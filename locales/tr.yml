@@ -160,6 +160,10 @@ settings:
   show-std: stdout ve stderr etiketlerini göster
   automatic-redirect: Aynı ada sahip yeni konteynerlere otomatik olarak yönlendir
   compact: Günlükler için kompakt modu etkinleştir
+  cpu-display: "CPU kullanımı görünümü"
+  cpu:
+    utilization: "Tüm CPU (%)"
+    cores: "Çekirdek başına (Linux)"
   size:
     small: Küçük
     medium: Orta

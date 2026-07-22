@@ -164,6 +164,10 @@ settings:
   show-std: Tampilkan label stdout dan stderr
   automatic-redirect: Alihkan otomatis ke kontainer baru dengan nama yang sama
   compact: Aktifkan mode ringkas untuk log
+  cpu-display: "Tampilan penggunaan CPU"
+  cpu:
+    utilization: "Seluruh CPU (%)"
+    cores: "Per inti (Linux)"
   size:
     small: Kecil
     medium: Sedang

@@ -156,6 +156,10 @@ settings:
   show-std: 显示stdout和stderr标签
   automatic-redirect: 自动重定向到同名的新容器
   compact: 紧凑模式
+  cpu-display: "CPU 使用率显示"
+  cpu:
+    utilization: "整颗 CPU (%)"
+    cores: "每核心 (Linux)"
   size:
     small: 小
     medium: 中

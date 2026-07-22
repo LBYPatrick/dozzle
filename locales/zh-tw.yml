@@ -159,6 +159,10 @@ settings:
   show-std: 顯示標準輸出(stdout)與標準錯誤(stderr)標籤
   automatic-redirect: 自動重新導向至相同名稱的新容器
   compact: 啟用緊湊模式
+  cpu-display: "CPU 使用率顯示"
+  cpu:
+    utilization: "整體 CPU (%)"
+    cores: "每核心 (Linux)"
   size:
     small: 小
     medium: 中

@@ -184,6 +184,10 @@ settings:
   show-std: Mostrar etiquetas de salida estándar y salida de error estándar
   automatic-redirect: Redireccionar automáticamente a nuevos contenedores con el mismo nombre
   compact: Modo compacto
+  cpu-display: "Visualización del uso de CPU"
+  cpu:
+    utilization: "CPU completa (%)"
+    cores: "Por núcleo (Linux)"
   size:
     small: Pequeño
     medium: Mediano

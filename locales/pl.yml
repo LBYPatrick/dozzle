@@ -159,6 +159,10 @@ settings:
   show-std: Pokaż etykiety dla stdout i stderr
   automatic-redirect: Automatycznie przekieruj na kontener o tej samej nazwie
   compact: Włącz tryb kompaktowy dla logów
+  cpu-display: "Wyświetlanie użycia CPU"
+  cpu:
+    utilization: "Cały procesor (%)"
+    cores: "Na rdzeń (Linux)"
   size:
     small: Mały
     medium: Średni

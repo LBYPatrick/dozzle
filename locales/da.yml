@@ -156,6 +156,10 @@ settings:
   show-std: Vis stdout og stderr mærker
   automatic-redirect: Automatisk omdiriger til nye containere med det samme navn
   compact: Slå kompakt tilstand til for logs
+  cpu-display: "Visning af CPU-forbrug"
+  cpu:
+    utilization: "Hele CPU'en (%)"
+    cores: "Pr. kerne (Linux)"
   size:
     small: Lille
     medium: Mellem

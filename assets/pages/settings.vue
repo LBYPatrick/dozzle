@@ -149,6 +149,23 @@
               </button>
             </div>
           </div>
+          <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
+            <span>{{ $t("settings.cpu-display") }}</span>
+            <div class="join ml-auto">
+              <button
+                v-for="opt in [
+                  { label: $t('settings.cpu.utilization'), value: 'utilization' },
+                  { label: $t('settings.cpu.cores'), value: 'cores' },
+                ]"
+                :key="opt.value"
+                class="btn btn-sm join-item"
+                :class="cpuDisplayMode === opt.value ? 'btn-primary' : 'btn-ghost'"
+                @click="cpuDisplayMode = opt.value as typeof cpuDisplayMode"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
         </div>
 
         <LogList
@@ -255,6 +272,7 @@ import {
   softWrap,
   locale,
   groupContainers,
+  cpuDisplayMode,
 } from "@/stores/settings";
 
 import { availableLocales, i18n } from "@/modules/i18n";

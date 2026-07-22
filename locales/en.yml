@@ -190,6 +190,10 @@ settings:
   show-std: Show stdout and stderr labels
   automatic-redirect: Automatically redirect to new containers with the same name
   compact: Enable compact mode for logs
+  cpu-display: CPU usage display
+  cpu:
+    utilization: Whole CPU (%)
+    cores: Per core (Linux)
   size:
     small: Small
     medium: Medium

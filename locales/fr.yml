@@ -156,6 +156,10 @@ settings:
   show-std: Afficher les étiquettes stdout et stderr
   automatic-redirect: Redirection automatique vers de nouveaux conteneurs portant le même nom
   compact: Activer le mode compact pour les journaux
+  cpu-display: "Affichage de l'utilisation du CPU"
+  cpu:
+    utilization: "CPU entier (%)"
+    cores: "Par cœur (Linux)"
   size:
     small: Petit
     medium: Moyen

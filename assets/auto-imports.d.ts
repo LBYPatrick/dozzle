@@ -29,6 +29,8 @@ declare global {
   const config: typeof import('./stores/config').default
   const controlledComputed: typeof import('@vueuse/core').controlledComputed
   const controlledRef: typeof import('@vueuse/core').controlledRef
+  const cpuDisplayMode: typeof import('./stores/settings').cpuDisplayMode
+  const cpuDisplayValue: typeof import('./composable/cpuDisplay').cpuDisplayValue
   const createApp: typeof import('vue').createApp
   const createContainerHints: typeof import('./composable/exprEditor').createContainerHints
   const createDisposableDirective: typeof import('@vueuse/core').createDisposableDirective
@@ -476,6 +478,8 @@ declare module 'vue' {
     readonly config: UnwrapRef<typeof import('./stores/config')['default']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
+    readonly cpuDisplayMode: UnwrapRef<typeof import('./stores/settings')['cpuDisplayMode']>
+    readonly cpuDisplayValue: UnwrapRef<typeof import('./composable/cpuDisplay')['cpuDisplayValue']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createContainerHints: UnwrapRef<typeof import('./composable/exprEditor')['createContainerHints']>
     readonly createDisposableDirective: UnwrapRef<typeof import('@vueuse/core')['createDisposableDirective']>

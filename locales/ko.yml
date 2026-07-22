@@ -160,6 +160,10 @@ settings:
   show-std: stdout 및 stderr 라벨 표시
   automatic-redirect: 같은 이름의 새 컨테이너로 자동 이동
   compact: 로그 간단하게 보기
+  cpu-display: "CPU 사용량 표시"
+  cpu:
+    utilization: "전체 CPU (%)"
+    cores: "코어당 (Linux)"
   size:
     small: 작게
     medium: 중간

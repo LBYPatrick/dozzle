@@ -156,6 +156,10 @@ settings:
   show-std: Zeige stdout und stderr Labels
   automatic-redirect: Automatische Weiterleitung zu neuen Containern mit demselben Namen
   compact: Aktiviere den kompakten Modus für Logs
+  cpu-display: "Anzeige der CPU-Auslastung"
+  cpu:
+    utilization: "Gesamte CPU (%)"
+    cores: "Pro Kern (Linux)"
   size:
     small: Klein
     medium: Mittel

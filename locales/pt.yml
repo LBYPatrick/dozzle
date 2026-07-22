@@ -156,6 +156,10 @@ settings:
   show-std: Mostrar rótulos stdout e stderr
   automatic-redirect: Redirecionar automaticamente para novos containers com o mesmo nome
   compact: Ativar modo compacto para logs
+  cpu-display: "Exibição de uso da CPU"
+  cpu:
+    utilization: "CPU inteira (%)"
+    cores: "Por núcleo (Linux)"
   size:
     small: Pequeno
     medium: Médio

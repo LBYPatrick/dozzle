@@ -154,6 +154,10 @@ settings:
     target="_blank" rel="noreferrer noopener">{nextVersion}</a>.
   show-std: Prikaži oznake stdout in stderr
   compact: Omogoči kompaktni način za dnevnike
+  cpu-display: "Prikaz porabe procesorja"
+  cpu:
+    utilization: "Celoten procesor (%)"
+    cores: "Na jedro (Linux)"
   size:
     small: Majhna
     medium: Srednja

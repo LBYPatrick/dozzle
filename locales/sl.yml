@@ -3,6 +3,7 @@ toolbar:
   download: Prenesi
   download-filtered: Prenesi Filtrirane Dnevnike
   search: Iskanje
+  reset-sidebar-width: "Ponastavi širino stranske vrstice"
   inverse-on: Izključi ujemanja (obratno)
   inverse-off: Vključi ujemanja (običajno)
   show: Prikaži {std}
@@ -127,6 +128,8 @@ button:
   retry: Retry
   scroll-to-top: "Pomakni na vrh"
   scroll-to-bottom: "Pomakni na dno"
+  show-sidebar: "Pokaži stransko vrstico"
+  hide-sidebar: "Skrij stransko vrstico"
   login: Prijava
   settings: Nastavitve
 placeholder:

@@ -3,6 +3,7 @@ toolbar:
   download: Descargar
   download-filtered: Descargar Logs Filtrados
   search: Buscar
+  reset-sidebar-width: "Restablecer ancho de barra lateral"
   inverse-on: Excluir coincidencias (inverso)
   inverse-off: Incluir coincidencias (normal)
   show: Mostrar {std}
@@ -127,6 +128,8 @@ button:
   retry: Retry
   scroll-to-top: "Desplazar arriba"
   scroll-to-bottom: "Desplazar abajo"
+  show-sidebar: "Mostrar barra lateral"
+  hide-sidebar: "Ocultar barra lateral"
 placeholder:
   search-containers: Buscar contenedores (⌘ + K, CTRL + K)
   search: Buscar

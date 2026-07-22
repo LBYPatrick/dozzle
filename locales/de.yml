@@ -3,6 +3,7 @@ toolbar:
   download: Herunterladen
   download-filtered: Gefilterte Logs Herunterladen
   search: Suchen
+  reset-sidebar-width: "Seitenleistenbreite zurücksetzen"
   inverse-on: Übereinstimmungen ausschließen (invertiert)
   inverse-off: Übereinstimmungen einschließen (normal)
   show: Zeige nur {std}
@@ -125,6 +126,8 @@ button:
   cancel: Abbruch
   redirect: Umleiten
   retry: Retry
+  show-sidebar: "Seitenleiste anzeigen"
+  hide-sidebar: "Seitenleiste ausblenden"
 placeholder:
   search-containers: Suche Container (⌘ + k, ⌃k)
   search: Suche

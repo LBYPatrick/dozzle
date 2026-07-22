@@ -3,6 +3,7 @@ toolbar:
   download: İndir
   download-filtered: Filtrelenmiş Logları İndir
   search: Ara
+  reset-sidebar-width: "Kenar çubuğu genişliğini sıfırla"
   inverse-on: Eşleşenleri hariç tut (ters)
   inverse-off: Eşleşenleri dahil et (normal)
   show: Sadece {std} göster
@@ -128,6 +129,8 @@ button:
   cancel: İptal
   redirect: Yönlendir
   retry: Retry
+  show-sidebar: "Kenar çubuğunu göster"
+  hide-sidebar: "Kenar çubuğunu gizle"
 placeholder:
   search-containers: Konteynerlerde ara (⌘ + k, ⌃k)
   search: Ara

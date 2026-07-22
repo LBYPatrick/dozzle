@@ -3,6 +3,7 @@ toolbar:
   download: Downloaden
   download-filtered: Gefilterde Logs Downloaden
   search: Zoeken
+  reset-sidebar-width: "Zijbalkbreedte herstellen"
   inverse-on: Overeenkomsten uitsluiten (omgekeerd)
   inverse-off: Overeenkomsten opnemen (normaal)
   show: Toon {std}
@@ -126,6 +127,8 @@ button:
   cancel: Annuleren
   redirect: Doorsturen
   retry: Retry
+  show-sidebar: "Zijbalk tonen"
+  hide-sidebar: "Zijbalk verbergen"
 placeholder:
   search-containers: Zoek containers (⌘ + k, ⌃k)
   search: Zoeken

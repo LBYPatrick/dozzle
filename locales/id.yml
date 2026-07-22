@@ -3,6 +3,7 @@ toolbar:
   download: Unduh
   download-filtered: Unduh Log yang Difilter
   search: Cari
+  reset-sidebar-width: "Atur ulang lebar bilah sisi"
   inverse-on: Kecualikan yang cocok (inversi)
   inverse-off: Sertakan yang cocok (normal)
   show: Tampilkan {std}
@@ -131,6 +132,8 @@ button:
   cancel: Batal
   redirect: Alihkan
   retry: Retry
+  show-sidebar: "Tampilkan bilah sisi"
+  hide-sidebar: "Sembunyikan bilah sisi"
 
 placeholder:
   search-containers: Cari kontainer (⌘ + k, ⌃k)

@@ -29,13 +29,21 @@
       </Pane>
     </Splitpanes>
     <label
-      class="btn btn-circle swap bg-base-content/10 swap-rotate border-base-content/20 hover:border-primary fixed bottom-4 -left-12 w-16 shadow-sm transition-all hover:-left-4"
-      :class="{ '-left-6!': collapseNav }"
+      class="group border-base-content/20 bg-base-100 hover:border-primary fixed bottom-16 -left-px z-20 flex h-10 cursor-pointer items-center rounded-l-none rounded-r-lg border px-2.5 shadow-sm transition-colors duration-300 select-none"
       v-if="!isMobile && !forceMenuHidden"
+      :title="collapseNav ? $t('button.show-sidebar') : $t('button.hide-sidebar')"
     >
-      <input type="checkbox" v-model="collapseNav" />
-      <mdi:chevron-right class="swap-on" />
-      <mdi:chevron-left class="swap-off" />
+      <input type="checkbox" v-model="collapseNav" class="hidden" />
+      <mdi:chevron-left
+        class="size-5 shrink-0 transition-transform duration-300"
+        :class="{ 'rotate-180': collapseNav }"
+      />
+      <span
+        class="flex max-w-0 items-center gap-2 overflow-hidden text-sm font-medium whitespace-nowrap transition-all duration-300 group-hover:ml-2 group-hover:max-w-60"
+      >
+        {{ collapseNav ? $t("button.show-sidebar") : $t("button.hide-sidebar") }}
+        <KeyShortcut char="s" :modifiers="['meta', '^']" />
+      </span>
     </label>
   </div>
   <dialog ref="modal" class="modal bg-base-300/50! items-start backdrop-blur-md transition-none!" @close="closeSearch">
@@ -84,6 +92,13 @@ watch(open, () => {
 onKeyStroke("k", (e) => {
   if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
     showFuzzySearch();
+    e.preventDefault();
+  }
+});
+
+onKeyStroke(["s", "S"], (e) => {
+  if (e.metaKey && e.ctrlKey && !isMobile.value && !forceMenuHidden.value) {
+    collapseNav.value = !collapseNav.value;
     e.preventDefault();
   }
 });

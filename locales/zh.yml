@@ -3,6 +3,7 @@ toolbar:
   download: 下载
   download-filtered: 下载筛选的日志
   search: 搜索
+  reset-sidebar-width: "重置侧边栏宽度"
   inverse-on: 排除匹配项（反向）
   inverse-off: 包含匹配项（正常）
   show: 显示 {std}
@@ -125,6 +126,8 @@ button:
   cancel: 取消
   redirect: 重定向
   retry: Retry
+  show-sidebar: "显示侧边栏"
+  hide-sidebar: "隐藏侧边栏"
 placeholder:
   search-containers: 搜索容器 (⌘ + k, ⌃k)
   search: 搜索

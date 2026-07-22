@@ -18,6 +18,7 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
   const automaticRedirect: typeof import('./stores/settings').automaticRedirect
+  const canResetMenuWidth: typeof import('./stores/settings').canResetMenuWidth
   const collapseNav: typeof import('./stores/settings').collapseNav
   const colorize: typeof import('./utils/index').colorize
   const compact: typeof import('./stores/settings').compact
@@ -74,6 +75,7 @@ declare global {
   const groupContainers: typeof import('./stores/settings').groupContainers
   const groupK8sOwners: typeof import('./stores/k8s').groupK8sOwners
   const h: typeof import('vue').h
+  const hasInlineSearch: typeof import('./composable/inlineSearch').hasInlineSearch
   const hashCode: typeof import('./utils/index').hashCode
   const highlightSubstringInHtml: typeof import('./utils/index').highlightSubstringInHtml
   const hourStyle: typeof import('./stores/settings').hourStyle
@@ -145,6 +147,7 @@ declare global {
   const refManualReset: typeof import('@vueuse/core').refManualReset
   const refThrottled: typeof import('@vueuse/core').refThrottled
   const refWithControl: typeof import('@vueuse/core').refWithControl
+  const resetMenuWidth: typeof import('./stores/settings').resetMenuWidth
   const resolveComponent: typeof import('vue').resolveComponent
   const resolveRef: typeof import('@vueuse/core').resolveRef
   const scrollContextKey: typeof import('./composable/scrollContext').scrollContextKey
@@ -280,6 +283,7 @@ declare global {
   const useIdle: typeof import('@vueuse/core').useIdle
   const useImage: typeof import('@vueuse/core').useImage
   const useInfiniteScroll: typeof import('@vueuse/core').useInfiniteScroll
+  const useInlineSearchProvider: typeof import('./composable/inlineSearch').useInlineSearchProvider
   const useIntersectionObserver: typeof import('@vueuse/core').useIntersectionObserver
   const useInterval: typeof import('@vueuse/core').useInterval
   const useIntervalFn: typeof import('@vueuse/core').useIntervalFn
@@ -465,6 +469,7 @@ declare module 'vue' {
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly automaticRedirect: UnwrapRef<typeof import('./stores/settings')['automaticRedirect']>
+    readonly canResetMenuWidth: UnwrapRef<typeof import('./stores/settings')['canResetMenuWidth']>
     readonly collapseNav: UnwrapRef<typeof import('./stores/settings')['collapseNav']>
     readonly colorize: UnwrapRef<typeof import('./utils/index')['colorize']>
     readonly compact: UnwrapRef<typeof import('./stores/settings')['compact']>
@@ -520,6 +525,7 @@ declare module 'vue' {
     readonly groupContainers: UnwrapRef<typeof import('./stores/settings')['groupContainers']>
     readonly groupK8sOwners: UnwrapRef<typeof import('./stores/k8s')['groupK8sOwners']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly hasInlineSearch: UnwrapRef<typeof import('./composable/inlineSearch')['hasInlineSearch']>
     readonly hashCode: UnwrapRef<typeof import('./utils/index')['hashCode']>
     readonly hourStyle: UnwrapRef<typeof import('./stores/settings')['hourStyle']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -590,6 +596,7 @@ declare module 'vue' {
     readonly refManualReset: UnwrapRef<typeof import('@vueuse/core')['refManualReset']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly resetMenuWidth: UnwrapRef<typeof import('./stores/settings')['resetMenuWidth']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly scrollContextKey: UnwrapRef<typeof import('./composable/scrollContext')['scrollContextKey']>
     readonly search: UnwrapRef<typeof import('./stores/settings')['search']>
@@ -722,6 +729,7 @@ declare module 'vue' {
     readonly useIdle: UnwrapRef<typeof import('@vueuse/core')['useIdle']>
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>
     readonly useInfiniteScroll: UnwrapRef<typeof import('@vueuse/core')['useInfiniteScroll']>
+    readonly useInlineSearchProvider: UnwrapRef<typeof import('./composable/inlineSearch')['useInlineSearchProvider']>
     readonly useIntersectionObserver: UnwrapRef<typeof import('@vueuse/core')['useIntersectionObserver']>
     readonly useInterval: UnwrapRef<typeof import('@vueuse/core')['useInterval']>
     readonly useIntervalFn: UnwrapRef<typeof import('@vueuse/core')['useIntervalFn']>

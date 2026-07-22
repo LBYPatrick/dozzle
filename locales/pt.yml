@@ -3,6 +3,7 @@ toolbar:
   download: Baixar
   download-filtered: Baixar Logs Filtrados
   search: Pesquisar
+  reset-sidebar-width: "Redefinir largura da barra lateral"
   inverse-on: Excluir correspondências (inverso)
   inverse-off: Incluir correspondências (normal)
   show: Mostrar {std}
@@ -125,6 +126,8 @@ button:
   cancel: Cancelar
   redirect: Redirecionar
   retry: Retry
+  show-sidebar: "Mostrar barra lateral"
+  hide-sidebar: "Ocultar barra lateral"
 placeholder:
   search-containers: Pesquisar containers (⌘ + k, ⌃k)
   search: Pesquisar

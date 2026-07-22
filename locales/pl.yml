@@ -3,6 +3,7 @@ toolbar:
   download: Pobierz
   download-filtered: Pobierz Filtrowane Logi
   search: Szukaj
+  reset-sidebar-width: "Zresetuj szerokość paska bocznego"
   inverse-on: Wyklucz pasujące (odwrotnie)
   inverse-off: Uwzględnij pasujące (normalnie)
   show: Pokaż tylko {std}
@@ -127,6 +128,8 @@ button:
   cancel: Anuluj
   redirect: Przekieruj
   retry: Retry
+  show-sidebar: "Pokaż pasek boczny"
+  hide-sidebar: "Ukryj pasek boczny"
 placeholder:
   search-containers: Przeszukaj kontery (⌘ + k, ⌃k)
   search: Szukaj

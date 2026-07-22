@@ -3,6 +3,7 @@ toolbar:
   download: Download
   download-filtered: Download Filtered Logs
   search: Search
+  reset-sidebar-width: Reset sidebar width
   inverse-on: Exclude matching (inverse)
   inverse-off: Include matching (normal)
   show: Show {std}
@@ -129,6 +130,8 @@ button:
   cancel: Cancel
   redirect: Redirect
   retry: Retry
+  show-sidebar: Show sidebar
+  hide-sidebar: Hide sidebar
 placeholder:
   search-containers: Search containers (⌘ + k, ⌃k)
   search: Search

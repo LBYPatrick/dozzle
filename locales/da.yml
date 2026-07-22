@@ -3,6 +3,7 @@ toolbar:
   download: Download
   download-filtered: Download Filtrerede Logs
   search: Søg
+  reset-sidebar-width: "Nulstil sidepanelbredde"
   inverse-on: Ekskluder matchende (inverteret)
   inverse-off: Inkluder matchende (normal)
   show: Vis kun {std}
@@ -125,6 +126,8 @@ button:
   cancel: Annuller
   redirect: Omdiriger
   retry: Retry
+  show-sidebar: "Vis sidepanel"
+  hide-sidebar: "Skjul sidepanel"
 placeholder:
   search-containers: Søg containere (⌘ + k, ⌃k)
   search: Søg

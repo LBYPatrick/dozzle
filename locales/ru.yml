@@ -3,6 +3,7 @@ toolbar:
   download: Скачать
   download-filtered: Скачать Отфильтрованные Логи
   search: Поиск
+  reset-sidebar-width: "Сбросить ширину боковой панели"
   inverse-on: Исключить совпадения (инверсия)
   inverse-off: Включить совпадения (обычно)
   show: Показать только {std}
@@ -125,6 +126,8 @@ button:
   cancel: Отмена
   redirect: Перенаправить
   retry: Retry
+  show-sidebar: "Показать боковую панель"
+  hide-sidebar: "Скрыть боковую панель"
 placeholder:
   search-containers: Поиск контейнеров (⌘ + k, ⌃k)
   search: Поиск

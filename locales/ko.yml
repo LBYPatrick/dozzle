@@ -3,6 +3,7 @@ toolbar:
   download: 다운로드
   download-filtered: 필터링된 로그 다운로드
   search: 검색
+  reset-sidebar-width: "사이드바 너비 초기화"
   inverse-on: 일치 항목 제외 (반전)
   inverse-off: 일치 항목 포함 (일반)
   show: "{std} 보기"
@@ -127,6 +128,8 @@ button:
   cancel: 취소
   redirect: 이동
   retry: Retry
+  show-sidebar: "사이드바 표시"
+  hide-sidebar: "사이드바 숨기기"
 placeholder:
   search-containers: 컨테이너 검색 (⌘ + k, ⌃k)
   search: 검색

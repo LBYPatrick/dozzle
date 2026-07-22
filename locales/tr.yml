@@ -128,6 +128,8 @@ button:
   cancel: İptal
   redirect: Yönlendir
   retry: Retry
+  scroll-to-top: "Yukarı kaydır"
+  scroll-to-bottom: "Aşağı kaydır"
 placeholder:
   search-containers: Konteynerlerde ara (⌘ + k, ⌃k)
   search: Ara

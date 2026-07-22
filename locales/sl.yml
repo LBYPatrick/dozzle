@@ -125,6 +125,8 @@ button:
   cancel: Prekliči
   redirect: Preusmeritev
   retry: Retry
+  scroll-to-top: "Pomakni na vrh"
+  scroll-to-bottom: "Pomakni na dno"
   login: Prijava
   settings: Nastavitve
 placeholder:

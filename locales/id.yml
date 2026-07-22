@@ -131,6 +131,8 @@ button:
   cancel: Batal
   redirect: Alihkan
   retry: Retry
+  scroll-to-top: "Gulir ke atas"
+  scroll-to-bottom: "Gulir ke bawah"
 
 placeholder:
   search-containers: Cari kontainer (⌘ + k, ⌃k)

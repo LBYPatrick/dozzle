@@ -129,6 +129,8 @@ button:
   cancel: Cancel
   redirect: Redirect
   retry: Retry
+  scroll-to-top: Scroll to top
+  scroll-to-bottom: Scroll to bottom
 placeholder:
   search-containers: Search containers (⌘ + k, ⌃k)
   search: Search

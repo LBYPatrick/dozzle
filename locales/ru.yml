@@ -125,6 +125,8 @@ button:
   cancel: Отмена
   redirect: Перенаправить
   retry: Retry
+  scroll-to-top: "Прокрутить вверх"
+  scroll-to-bottom: "Прокрутить вниз"
 placeholder:
   search-containers: Поиск контейнеров (⌘ + k, ⌃k)
   search: Поиск

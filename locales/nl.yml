@@ -126,6 +126,8 @@ button:
   cancel: Annuleren
   redirect: Doorsturen
   retry: Retry
+  scroll-to-top: "Naar boven scrollen"
+  scroll-to-bottom: "Naar beneden scrollen"
 placeholder:
   search-containers: Zoek containers (⌘ + k, ⌃k)
   search: Zoeken

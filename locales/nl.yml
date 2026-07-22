@@ -148,6 +148,8 @@ settings:
   color-scheme: Kleurmodus
   options: Opties
   show-stopped-containers: Gestopte containers tonen
+  open-as-popup: Instellingen in een pop-up openen
+  experimental: Experimenteel
   group-containers: Groepeer containers op namespace
   about: Over
   search: Doorzoeken inschakelen via Dozzle

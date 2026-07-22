@@ -147,6 +147,8 @@ settings:
   color-scheme: Barvna shema
   options: Možnosti
   show-stopped-containers: Prikaži ustavljene zabojnike
+  open-as-popup: Odpri nastavitve v pojavnem oknu
+  experimental: Poskusno
   group-containers: Združi zabojnike po imenskem prostoru
   about: O programu
   search: Omogočite iskanje z Dozzle z uporabo

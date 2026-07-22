@@ -147,6 +147,8 @@ settings:
   color-scheme: Tema colori
   options: Opzioni
   show-stopped-containers: Visualizza i container arrestati
+  open-as-popup: Apri le impostazioni in un popup
+  experimental: Sperimentale
   group-containers: Raggruppa i container per namespace
   about: Circa
   search: Abilita la ricerca attraverso Dozzle

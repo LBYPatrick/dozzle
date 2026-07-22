@@ -147,6 +147,8 @@ settings:
   color-scheme: Farve skema
   options: Muligheder
   show-stopped-containers: Vis stoppet containere
+  open-as-popup: Åbn indstillinger i et pop op-vindue
+  experimental: Eksperimentel
   group-containers: Gruppér containere efter namespace
   about: Omkring
   search: Aktiver søgning med Dozzle ved brug af

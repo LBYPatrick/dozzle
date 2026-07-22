@@ -155,6 +155,8 @@ settings:
   color-scheme: Skema warna
   options: Opsi
   show-stopped-containers: Tampilkan kontainer yang dihentikan
+  open-as-popup: Buka pengaturan di popup
+  experimental: Eksperimental
   group-containers: Kelompokkan kontainer berdasarkan namespace
   about: Tentang
   search: Aktifkan pencarian dengan Dozzle menggunakan

@@ -150,6 +150,8 @@ settings:
   color-scheme: Renk düzeni
   options: Seçenekler
   show-stopped-containers: Durdurulan konteynerleri göster
+  open-as-popup: Ayarları açılır pencerede aç
+  experimental: Deneysel
   group-containers: Konteynerleri ad alanına göre grupla
   about: Hakkında
   search: Dozzle kullanarak aramayı etkinleştir

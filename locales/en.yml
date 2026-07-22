@@ -180,6 +180,8 @@ settings:
   color-scheme: Color scheme
   options: Options
   show-stopped-containers: Show stopped containers
+  open-as-popup: Open settings in a popup
+  experimental: Experimental
   group-containers: Group containers by namespace
   about: About
   search: Enable searching with Dozzle using

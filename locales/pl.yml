@@ -149,6 +149,8 @@ settings:
   color-scheme: Motyw
   options: Opcje
   show-stopped-containers: Pokaż zatrzymane kontenery
+  open-as-popup: Otwórz ustawienia w oknie wyskakującym
+  experimental: Eksperymentalne
   group-containers: Grupuj kontenery według przestrzeni nazw
   about: Informacje
   search: Włącz szukanie z dozzle

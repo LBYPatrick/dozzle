@@ -149,6 +149,8 @@ settings:
   color-scheme: 顏色設定
   options: 選項
   show-stopped-containers: 顯示已停止的容器
+  open-as-popup: 在彈出視窗中開啟設定
+  experimental: 實驗性
   group-containers: 依命名空間分組容器
   about: 關於
   search: 啟用 Dozzle 搜尋功能

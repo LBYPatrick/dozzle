@@ -147,6 +147,8 @@ settings:
   color-scheme: Цветовая схема
   options: Опции
   show-stopped-containers: Показывать остановленные контейнеры
+  open-as-popup: Открывать настройки во всплывающем окне
+  experimental: Экспериментально
   group-containers: Группировать контейнеры по пространству имён
   about: Информация
   search: Включить поиск с помощью Dozzle, используя

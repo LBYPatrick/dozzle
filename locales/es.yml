@@ -175,6 +175,8 @@ settings:
   color-scheme: Esquema de colores
   options: Opciones
   show-stopped-containers: Mostrar contenedores parados
+  open-as-popup: Abrir ajustes en una ventana emergente
+  experimental: Experimental
   group-containers: Agrupar contenedores por namespace
   about: Acerca de
   search: Activar la búsqueda con Dozzle mediante

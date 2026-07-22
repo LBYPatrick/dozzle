@@ -184,6 +184,8 @@ declare module 'vue' {
     Search: typeof import('./components/Search.vue')['default']
     SearchStatus: typeof import('./components/LogViewer/SearchStatus.vue')['default']
     ServiceLog: typeof import('./components/ServiceViewer/ServiceLog.vue')['default']
+    SettingsModal: typeof import('./components/Settings/SettingsModal.vue')['default']
+    SettingsPanel: typeof import('./components/Settings/SettingsPanel.vue')['default']
     SideDrawer: typeof import('./components/common/SideDrawer.vue')['default']
     SideMenu: typeof import('./components/SideMenu.vue')['default']
     SidePanel: typeof import('./components/SidePanel.vue')['default']

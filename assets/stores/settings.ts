@@ -17,6 +17,7 @@ export type Settings = {
   automaticRedirect: "instant" | "delayed" | "none";
   locale: string;
   groupContainers: "always" | "at-least-2" | "never";
+  settingsAsPopup: boolean;
 };
 // Shared sidebar sizing (percent of the window width) so the layout and the
 // collapse/expand handling always agree on one value.
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   automaticRedirect: "delayed",
   locale: "",
   groupContainers: "at-least-2",
+  settingsAsPopup: false,
 };
 
 export const settings = useProfileStorage("settings", DEFAULT_SETTINGS);
@@ -69,4 +71,5 @@ export const {
   locale,
   automaticRedirect,
   groupContainers,
+  settingsAsPopup,
 } = toRefs(settings.value);

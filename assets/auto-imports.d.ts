@@ -154,6 +154,7 @@ declare global {
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
   const setTitle: typeof import('./composable/title').setTitle
   const settings: typeof import('./stores/settings').settings
+  const settingsAsPopup: typeof import('./stores/settings').settingsAsPopup
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
@@ -344,6 +345,7 @@ declare global {
   const useSeoMeta: typeof import('@vueuse/head').useSeoMeta
   const useServiceStream: typeof import('./composable/eventStreams').useServiceStream
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
+  const useSettingsModal: typeof import('./composable/settingsModal').useSettingsModal
   const useShare: typeof import('@vueuse/core').useShare
   const useSimpleRefHistory: typeof import('./utils/index').useSimpleRefHistory
   const useSlots: typeof import('vue').useSlots
@@ -598,6 +600,7 @@ declare module 'vue' {
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly setTitle: UnwrapRef<typeof import('./composable/title')['setTitle']>
     readonly settings: UnwrapRef<typeof import('./stores/settings')['settings']>
+    readonly settingsAsPopup: UnwrapRef<typeof import('./stores/settings')['settingsAsPopup']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -786,6 +789,7 @@ declare module 'vue' {
     readonly useSeoMeta: UnwrapRef<typeof import('@vueuse/head')['useSeoMeta']>
     readonly useServiceStream: UnwrapRef<typeof import('./composable/eventStreams')['useServiceStream']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
+    readonly useSettingsModal: UnwrapRef<typeof import('./composable/settingsModal')['useSettingsModal']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useSimpleRefHistory: UnwrapRef<typeof import('./utils/index')['useSimpleRefHistory']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>

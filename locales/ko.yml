@@ -127,6 +127,8 @@ button:
   cancel: 취소
   redirect: 이동
   retry: Retry
+  scroll-to-top: "맨 위로"
+  scroll-to-bottom: "맨 아래로"
 placeholder:
   search-containers: 컨테이너 검색 (⌘ + k, ⌃k)
   search: 검색

@@ -127,6 +127,8 @@ button:
   cancel: 取消
   redirect: 重新導向
   retry: Retry
+  scroll-to-top: "捲動至頂部"
+  scroll-to-bottom: "捲動至底部"
 placeholder:
   search-containers: 搜尋容器 (⌘ + k, ⌃k)
   search: 搜尋

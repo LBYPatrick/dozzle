@@ -125,6 +125,8 @@ button:
   cancel: Annuller
   redirect: Omdiriger
   retry: Retry
+  scroll-to-top: "Rul til toppen"
+  scroll-to-bottom: "Rul til bunden"
 placeholder:
   search-containers: Søg containere (⌘ + k, ⌃k)
   search: Søg

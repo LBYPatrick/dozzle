@@ -127,6 +127,8 @@ button:
   cancel: Anuluj
   redirect: Przekieruj
   retry: Retry
+  scroll-to-top: "Przewiń do góry"
+  scroll-to-bottom: "Przewiń w dół"
 placeholder:
   search-containers: Przeszukaj kontery (⌘ + k, ⌃k)
   search: Szukaj

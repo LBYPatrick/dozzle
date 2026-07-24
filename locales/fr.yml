@@ -153,6 +153,17 @@ settings:
   font-size: Taille de police à utiliser pour les journaux
   color-scheme: Schéma de couleurs
   accent-color: "Couleur d'accent"
+  view-visual: "Visuel"
+  view-json: "JSON"
+  export: "Exporter"
+  import: "Importer"
+  apply: "Appliquer"
+  json-valid: "JSON valide"
+  imported: "Paramètres importés"
+  exported: "Paramètres copiés dans le presse-papiers"
+  applied: "Paramètres appliqués"
+  import-hint: "Collez le JSON des paramètres, ou une URL renvoyant application/json."
+  import-placeholder: "Collez le JSON des paramètres ici, ou https://example.com/settings.json"
   options: Options
   show-stopped-containers: Afficher les conteneurs arrêtés
   group-containers: Regrouper les conteneurs par namespace

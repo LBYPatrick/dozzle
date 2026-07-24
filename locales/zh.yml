@@ -153,6 +153,17 @@ settings:
   font-size: 字体大小
   color-scheme: 颜色方案
   accent-color: "强调色"
+  view-visual: "可视化"
+  view-json: "JSON"
+  export: "导出"
+  import: "导入"
+  apply: "应用"
+  json-valid: "JSON 有效"
+  imported: "设置已导入"
+  exported: "已将设置复制到剪贴板"
+  applied: "设置已应用"
+  import-hint: "粘贴设置 JSON，或返回 application/json 的 URL。"
+  import-placeholder: "在此粘贴设置 JSON，或 https://example.com/settings.json"
   options: 选项
   show-stopped-containers: 显示已停止的容器
   group-containers: 按命名空间分组容器

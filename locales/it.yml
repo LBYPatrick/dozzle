@@ -153,6 +153,17 @@ settings:
   font-size: Grandezza del Font da usare nei log
   color-scheme: Tema colori
   accent-color: "Colore d'accento"
+  view-visual: "Visuale"
+  view-json: "JSON"
+  export: "Esporta"
+  import: "Importa"
+  apply: "Applica"
+  json-valid: "JSON valido"
+  imported: "Impostazioni importate"
+  exported: "Impostazioni copiate negli appunti"
+  applied: "Impostazioni applicate"
+  import-hint: "Incolla il JSON delle impostazioni, o un URL che restituisce application/json."
+  import-placeholder: "Incolla qui il JSON delle impostazioni, o https://example.com/settings.json"
   options: Opzioni
   show-stopped-containers: Visualizza i container arrestati
   group-containers: Raggruppa i container per namespace

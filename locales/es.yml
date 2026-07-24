@@ -211,6 +211,17 @@ settings:
   font-size: Tamaño de letra a utilizar para los registros
   color-scheme: Esquema de colores
   accent-color: "Color de acento"
+  view-visual: "Visual"
+  view-json: "JSON"
+  export: "Exportar"
+  import: "Importar"
+  apply: "Aplicar"
+  json-valid: "JSON válido"
+  imported: "Ajustes importados"
+  exported: "Ajustes copiados al portapapeles"
+  applied: "Ajustes aplicados"
+  import-hint: "Pega el JSON de ajustes, o una URL que devuelva application/json."
+  import-placeholder: "Pega aquí el JSON de ajustes, o https://example.com/settings.json"
   options: Opciones
   show-stopped-containers: Mostrar contenedores parados
   group-containers: Agrupar contenedores por namespace

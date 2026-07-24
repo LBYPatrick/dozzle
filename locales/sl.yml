@@ -153,6 +153,17 @@ settings:
   font-size: Velikost pisave za dnevnike
   color-scheme: Barvna shema
   accent-color: "Poudarna barva"
+  view-visual: "Vizualno"
+  view-json: "JSON"
+  export: "Izvozi"
+  import: "Uvozi"
+  apply: "Uporabi"
+  json-valid: "Veljaven JSON"
+  imported: "Nastavitve uvožene"
+  exported: "Nastavitve kopirane v odložišče"
+  applied: "Nastavitve uporabljene"
+  import-hint: "Prilepite JSON nastavitev ali URL, ki vrne application/json."
+  import-placeholder: "Prilepite JSON nastavitev sem ali https://example.com/settings.json"
   options: Možnosti
   show-stopped-containers: Prikaži ustavljene zabojnike
   group-containers: Združi zabojnike po imenskem prostoru

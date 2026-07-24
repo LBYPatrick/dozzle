@@ -161,6 +161,17 @@ settings:
   font-size: Ukuran font untuk log
   color-scheme: Skema warna
   accent-color: "Warna aksen"
+  view-visual: "Visual"
+  view-json: "JSON"
+  export: "Ekspor"
+  import: "Impor"
+  apply: "Terapkan"
+  json-valid: "JSON valid"
+  imported: "Pengaturan diimpor"
+  exported: "Pengaturan disalin ke papan klip"
+  applied: "Pengaturan diterapkan"
+  import-hint: "Tempel JSON pengaturan, atau URL yang mengembalikan application/json."
+  import-placeholder: "Tempel JSON pengaturan di sini, atau https://example.com/settings.json"
   options: Opsi
   show-stopped-containers: Tampilkan kontainer yang dihentikan
   group-containers: Kelompokkan kontainer berdasarkan namespace

@@ -156,6 +156,17 @@ settings:
   font-size: 로그 글꼴 크기
   color-scheme: 색상 테마
   accent-color: "강조 색상"
+  view-visual: "시각적"
+  view-json: "JSON"
+  export: "내보내기"
+  import: "가져오기"
+  apply: "적용"
+  json-valid: "유효한 JSON"
+  imported: "설정을 가져왔습니다"
+  exported: "설정을 클립보드에 복사했습니다"
+  applied: "설정이 적용되었습니다"
+  import-hint: "설정 JSON을 붙여넣거나 application/json을 반환하는 URL을 입력하세요."
+  import-placeholder: "여기에 설정 JSON을 붙여넣거나 https://example.com/settings.json"
   options: 옵션
   show-stopped-containers: 중지된 컨테이너 보기
   group-containers: 네임스페이스별로 컨테이너 그룹화

@@ -153,6 +153,17 @@ settings:
   font-size: Tekststørrelse at bruge til logs
   color-scheme: Farve skema
   accent-color: "Accentfarve"
+  view-visual: "Visuel"
+  view-json: "JSON"
+  export: "Eksportér"
+  import: "Importér"
+  apply: "Anvend"
+  json-valid: "Gyldig JSON"
+  imported: "Indstillinger importeret"
+  exported: "Indstillinger kopieret til udklipsholder"
+  applied: "Indstillinger anvendt"
+  import-hint: "Indsæt indstillings-JSON, eller en URL der returnerer application/json."
+  import-placeholder: "Indsæt indstillings-JSON her, eller https://example.com/settings.json"
   options: Muligheder
   show-stopped-containers: Vis stoppet containere
   group-containers: Gruppér containere efter namespace

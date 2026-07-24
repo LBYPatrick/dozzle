@@ -154,6 +154,17 @@ settings:
   font-size: Lettergrootte voor logs
   color-scheme: Kleurmodus
   accent-color: "Accentkleur"
+  view-visual: "Visueel"
+  view-json: "JSON"
+  export: "Exporteren"
+  import: "Importeren"
+  apply: "Toepassen"
+  json-valid: "Geldige JSON"
+  imported: "Instellingen geïmporteerd"
+  exported: "Instellingen naar klembord gekopieerd"
+  applied: "Instellingen toegepast"
+  import-hint: "Plak instellingen-JSON, of een URL die application/json retourneert."
+  import-placeholder: "Plak hier instellingen-JSON, of https://example.com/settings.json"
   options: Opties
   show-stopped-containers: Gestopte containers tonen
   group-containers: Groepeer containers op namespace

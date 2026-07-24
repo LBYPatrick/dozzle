@@ -156,6 +156,17 @@ settings:
   font-size: Günlükler için kullanılacak yazı tipi boyutu
   color-scheme: Renk düzeni
   accent-color: "Vurgu rengi"
+  view-visual: "Görsel"
+  view-json: "JSON"
+  export: "Dışa aktar"
+  import: "İçe aktar"
+  apply: "Uygula"
+  json-valid: "Geçerli JSON"
+  imported: "Ayarlar içe aktarıldı"
+  exported: "Ayarlar panoya kopyalandı"
+  applied: "Ayarlar uygulandı"
+  import-hint: "Ayar JSON'unu veya application/json döndüren bir URL'yi yapıştırın."
+  import-placeholder: "Ayar JSON'unu buraya yapıştırın veya https://example.com/settings.json"
   options: Seçenekler
   show-stopped-containers: Durdurulan konteynerleri göster
   group-containers: Konteynerleri ad alanına göre grupla

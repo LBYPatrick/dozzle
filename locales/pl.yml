@@ -155,6 +155,17 @@ settings:
   font-size: Rozmiar czcionki używany dla logów
   color-scheme: Motyw
   accent-color: "Kolor akcentu"
+  view-visual: "Wizualny"
+  view-json: "JSON"
+  export: "Eksportuj"
+  import: "Importuj"
+  apply: "Zastosuj"
+  json-valid: "Prawidłowy JSON"
+  imported: "Zaimportowano ustawienia"
+  exported: "Skopiowano ustawienia do schowka"
+  applied: "Zastosowano ustawienia"
+  import-hint: "Wklej JSON ustawień lub adres URL zwracający application/json."
+  import-placeholder: "Wklej tutaj JSON ustawień lub https://example.com/settings.json"
   options: Opcje
   show-stopped-containers: Pokaż zatrzymane kontenery
   group-containers: Grupuj kontenery według przestrzeni nazw

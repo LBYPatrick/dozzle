@@ -153,6 +153,17 @@ settings:
   font-size: Размер шрифта
   color-scheme: Цветовая схема
   accent-color: "Акцентный цвет"
+  view-visual: "Визуально"
+  view-json: "JSON"
+  export: "Экспорт"
+  import: "Импорт"
+  apply: "Применить"
+  json-valid: "Корректный JSON"
+  imported: "Настройки импортированы"
+  exported: "Настройки скопированы в буфер обмена"
+  applied: "Настройки применены"
+  import-hint: "Вставьте JSON настроек или URL, возвращающий application/json."
+  import-placeholder: "Вставьте сюда JSON настроек или https://example.com/settings.json"
   options: Опции
   show-stopped-containers: Показывать остановленные контейнеры
   group-containers: Группировать контейнеры по пространству имён

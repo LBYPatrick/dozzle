@@ -44,6 +44,7 @@
             >
               <component :is="command.icon" class="text-base-content/60 size-4 shrink-0" />
               <span class="min-w-0 flex-1 truncate text-sm">{{ command.title }}</span>
+              <span class="text-base-content/30 shrink-0 font-mono text-xs">{{ command.slash }}</span>
               <ic:sharp-keyboard-return v-if="index === selectedIndex" class="text-base-content/40 size-4" />
             </a>
           </li>
@@ -119,7 +120,7 @@
             >
               <i18n-t keypath="cloud-search.search-logs-for">
                 <template #query>
-                  <span class="font-mono">{{ query }}</span>
+                  <span class="font-mono">{{ searchQuery }}</span>
                 </template>
               </i18n-t>
             </span>
@@ -221,9 +222,19 @@ const { cloudConfig } = useCloudConfig();
 // don't render the hits inside the popup. The composable's debounced
 // watch short-circuits on empty query, so opening the modal alone does
 // not fire a request.
-const cloudSearch = useCloudLogSearch(query);
+// Command mode: an unescaped leading "/" turns the palette into a slash-command
+// autocomplete. "\/" is an escaped literal slash the user wants to search for,
+// so it does not trigger command mode.
+const isCommandMode = computed(() => query.value.startsWith("/"));
 
-const logSearchVisible = computed(() => query.value.trim().length > 0);
+// The query used for fuzzy search, with a leading escaped slash unescaped so
+// "\/foo" searches literally for "/foo" instead of triggering command mode.
+const searchQuery = computed(() => (query.value.startsWith("\\/") ? query.value.slice(1) : query.value));
+
+// Never send a slash command to cloud log search; keep it blank in command mode.
+const cloudSearch = useCloudLogSearch(computed(() => (isCommandMode.value ? "" : searchQuery.value)));
+
+const logSearchVisible = computed(() => !isCommandMode.value && searchQuery.value.trim().length > 0);
 
 const { t } = useI18n();
 const placeholderCopy = computed(() =>
@@ -286,7 +297,7 @@ const list = computed(() => {
   return items;
 });
 
-const { results: fuseResults } = useFuse(query, list, {
+const { results: fuseResults } = useFuse(searchQuery, list, {
   fuseOptions: {
     keys: ["name", "host"],
     includeScore: true,
@@ -296,21 +307,30 @@ const { results: fuseResults } = useFuse(query, list, {
   },
 });
 
-const results = computed(() => (query.value ? fuseResults.value : []));
+// Containers are hidden in command mode so the slash-command list stands alone.
+const results = computed(() => (!isCommandMode.value && searchQuery.value ? fuseResults.value : []));
 
 // Commands palette. Fuzzy-matched against title/keywords while typing; the
 // context commands (container actions) show up front on an empty query.
 const { commands, contextCommands } = useCommands();
-const { results: commandFuseResults } = useFuse(query, commands, {
+const { results: commandFuseResults } = useFuse(searchQuery, commands, {
   fuseOptions: {
     keys: ["title", "keywords"],
     useExtendedSearch: true,
     threshold: 0.3,
   },
 });
-const commandEntries = computed<Command[]>(() =>
-  query.value ? commandFuseResults.value.map((r) => r.item) : contextCommands.value,
-);
+const commandEntries = computed<Command[]>(() => {
+  if (isCommandMode.value) {
+    // Autocomplete by the explicit slash command. Substring match keeps it
+    // forgiving ("/dark" finds "/theme dark"), prefix matches sort first.
+    const q = query.value.toLowerCase();
+    return commands.value
+      .filter((c) => c.slash.toLowerCase().includes(q))
+      .sort((a, b) => Number(b.slash.toLowerCase().startsWith(q)) - Number(a.slash.toLowerCase().startsWith(q)));
+  }
+  return searchQuery.value ? commandFuseResults.value.map((r) => r.item) : contextCommands.value;
+});
 
 const data = computed(() => {
   return [...results.value].sort((a: FuseResult<Item>, b: FuseResult<Item>) => {
@@ -391,8 +411,8 @@ function onPin() {
 }
 
 function runLogSearch() {
-  if (!cloudSearch.available.value) return;
-  const q = query.value.trim();
+  if (isCommandMode.value || !cloudSearch.available.value) return;
+  const q = searchQuery.value.trim();
   if (!q) return;
   router.push({ path: "/cloud/search", query: { q } });
   close();

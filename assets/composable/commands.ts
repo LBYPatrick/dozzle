@@ -34,6 +34,10 @@ export type Command = {
   title: string;
   section: CommandSection;
   icon: Component;
+  // Explicit slash command (e.g. "/theme dark"). Shown dimmed on the right of
+  // the row and used for autocomplete when the query starts with "/". Kept
+  // untranslated so the command names stay stable across locales.
+  slash: string;
   keywords?: string;
   perform: () => unknown;
 };
@@ -72,6 +76,7 @@ export function useCommands() {
         section: "container",
         icon: carbonRestart,
         title: t("command-palette.restart-container", { name }),
+        slash: "/restart",
         keywords: "restart reboot",
         perform: restart,
       });
@@ -81,6 +86,7 @@ export function useCommands() {
           section: "container",
           icon: mdiStop,
           title: t("command-palette.stop-container", { name }),
+          slash: "/stop",
           keywords: "stop kill halt",
           perform: stop,
         });
@@ -90,6 +96,7 @@ export function useCommands() {
           section: "container",
           icon: mdiPlay,
           title: t("command-palette.start-container", { name }),
+          slash: "/start",
           keywords: "start run",
           perform: start,
         });
@@ -99,6 +106,7 @@ export function useCommands() {
         section: "container",
         icon: mdiDownload,
         title: t("command-palette.update-container", { name }),
+        slash: "/update",
         keywords: "update pull recreate upgrade",
         perform: update,
       });
@@ -113,6 +121,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiThemeLightDark,
         title: t("command-palette.theme-auto"),
+        slash: "/theme auto",
         keywords: "theme auto system color mode appearance",
         perform: () => (lightTheme.value = "auto"),
       },
@@ -121,6 +130,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiWhiteBalanceSunny,
         title: t("command-palette.theme-light"),
+        slash: "/theme light",
         keywords: "theme light color mode appearance",
         perform: () => (lightTheme.value = "light"),
       },
@@ -129,6 +139,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiWeatherNight,
         title: t("command-palette.theme-dark"),
+        slash: "/theme dark",
         keywords: "theme dark color mode appearance",
         perform: () => (lightTheme.value = "dark"),
       },
@@ -137,6 +148,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiFormatLineSpacing,
         title: t("command-palette.toggle-compact"),
+        slash: "/compact",
         keywords: "compact density spacing",
         perform: () => (compact.value = !compact.value),
       },
@@ -145,6 +157,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiClockOutline,
         title: t("command-palette.toggle-timestamps"),
+        slash: "/timestamps",
         keywords: "timestamp time date",
         perform: () => (showTimestamp.value = !showTimestamp.value),
       },
@@ -153,6 +166,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiWrap,
         title: t("command-palette.toggle-soft-wrap"),
+        slash: "/wrap",
         keywords: "wrap soft line",
         perform: () => (softWrap.value = !softWrap.value),
       },
@@ -161,6 +175,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiEyeOutline,
         title: t("command-palette.toggle-stopped"),
+        slash: "/stopped",
         keywords: "stopped hidden all containers exited",
         perform: () => (showAllContainers.value = !showAllContainers.value),
       },
@@ -169,6 +184,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiFormatListBulleted,
         title: t("command-palette.toggle-std"),
+        slash: "/std",
         keywords: "stdout stderr std labels stream",
         perform: () => (showStd.value = !showStd.value),
       },
@@ -177,6 +193,7 @@ export function useCommands() {
         section: "settings",
         icon: mdiUnfoldMoreHorizontal,
         title: t("command-palette.toggle-scrollbars"),
+        slash: "/scrollbars",
         keywords: "scrollbar smaller thin",
         perform: () => (smallerScrollbars.value = !smallerScrollbars.value),
       },
@@ -185,6 +202,7 @@ export function useCommands() {
         section: "navigation",
         icon: mdiCogOutline,
         title: t("command-palette.open-settings"),
+        slash: "/settings",
         keywords: "settings preferences options config",
         perform: () => router.push("/settings"),
       },

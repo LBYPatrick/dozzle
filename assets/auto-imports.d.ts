@@ -157,6 +157,7 @@ declare global {
   const refManualReset: typeof import('@vueuse/core').refManualReset
   const refThrottled: typeof import('@vueuse/core').refThrottled
   const refWithControl: typeof import('@vueuse/core').refWithControl
+  const registerSearchInstance: typeof import('./composable/search').registerSearchInstance
   const resetMenuWidth: typeof import('./stores/settings').resetMenuWidth
   const resolveComponent: typeof import('vue').resolveComponent
   const resolvePrimaryColor: typeof import('./composable/primaryColor').resolvePrimaryColor
@@ -637,6 +638,7 @@ declare module 'vue' {
     readonly refManualReset: UnwrapRef<typeof import('@vueuse/core')['refManualReset']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly registerSearchInstance: UnwrapRef<typeof import('./composable/search')['registerSearchInstance']>
     readonly resetMenuWidth: UnwrapRef<typeof import('./stores/settings')['resetMenuWidth']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolvePrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['resolvePrimaryColor']>

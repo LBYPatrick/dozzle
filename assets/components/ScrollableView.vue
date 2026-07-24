@@ -9,8 +9,8 @@
   >
     <main
       :data-scrolling="scrollable ? true : undefined"
-      class="relative min-h-[300px] flex-1 snap-y overflow-auto"
-      :style="hasHeader ? { paddingTop: `${barHeight}px` } : undefined"
+      class="relative min-h-[300px] flex-1 snap-y overflow-auto transition-[padding-top] duration-200 ease-out"
+      :style="hasHeader ? { paddingTop: `${collapsed ? 0 : barHeight}px` } : undefined"
     >
       <div ref="scrollTopObserver" class="h-px"></div>
       <div ref="scrollableContent">
@@ -30,11 +30,6 @@
       <div ref="barRow" class="flex items-stretch py-0.5 md:py-1.5">
         <div class="min-w-0 flex-1"><slot name="header"></slot></div>
         <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
-          <span
-            v-if="loadingMore"
-            class="loading loading-spinner loading-sm text-primary mr-1"
-            :title="$t('label.loading')"
-          ></span>
           <button
             v-if="showSearchControls"
             type="button"
@@ -160,6 +155,18 @@ const showSearchControls = computed(() => search.value && !historical.value);
 const hasRunningStats = computed(() => containers.value.some((c) => c.state === "running"));
 const canCollapse = computed(() => !scrollable && !historical.value && hasRunningStats.value);
 const collapsed = computed(() => canCollapse.value && topBarCollapsed.value);
+
+// ⌘/⌃F opens the integrated search row. Lives here (not in Search.vue) because
+// the row is unmounted while the bar is collapsed — opening search must first
+// expand the bar back so the row can appear.
+onKeyStroke("f", (e) => {
+  if (!showSearchControls.value) return;
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
+    showSearch.value = true;
+    if (collapsed.value) topBarCollapsed.value = false;
+    e.preventDefault();
+  }
+});
 
 if (!historical.value) {
   useIntersectionObserver(scrollObserver, ([entry]) => (scrollContext.paused = entry.intersectionRatio == 0), {

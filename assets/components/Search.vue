@@ -1,11 +1,11 @@
 <template>
-  <!-- Integrated search: a right-aligned glass pill overlaid just below the top
-       bar (absolute, so toggling it never changes the bar height or the scroll
-       area). Opened from the bar's search button or ⌘/⌃F. -->
-  <transition name="search-pop">
-    <div v-show="showSearch" class="absolute top-full right-2 z-10 mt-1 w-64 max-w-[calc(100%-1rem)]">
+  <!-- Integrated search: a second row of the top bar (part of the glass bar,
+       not a detached floating widget). Right-aligned with a compact field.
+       Opening it never reflows the logs because the bar floats over them. -->
+  <transition name="search-row">
+    <div v-show="showSearch" class="border-base-content/10 flex items-center justify-end border-t px-2 py-1.5 md:px-4">
       <label
-        class="input input-sm border-base-content/10 bg-base-200/80 flex w-full items-center gap-2 rounded-full border shadow-lg backdrop-blur-xl backdrop-saturate-150"
+        class="input input-sm bg-base-100/70 border-base-content/10 flex w-full max-w-xs items-center gap-2 rounded-full border backdrop-blur-sm"
         :class="!isValidQuery ? 'input-warning' : 'focus-within:border-primary'"
       >
         <mdi:magnify class="text-base-content/50 size-4 shrink-0" />
@@ -42,7 +42,7 @@ const input = ref<HTMLInputElement>();
 const { searchQueryFilter, showSearch, resetSearch, isValidQuery, inverseFilter, toggleInverse } = useSearchFilter();
 
 // Focus the field whenever it opens, no matter the trigger (bar button, the
-// shortcut below, or a deep-linked ?search= query).
+// ⌘/⌃F shortcut in ScrollableView, or a deep-linked ?search= query).
 watch(
   showSearch,
   (open) => {
@@ -51,33 +51,21 @@ watch(
   { immediate: true },
 );
 
-// ⌘/⌃F opens the row (gated by the search setting). Plain F is left alone so it
-// still types into log fields.
-onKeyStroke("f", (e) => {
-  if (!search.value) return;
-  if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
-    showSearch.value = true;
-    e.preventDefault();
-  }
-});
-
 registerSearchInstance();
 </script>
 
 <style scoped>
-.search-pop-enter-active {
+.search-row-enter-active,
+.search-row-leave-active {
   transition:
-    opacity 160ms ease,
-    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 160ms ease;
+  overflow: hidden;
+  max-height: 4rem;
 }
-.search-pop-leave-active {
-  transition:
-    opacity 130ms ease,
-    transform 130ms ease;
-}
-.search-pop-enter-from,
-.search-pop-leave-to {
+.search-row-enter-from,
+.search-row-leave-to {
+  max-height: 0;
   opacity: 0;
-  transform: translateY(-0.4rem) scale(0.98);
 }
 </style>

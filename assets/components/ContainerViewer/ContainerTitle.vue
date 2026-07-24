@@ -1,10 +1,15 @@
 <template>
   <div class="@container flex min-w-0 flex-1 items-center gap-1.5 md:gap-2">
-    <label class="swap swap-rotate size-4">
+    <label class="swap swap-rotate size-4 shrink-0 place-content-center">
       <input type="checkbox" v-model="pinned" />
-      <carbon:star-filled class="swap-on text-secondary" />
-      <carbon:star class="swap-off" />
+      <carbon:star-filled class="swap-on text-secondary block size-4" />
+      <carbon:star class="swap-off block size-4" />
     </label>
+    <!-- Loading indicator: right of the pin star, left of the name. Animates in
+         and out so it doesn't shift the title abruptly. -->
+    <transition name="spinner">
+      <span v-if="loadingMore" class="loading loading-spinner loading-xs text-primary shrink-0"></span>
+    </transition>
     <div class="inline-flex min-w-0 items-center text-sm">
       <div class="breadcrumbs min-w-0 overflow-x-visible p-0 font-mono">
         <ul>
@@ -69,6 +74,8 @@ import { Container } from "@/models/Container";
 
 const { container } = defineProps<{ container: Container }>();
 
+const { loadingMore } = useLoggingContext();
+
 const { t } = useI18n();
 const { copy, copied, isSupported } = useClipboard({ legacy: true });
 const { showToast } = useToast();
@@ -103,4 +110,22 @@ const otherContainers = computed(() =>
 );
 </script>
 
-<style scoped></style>
+<style scoped>
+.spinner-enter-active,
+.spinner-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    max-width 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    margin 200ms ease;
+  overflow: hidden;
+  max-width: 1.5rem;
+}
+.spinner-enter-from,
+.spinner-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+  max-width: 0;
+  margin-left: -0.375rem;
+}
+</style>

@@ -1,32 +1,38 @@
 // Module-level registry that lets the global command palette drive the scroll
 // view of whichever log page is currently mounted. ScrollableView registers its
-// handlers while mounted (mirrors the pattern in inlineSearch.ts), and the
-// palette reads them to run the "scroll to top / bottom" commands without
-// threading refs through provide/inject across the modal boundary.
+// handlers while mounted; the palette reads them to run the "scroll to top /
+// bottom" commands without threading refs through provide/inject across the
+// modal boundary.
+//
+// A stack (not a single slot) is used so that when several scroll views are on
+// screen at once — side-by-side pinned columns — the commands keep working and
+// drive the most recently mounted one, and unmounting one view never clears the
+// others.
 type ScrollHandlers = {
   scrollToTop: () => void;
   scrollToBottom: () => void;
 };
 
-const handlers = ref<ScrollHandlers>();
+const stack = ref<ScrollHandlers[]>([]);
 
-// Called from ScrollableView's setup. Registers on mount and clears on unmount
-// so a torn-down page never leaves a stale handler the palette could call.
+// Called from ScrollableView's setup. Registers on mount and removes its own
+// entry on unmount so torn-down views leave no stale handler behind.
 export function useScrollControlsProvider(scroll: ScrollHandlers) {
-  onMounted(() => (handlers.value = scroll));
+  onMounted(() => stack.value.push(scroll));
   onUnmounted(() => {
-    if (handlers.value === scroll) handlers.value = undefined;
+    const index = stack.value.indexOf(scroll);
+    if (index !== -1) stack.value.splice(index, 1);
   });
 }
 
-// True only while a scrollable log view is on screen, so the palette can hide
-// the scroll commands on pages where they would do nothing.
-export const canScroll = computed(() => handlers.value !== undefined);
+// True while any scrollable log view is on screen, so the palette can hide the
+// scroll commands on pages where they would do nothing.
+export const canScroll = computed(() => stack.value.length > 0);
 
 export function scrollLogsToTop() {
-  handlers.value?.scrollToTop();
+  stack.value.at(-1)?.scrollToTop();
 }
 
 export function scrollLogsToBottom() {
-  handlers.value?.scrollToBottom();
+  stack.value.at(-1)?.scrollToBottom();
 }

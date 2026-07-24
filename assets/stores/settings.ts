@@ -102,23 +102,50 @@ export function serializeSettings(): string {
   return JSON.stringify(settings.value, null, 2);
 }
 
-// Merges an incoming settings object, keeping only keys Dozzle knows about so a
-// hand-edited or imported document can never inject arbitrary state. Returns a
-// typed result instead of throwing so callers can surface a friendly message.
+// Allowed values for the string-enum settings, so an imported document can't
+// set e.g. lightTheme to a non-existent theme. Keys without an entry accept any
+// value of the matching primitive type.
+const ALLOWED_VALUES: Partial<Record<keyof Settings, readonly string[]>> = {
+  size: ["small", "medium", "large"],
+  lightTheme: ["auto", "dark", "light"],
+  hourStyle: ["auto", "24", "12"],
+  dateLocale: ["auto", "en-US", "en-GB", "de-DE", "en-CA"],
+  automaticRedirect: ["instant", "delayed", "none"],
+  groupContainers: ["always", "at-least-2", "never"],
+  cpuDisplayMode: ["utilization", "cores"],
+};
+
+// Numeric settings clamped to a safe range on import.
+const NUMBER_BOUNDS: Partial<Record<keyof Settings, { min: number; max: number }>> = {
+  menuWidth: { min: MIN_MENU_WIDTH, max: 50 },
+};
+
+// Merges an incoming settings object, keeping only keys Dozzle knows about and
+// only values that are the right type, within a known enum, and (for numbers)
+// within range — so a hand-edited or imported document can never inject
+// arbitrary or malformed state. Returns a typed result instead of throwing.
 export function applySettings(input: unknown): { ok: true } | { ok: false; error: string } {
   if (typeof input !== "object" || input === null || Array.isArray(input)) {
     return { ok: false, error: "Expected a JSON object of settings." };
   }
   const incoming = input as Record<string, unknown>;
   for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
-    if (key in incoming && incoming[key] !== undefined) {
-      // Only accept values whose type matches the current/default value, so a
-      // bad type can't corrupt a setting (e.g. a string where a boolean lives).
-      const expected = typeof DEFAULT_SETTINGS[key];
-      if (typeof incoming[key] === expected) {
-        (settings.value as Record<string, unknown>)[key] = incoming[key];
-      }
+    if (!(key in incoming) || incoming[key] === undefined) continue;
+
+    const value = incoming[key];
+    if (typeof value !== typeof DEFAULT_SETTINGS[key]) continue;
+
+    const allowed = ALLOWED_VALUES[key];
+    if (allowed && (typeof value !== "string" || !allowed.includes(value))) continue;
+
+    if (typeof value === "number") {
+      const bounds = NUMBER_BOUNDS[key];
+      const clamped = bounds ? Math.min(bounds.max, Math.max(bounds.min, value)) : value;
+      (settings.value as Record<string, unknown>)[key] = clamped;
+      continue;
     }
+
+    (settings.value as Record<string, unknown>)[key] = value;
   }
   return { ok: true };
 }

@@ -36,6 +36,8 @@
 </template>
 
 <script lang="ts" setup>
+import { registerSearchInstance } from "@/composable/search";
+
 const input = ref<HTMLInputElement>();
 const { searchQueryFilter, showSearch, resetSearch, isValidQuery, inverseFilter, toggleInverse } = useSearchFilter();
 
@@ -59,7 +61,7 @@ onKeyStroke("f", (e) => {
   }
 });
 
-onUnmounted(() => resetSearch());
+registerSearchInstance();
 </script>
 
 <style scoped>

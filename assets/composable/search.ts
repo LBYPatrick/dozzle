@@ -41,3 +41,21 @@ export function useSearchFilter() {
     toggleInverse,
   };
 }
+
+// The search bar is now rendered per log view, so several instances can be
+// mounted at once (side-by-side columns). Reference-count them and only reset
+// the shared filter once the last one unmounts (i.e. the user leaves logs
+// entirely), instead of every time one column tears down.
+let mountedInstances = 0;
+export function registerSearchInstance() {
+  onMounted(() => {
+    mountedInstances++;
+  });
+  onUnmounted(() => {
+    mountedInstances--;
+    if (mountedInstances <= 0) {
+      mountedInstances = 0;
+      resetSearch();
+    }
+  });
+}

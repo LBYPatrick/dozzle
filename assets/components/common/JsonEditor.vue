@@ -11,15 +11,24 @@ const emit = defineEmits<{ "update:modelValue": [string] }>();
 
 const parent = ref<HTMLElement>();
 let view: EditorView | undefined;
+let disposed = false;
 
 onMounted(async () => {
   if (!parent.value) return;
-  view = await createJsonEditor({
+  const created = await createJsonEditor({
     parent: parent.value,
     initialValue: modelValue,
     readOnly,
     onChange: (value) => emit("update:modelValue", value),
   });
+  // The dynamic import can resolve after the component was already torn down
+  // (e.g. the dialog closed quickly); destroy it instead of leaking a detached
+  // EditorView.
+  if (disposed) {
+    created.destroy();
+    return;
+  }
+  view = created;
 });
 
 // Keep the editor in sync when the value is replaced from outside (e.g. the
@@ -33,5 +42,8 @@ watch(
   },
 );
 
-onBeforeUnmount(() => view?.destroy());
+onBeforeUnmount(() => {
+  disposed = true;
+  view?.destroy();
+});
 </script>

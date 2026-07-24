@@ -24,26 +24,15 @@
          reflows the logs. Glass (backdrop blur) is allowed here: it is a
          container background layered over its own content. -->
     <header v-if="hasHeader && !collapsed" class="absolute inset-x-0 top-0 z-20">
-      <!-- Glass lives on the fixed-size primary row (computed once), not the
-           whole header. Animating the search row below it therefore never
-           re-blurs a changing region, which keeps the open/close smooth. -->
       <div
         ref="barRow"
-        class="border-base-content/10 bg-base-200/72 flex items-stretch border-b py-0.5 shadow-sm backdrop-blur-xl backdrop-saturate-150 md:py-1.5"
+        class="border-base-content/10 bg-base-200/72 flex items-center border-b py-0.5 shadow-sm backdrop-blur-xl backdrop-saturate-150 md:py-1.5"
       >
         <div class="min-w-0 flex-1"><slot name="header"></slot></div>
         <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
-          <button
-            v-if="showSearchControls"
-            type="button"
-            class="btn btn-ghost btn-sm btn-square transition-colors"
-            :class="{ 'text-primary': isSearching }"
-            @click="showSearch ? resetSearch() : (showSearch = true)"
-            :title="$t('toolbar.search')"
-            :aria-label="$t('toolbar.search')"
-          >
-            <mdi:magnify class="size-5" />
-          </button>
+          <!-- Search lives inside the bar: an icon that expands into a field in
+               place, so there is no second row and no height animation. -->
+          <Search v-if="showSearchControls" />
           <button
             v-if="canCollapse"
             type="button"
@@ -57,12 +46,8 @@
         </div>
       </div>
 
-      <!-- Integrated search: a second row of the bar. In-flow, so opening it
-           grows the header and pushes the progress strip below it. -->
-      <Search v-if="showSearchControls" />
-
       <!-- Determinate scroll-position progress (how far back you've scrolled).
-           Anchored to the header bottom, below the search row, rendered last. -->
+           Anchored to the bar's bottom edge, rendered last so nothing covers it. -->
       <transition name="fade">
         <ScrollProgressBar
           v-show="scrollContext.paused"
@@ -128,7 +113,7 @@ const { scrollable = false } = defineProps<{ scrollable?: boolean }>();
 const slots = useSlots();
 const hasHeader = computed(() => !!slots.header);
 
-const { showSearch, isSearching, resetSearch, searchLoading } = useSearchFilter();
+const { showSearch, searchLoading } = useSearchFilter();
 
 const hasMore = ref(false);
 const atTop = ref(true);

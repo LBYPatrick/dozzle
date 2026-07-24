@@ -1,5 +1,58 @@
 GEN_DIR := internal/agent/pb
 
+.DEFAULT_GOAL := help
+
+define HELP_TEXT
+Dozzle — make targets  (run `make <target>`)
+
+Setup
+  generate        Generate TLS certs (shared_cert/key) + protobuf code. Run once after clone.
+
+Development
+  dev             Backend (air, :3100) + frontend (vite, :5173) with hot reload. Open http://localhost:3100
+  cloud-mock      Mock Dozzle Cloud proxy on :3200: fakes the cloud UIs (linked + pro + streaming +
+                  canned log search) and proxies everything else to :3100. Needs `make dev` running.
+                  Then open http://localhost:3200 instead of :3100.
+  preview         Build, then serve the production bundle locally.
+
+Build
+  dist            Build the frontend bundle (pnpm build) into dist/.
+  build           Build the Go binary (embeds dist/) -> ./dozzle
+  docker          Build image amir20/dozzle:local.
+                    arg CLOUD_URL  frontend cloud link URL (default https://cloud.dozzle.dev)
+                    e.g. make docker CLOUD_URL=https://cloud.example.com
+
+Test
+  test            Go tests: race detector + coverage.
+  test-update     Same, updating golden fixtures.
+  int             Playwright integration tests via docker compose.
+
+Run / deploy
+  run             Build image and run it (:8080, mounts docker.sock).
+  agent-reload    Rebuild image and redeploy the agent into an OrbStack VM.
+                    arg VM_NAME  target VM (default dozzle-agent)
+                    e.g. make agent-reload VM_NAME=my-vm
+
+Housekeeping
+  clean           Remove dist/, generated protobuf, and certs.
+  help            Show this help (default).
+
+Runtime env (for the binary itself, not make): DOZZLE_ADDR, DOZZLE_LEVEL=debug,
+  DOZZLE_REMOTE_AGENT=host:7007, DOZZLE_REMOTE_HOST=tcp://..., DOZZLE_ENABLE_ACTIONS.
+Cloud endpoint overrides: CLOUD_URL (UI link), AGENT_URL (gRPC), DOLIGENCE_URL (HTTP).
+endef
+export HELP_TEXT
+
+.PHONY: help
+help:
+	@echo "$$HELP_TEXT"
+
+.PHONY: cloud-mock
+cloud-mock:
+	@echo "Mock Dozzle Cloud on http://localhost:3200 (proxying http://localhost:3100)."
+	@echo "Make sure 'make dev' is running, then open http://localhost:3200"
+	go run ./scripts/cloudmock
+
 .PHONY: clean
 clean:
 	@rm -rf dist

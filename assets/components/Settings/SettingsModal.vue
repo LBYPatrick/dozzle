@@ -10,22 +10,14 @@
       <mdi:cog-outline class="text-base-content/60 size-5 shrink-0" />
       <h2 class="text-base font-semibold">{{ $t("title.settings") }}</h2>
 
-      <div class="join ml-2">
-        <button
-          class="btn btn-xs join-item gap-1"
-          :class="view === 'visual' ? 'btn-primary' : 'btn-ghost'"
-          @click="view = 'visual'"
-        >
-          <mdi:tune-variant class="size-3.5" /> {{ $t("settings.view-visual") }}
-        </button>
-        <button
-          class="btn btn-xs join-item gap-1"
-          :class="view === 'json' ? 'btn-primary' : 'btn-ghost'"
-          @click="view = 'json'"
-        >
-          <mdi:code-json class="size-3.5" /> {{ $t("settings.view-json") }}
-        </button>
-      </div>
+      <SegmentedControl
+        class="ml-2"
+        v-model="view"
+        :options="[
+          { label: $t('settings.view-visual'), value: 'visual' },
+          { label: $t('settings.view-json'), value: 'json' },
+        ]"
+      />
 
       <div class="ml-auto flex items-center gap-1">
         <button class="btn btn-ghost btn-sm gap-1" @click="exportToClipboard">

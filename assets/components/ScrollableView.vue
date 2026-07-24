@@ -48,10 +48,12 @@
                 :title="$t('label.loading')"
               ></span>
             </transition>
-            <template v-if="scrollContext.paused">
-              <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
-              <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />
-            </template>
+            <transition name="progress-status">
+              <div v-if="scrollContext.paused" class="flex min-w-0 items-center gap-2">
+                <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
+                <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />
+              </div>
+            </transition>
           </div>
 
           <div class="flex shrink-0 items-center gap-0.5">
@@ -74,7 +76,7 @@
         <!-- The log progress bar spans both rows at the bar's bottom edge. No
              z-index, so the bar's own dropdowns (in this backdrop-blur stacking
              context) stay above it. -->
-        <transition name="fade">
+        <transition name="progress-bar">
           <ScrollProgressBar
             v-show="scrollContext.paused"
             :progress="scrollContext.progress"
@@ -306,6 +308,31 @@ useScrollControlsProvider({
   opacity: 0;
   max-width: 0;
   margin-right: -0.5rem;
+}
+
+/* Row-2 progress readout (percentage + date) slides in from the left as it
+   appears when you scroll up, and out again when you rejoin the tail. */
+.progress-status-enter-active,
+.progress-status-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.progress-status-enter-from,
+.progress-status-leave-to {
+  opacity: 0;
+  transform: translateX(-0.5rem);
+}
+
+/* The progress bar fades in and out (it keeps its Tailwind translate for
+   positioning, so only opacity is animated here to avoid transform conflicts). */
+.progress-bar-enter-active,
+.progress-bar-leave-active {
+  transition: opacity 240ms ease;
+}
+.progress-bar-enter-from,
+.progress-bar-leave-to {
+  opacity: 0;
 }
 </style>
 

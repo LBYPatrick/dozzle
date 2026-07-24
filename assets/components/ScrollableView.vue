@@ -26,36 +26,40 @@
     <header v-if="hasHeader && !collapsed" class="absolute inset-x-0 top-0 z-20">
       <div
         ref="barRow"
-        class="border-base-content/10 bg-base-200/72 flex items-center border-b py-0.5 shadow-sm backdrop-blur-xl backdrop-saturate-150 md:py-1.5"
+        class="border-base-content/10 bg-base-200/72 relative border-b shadow-sm backdrop-blur-xl backdrop-saturate-150"
       >
-        <div class="min-w-0 flex-1"><slot name="header"></slot></div>
-        <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
-          <!-- Search lives inside the bar: an icon that expands into a field in
-               place, so there is no second row and no height animation. -->
-          <Search v-if="showSearchControls" />
-          <button
-            v-if="canCollapse"
-            type="button"
-            class="btn btn-ghost btn-sm btn-square transition-transform hover:-translate-y-px"
-            @click="topBarCollapsed = true"
-            :title="$t('button.collapse-top-bar')"
-            :aria-label="$t('button.collapse-top-bar')"
-          >
-            <mdi:chevron-up class="size-5" />
-          </button>
+        <div class="flex items-center py-0.5 md:py-1.5">
+          <div class="min-w-0 flex-1"><slot name="header"></slot></div>
+          <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
+            <!-- Search lives inside the bar: an icon that expands into a field in
+                 place, so there is no second row and no height animation. -->
+            <Search v-if="showSearchControls" />
+            <button
+              v-if="canCollapse"
+              type="button"
+              class="btn btn-ghost btn-sm btn-square transition-transform hover:-translate-y-px"
+              @click="topBarCollapsed = true"
+              :title="$t('button.collapse-top-bar')"
+              :aria-label="$t('button.collapse-top-bar')"
+            >
+              <mdi:chevron-up class="size-5" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Determinate scroll-position progress (how far back you've scrolled).
-           Anchored to the bar's bottom edge, rendered last so nothing covers it. -->
-      <transition name="fade">
-        <ScrollProgressBar
-          v-show="scrollContext.paused"
-          :progress="scrollContext.progress"
-          :date="scrollContext.currentDate"
-          class="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-1/2"
-        />
-      </transition>
+        <!-- Determinate scroll-position progress (how far back you've scrolled),
+             part of the bar: straddles its bottom edge. No z-index so the bar's
+             own dropdowns (which sit in this backdrop-blur stacking context) stay
+             above it. -->
+        <transition name="fade">
+          <ScrollProgressBar
+            v-show="scrollContext.paused"
+            :progress="scrollContext.progress"
+            :date="scrollContext.currentDate"
+            class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1/2"
+          />
+        </transition>
+      </div>
     </header>
 
     <transition name="widget-pop">

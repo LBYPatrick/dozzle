@@ -2,7 +2,10 @@
   <!-- Integrated search: an icon in the bar that expands in place into a field.
        Only the width animates (fixed row height), so there is no second row and
        no reflow of the logs. -->
-  <label
+  <!-- A div, not a label: a label forwards clicks to its input, and that
+       forwarded click bubbles back here and would re-open search right after the
+       close button clears it. -->
+  <div
     class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-full transition-[width,background-color,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
     :class="fieldClass"
     :title="showSearch ? undefined : $t('toolbar.search')"
@@ -39,7 +42,7 @@
     >
       <mdi:close />
     </a>
-  </label>
+  </div>
 </template>
 
 <script lang="ts" setup>

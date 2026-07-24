@@ -10,9 +10,19 @@
       :aria-label="$t('button.expand-top-bar')"
       @click="$emit('expand')"
     >
-      <!-- Spinning "circuit" while logs load (progress is unknown). Drawn on the
-           pill edge so it reads as an animated border. -->
+      <!-- Circuit on the pill edge: spins indeterminately while logs load
+           (unknown progress), otherwise fills clockwise with the scroll-position
+           progress once you scroll up from the tail. -->
       <CircuitRing v-if="loading" indeterminate :stroke-width="1.5" />
+      <CircuitRing v-else-if="paused" :progress="progress" :stroke-width="1.5" />
+
+      <!-- Scroll-position percentage on the left, while scrolled up. -->
+      <transition name="pct">
+        <span v-if="paused && !loading" class="text-primary flex items-center gap-3 text-sm font-semibold tabular-nums">
+          {{ Math.round(clamped * 100) }}%
+          <span class="bg-base-content/15 h-4 w-px"></span>
+        </span>
+      </transition>
 
       <span class="text-primary flex items-center gap-1.5">
         <PhCpu class="size-4" />
@@ -38,9 +48,32 @@ import { useLiveStatTotals } from "@/composable/liveStatTotals";
 import PhCpu from "~icons/ph/cpu";
 import PhMemory from "~icons/ph/memory";
 
-const { containers, loading = false } = defineProps<{ containers: Container[]; loading?: boolean }>();
+const {
+  containers,
+  loading = false,
+  paused = false,
+  progress = 1,
+} = defineProps<{ containers: Container[]; loading?: boolean; paused?: boolean; progress?: number }>();
 
 defineEmits<{ expand: [] }>();
 
 const { cpu, memoryUsage } = useLiveStatTotals(() => containers);
+
+const clamped = computed(() => Math.min(1, Math.max(0, progress)));
 </script>
+
+<style scoped>
+.pct-enter-active,
+.pct-leave-active {
+  transition:
+    max-width 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 160ms ease;
+  overflow: hidden;
+  max-width: 6rem;
+}
+.pct-enter-from,
+.pct-leave-to {
+  max-width: 0;
+  opacity: 0;
+}
+</style>

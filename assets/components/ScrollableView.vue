@@ -55,8 +55,19 @@
       </div>
 
       <!-- Integrated search: a second row of the bar. In-flow, so opening it
-           grows the header. -->
+           grows the header and pushes the progress strip below it. -->
       <Search v-if="showSearchControls" />
+
+      <!-- Determinate scroll-position progress (how far back you've scrolled).
+           Anchored to the header bottom, below the search row, rendered last. -->
+      <transition name="fade">
+        <ScrollProgressBar
+          v-show="scrollContext.paused"
+          :progress="scrollContext.progress"
+          :date="scrollContext.currentDate"
+          class="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-full"
+        />
+      </transition>
     </header>
 
     <transition name="widget-pop">
@@ -64,6 +75,8 @@
         v-if="collapsed"
         :containers="containers"
         :loading="loadingMore || searchLoading"
+        :paused="scrollContext.paused"
+        :progress="scrollContext.progress"
         @expand="topBarCollapsed = false"
       />
     </transition>

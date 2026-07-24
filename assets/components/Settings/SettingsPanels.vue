@@ -125,38 +125,26 @@
           </div>
           <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
             <span>{{ $t("settings.font-size") }}</span>
-            <div class="join ml-auto">
-              <button
-                v-for="opt in [
-                  { label: $t('settings.size.small'), value: 'small' },
-                  { label: $t('settings.size.medium'), value: 'medium' },
-                  { label: $t('settings.size.large'), value: 'large' },
-                ]"
-                :key="opt.value"
-                class="btn btn-sm join-item"
-                :class="size === opt.value ? 'btn-primary' : 'btn-ghost'"
-                @click="size = opt.value as typeof size"
-              >
-                {{ opt.label }}
-              </button>
-            </div>
+            <SegmentedControl
+              class="ml-auto"
+              v-model="size"
+              :options="[
+                { label: $t('settings.size.small'), value: 'small' },
+                { label: $t('settings.size.medium'), value: 'medium' },
+                { label: $t('settings.size.large'), value: 'large' },
+              ]"
+            />
           </div>
           <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
             <span>{{ $t("settings.cpu-display") }}</span>
-            <div class="join ml-auto">
-              <button
-                v-for="opt in [
-                  { label: $t('settings.cpu.utilization'), value: 'utilization' },
-                  { label: $t('settings.cpu.cores'), value: 'cores' },
-                ]"
-                :key="opt.value"
-                class="btn btn-sm join-item"
-                :class="cpuDisplayMode === opt.value ? 'btn-primary' : 'btn-ghost'"
-                @click="cpuDisplayMode = opt.value as typeof cpuDisplayMode"
-              >
-                {{ opt.label }}
-              </button>
-            </div>
+            <SegmentedControl
+              class="ml-auto"
+              v-model="cpuDisplayMode"
+              :options="[
+                { label: $t('settings.cpu.utilization'), value: 'utilization' },
+                { label: $t('settings.cpu.cores'), value: 'cores' },
+              ]"
+            />
           </div>
         </div>
 
@@ -190,21 +178,15 @@
         </div>
         <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
           <span>{{ $t("settings.color-scheme") }}</span>
-          <div class="join ml-auto">
-            <button
-              v-for="opt in [
-                { label: $t('settings.theme.light'), value: 'light' },
-                { label: $t('settings.theme.dark'), value: 'dark' },
-                { label: $t('settings.theme.auto'), value: 'auto' },
-              ]"
-              :key="opt.value"
-              class="btn btn-sm join-item"
-              :class="lightTheme === opt.value ? 'btn-primary' : 'btn-ghost'"
-              @click="lightTheme = opt.value as typeof lightTheme"
-            >
-              {{ opt.label }}
-            </button>
-          </div>
+          <SegmentedControl
+            class="ml-auto"
+            v-model="lightTheme"
+            :options="[
+              { label: $t('settings.theme.light'), value: 'light' },
+              { label: $t('settings.theme.dark'), value: 'dark' },
+              { label: $t('settings.theme.auto'), value: 'auto' },
+            ]"
+          />
         </div>
         <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
           <span>{{ $t("settings.accent-color") }}</span>

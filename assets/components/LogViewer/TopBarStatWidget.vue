@@ -6,7 +6,7 @@
     <button
       ref="pill"
       type="button"
-      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-visible:ring-primary/60 relative flex items-center gap-3 rounded-full py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2"
+      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-visible:ring-primary/60 relative flex items-center gap-3 rounded-full py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[background-color,box-shadow] duration-200 hover:shadow-xl focus:outline-none focus-visible:ring-2"
       :title="$t('button.expand-top-bar')"
       :aria-label="$t('button.expand-top-bar')"
       @click="$emit('expand')"

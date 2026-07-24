@@ -193,6 +193,7 @@ declare module 'vue' {
     ScrollProgressBar: typeof import('./components/LogViewer/ScrollProgressBar.vue')['default']
     Search: typeof import('./components/Search.vue')['default']
     SearchStatus: typeof import('./components/LogViewer/SearchStatus.vue')['default']
+    SegmentedControl: typeof import('./components/common/SegmentedControl.vue')['default']
     ServiceLog: typeof import('./components/ServiceViewer/ServiceLog.vue')['default']
     SettingsModal: typeof import('./components/Settings/SettingsModal.vue')['default']
     SettingsPanels: typeof import('./components/Settings/SettingsPanels.vue')['default']

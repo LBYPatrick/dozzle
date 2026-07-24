@@ -54,19 +54,21 @@
         </div>
       </div>
 
-      <!-- Determinate scroll progress: a horizontal strip along the bar's foot,
-           overlaid (absolute) so it never grows the measured bar height. -->
+      <!-- Integrated search: a second row of the bar. In-flow, so opening it
+           grows the header and pushes the progress strip below it. -->
+      <Search v-if="showSearchControls" />
+
+      <!-- Determinate scroll progress: a horizontal strip along the bar's foot.
+           Anchored to the header bottom (below the search row when it is open)
+           and rendered last so nothing covers it. -->
       <transition name="fade">
         <ScrollProgressBar
           v-show="scrollContext.paused"
           :progress="scrollContext.progress"
           :date="scrollContext.currentDate"
-          class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full"
+          class="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-full"
         />
       </transition>
-
-      <!-- Integrated search: a right-aligned glass pill, overlaid below the bar. -->
-      <Search v-if="showSearchControls" />
     </header>
 
     <transition name="widget-pop">
@@ -167,6 +169,15 @@ onKeyStroke("f", (e) => {
     e.preventDefault();
   }
 });
+
+// Switching to a different container (or container set) re-expands the bar, so a
+// collapsed bar doesn't carry over and hide the new container's stats.
+watch(
+  () => containers.value.map((c) => c.id).join(","),
+  () => {
+    topBarCollapsed.value = false;
+  },
+);
 
 if (!historical.value) {
   useIntersectionObserver(scrollObserver, ([entry]) => (scrollContext.paused = entry.intersectionRatio == 0), {

@@ -1,5 +1,9 @@
 # Bug Hunter Agent Memory
 
+## Topic files
+
+- [frontend-patterns.md](frontend-patterns.md) — Vue reactivity, module-singleton pitfalls (search.ts/scrollControls.ts), settings.applySettings enum gap, ScrollableView layout
+
 ## Codebase Patterns
 
 ### Notification System Architecture

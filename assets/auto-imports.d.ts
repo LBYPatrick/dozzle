@@ -12,8 +12,10 @@ declare global {
   const K8sNamespace: typeof import('./stores/k8s').K8sNamespace
   const K8sOwner: typeof import('./stores/k8s').K8sOwner
   const MIN_MENU_WIDTH: typeof import('./stores/settings').MIN_MENU_WIDTH
+  const PRIMARY_COLORS: typeof import('./composable/primaryColor').PRIMARY_COLORS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const allLevels: typeof import('./composable/logContext').allLevels
+  const applyPrimaryColor: typeof import('./composable/primaryColor').applyPrimaryColor
   const arrayEquals: typeof import('./utils/index').arrayEquals
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
@@ -133,6 +135,7 @@ declare global {
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const persistentVisibleKeysForContainer: typeof import('./composable/storage').persistentVisibleKeysForContainer
   const pinnedContainers: typeof import('./composable/storage').pinnedContainers
+  const primaryColor: typeof import('./stores/settings').primaryColor
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
   const provideLoggingContext: typeof import('./composable/logContext').provideLoggingContext
@@ -153,6 +156,7 @@ declare global {
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const resetMenuWidth: typeof import('./stores/settings').resetMenuWidth
   const resolveComponent: typeof import('vue').resolveComponent
+  const resolvePrimaryColor: typeof import('./composable/primaryColor').resolvePrimaryColor
   const resolveRef: typeof import('@vueuse/core').resolveRef
   const scrollContextKey: typeof import('./composable/scrollContext').scrollContextKey
   const scrollLogsToBottom: typeof import('./composable/scrollControls').scrollLogsToBottom
@@ -449,6 +453,9 @@ declare global {
   export type { ExprEditorOptions } from './composable/exprEditor'
   import('./composable/exprEditor')
   // @ts-ignore
+  export type { PrimaryColor } from './composable/primaryColor'
+  import('./composable/primaryColor')
+  // @ts-ignore
   export type { TemplateEditorOptions } from './composable/templateEditor'
   import('./composable/templateEditor')
   // @ts-ignore
@@ -476,8 +483,10 @@ declare module 'vue' {
     readonly K8sNamespace: UnwrapRef<typeof import('./stores/k8s')['K8sNamespace']>
     readonly K8sOwner: UnwrapRef<typeof import('./stores/k8s')['K8sOwner']>
     readonly MIN_MENU_WIDTH: UnwrapRef<typeof import('./stores/settings')['MIN_MENU_WIDTH']>
+    readonly PRIMARY_COLORS: UnwrapRef<typeof import('./composable/primaryColor')['PRIMARY_COLORS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly allLevels: UnwrapRef<typeof import('./composable/logContext')['allLevels']>
+    readonly applyPrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['applyPrimaryColor']>
     readonly arrayEquals: UnwrapRef<typeof import('./utils/index')['arrayEquals']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -595,6 +604,7 @@ declare module 'vue' {
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly persistentVisibleKeysForContainer: UnwrapRef<typeof import('./composable/storage')['persistentVisibleKeysForContainer']>
     readonly pinnedContainers: UnwrapRef<typeof import('./composable/storage')['pinnedContainers']>
+    readonly primaryColor: UnwrapRef<typeof import('./stores/settings')['primaryColor']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
     readonly provideLoggingContext: UnwrapRef<typeof import('./composable/logContext')['provideLoggingContext']>
@@ -615,6 +625,7 @@ declare module 'vue' {
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resetMenuWidth: UnwrapRef<typeof import('./stores/settings')['resetMenuWidth']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly resolvePrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['resolvePrimaryColor']>
     readonly scrollContextKey: UnwrapRef<typeof import('./composable/scrollContext')['scrollContextKey']>
     readonly scrollLogsToBottom: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToBottom']>
     readonly scrollLogsToTop: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToTop']>

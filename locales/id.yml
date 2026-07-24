@@ -160,6 +160,7 @@ settings:
   datetime-format: Ganti format tanggal dan waktu
   font-size: Ukuran font untuk log
   color-scheme: Skema warna
+  accent-color: "Warna aksen"
   options: Opsi
   show-stopped-containers: Tampilkan kontainer yang dihentikan
   group-containers: Kelompokkan kontainer berdasarkan namespace

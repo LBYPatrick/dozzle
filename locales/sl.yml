@@ -152,6 +152,7 @@ settings:
   datetime-format: Preglasi obliko zapisa datuma in časa
   font-size: Velikost pisave za dnevnike
   color-scheme: Barvna shema
+  accent-color: "Poudarna barva"
   options: Možnosti
   show-stopped-containers: Prikaži ustavljene zabojnike
   group-containers: Združi zabojnike po imenskem prostoru

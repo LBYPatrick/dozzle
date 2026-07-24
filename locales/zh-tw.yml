@@ -154,6 +154,7 @@ settings:
   datetime-format: 變更日期與時間格式
   font-size: 日誌字型大小
   color-scheme: 顏色設定
+  accent-color: "強調色"
   options: 選項
   show-stopped-containers: 顯示已停止的容器
   group-containers: 依命名空間分組容器

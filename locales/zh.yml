@@ -152,6 +152,7 @@ settings:
   datetime-format: 自定义日期和时间格式
   font-size: 字体大小
   color-scheme: 颜色方案
+  accent-color: "强调色"
   options: 选项
   show-stopped-containers: 显示已停止的容器
   group-containers: 按命名空间分组容器

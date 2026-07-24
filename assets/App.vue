@@ -3,6 +3,9 @@
 </template>
 
 <script lang="ts" setup>
+import { applyPrimaryColor } from "@/composable/primaryColor";
+import { primaryColor } from "@/stores/settings";
+
 const mode = useColorMode();
 watchEffect(() => {
   if (smallerScrollbars.value) {
@@ -17,6 +20,8 @@ watchEffect(() => {
   }
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme == "dark" ? "#121212" : "#F5F5F5");
   document.documentElement.setAttribute("data-theme", theme);
+  // Re-applies whenever the theme or the chosen accent changes.
+  applyPrimaryColor(primaryColor.value, theme as "light" | "dark");
 });
 </script>
 <style>

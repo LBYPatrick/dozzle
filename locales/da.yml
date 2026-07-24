@@ -152,6 +152,7 @@ settings:
   datetime-format: Overskriv dato og tids format
   font-size: Tekststørrelse at bruge til logs
   color-scheme: Farve skema
+  accent-color: "Accentfarve"
   options: Muligheder
   show-stopped-containers: Vis stoppet containere
   group-containers: Gruppér containere efter namespace

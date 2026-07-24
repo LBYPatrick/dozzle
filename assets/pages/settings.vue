@@ -215,6 +215,10 @@
           </div>
         </div>
         <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
+          <span>{{ $t("settings.accent-color") }}</span>
+          <PrimaryColorPicker class="ml-auto" />
+        </div>
+        <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
           <span>{{ $t("settings.automatic-redirect") }}</span>
           <DropdownMenu
             class="ml-auto"

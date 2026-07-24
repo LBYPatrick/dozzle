@@ -152,6 +152,7 @@ settings:
   datetime-format: Sobrescrever formato de data e hora
   font-size: Tamanho da fonte para logs
   color-scheme: Esquema de cores
+  accent-color: "Cor de destaque"
   options: Opções
   show-stopped-containers: Mostrar containers parados
   group-containers: Agrupar containers por namespace

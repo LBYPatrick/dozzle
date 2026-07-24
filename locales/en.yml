@@ -214,6 +214,7 @@ settings:
   datetime-format: Override date and time format
   font-size: Font size to use for logs
   color-scheme: Color scheme
+  accent-color: "Accent color"
   options: Options
   show-stopped-containers: Show stopped containers
   group-containers: Group containers by namespace

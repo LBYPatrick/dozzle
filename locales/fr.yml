@@ -152,6 +152,7 @@ settings:
   datetime-format: Remplacer le format de la date et de l'heure
   font-size: Taille de police à utiliser pour les journaux
   color-scheme: Schéma de couleurs
+  accent-color: "Couleur d'accent"
   options: Options
   show-stopped-containers: Afficher les conteneurs arrêtés
   group-containers: Regrouper les conteneurs par namespace

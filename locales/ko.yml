@@ -155,6 +155,7 @@ settings:
   datetime-format: 날짜 및 시간 형식 변경
   font-size: 로그 글꼴 크기
   color-scheme: 색상 테마
+  accent-color: "강조 색상"
   options: 옵션
   show-stopped-containers: 중지된 컨테이너 보기
   group-containers: 네임스페이스별로 컨테이너 그룹화

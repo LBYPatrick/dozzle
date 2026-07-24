@@ -22,6 +22,8 @@ export type Settings = {
   // When true the log view's top bar is collapsed into a small floating
   // CPU/memory widget. Persisted so the choice survives navigation and reload.
   topBarCollapsed: boolean;
+  // Accent color id from PRIMARY_COLORS ("" == the default teal theme).
+  primaryColor: string;
 };
 // Shared sidebar sizing (percent of the window width) so the layout and the
 // collapse/expand handling always agree on one value.
@@ -47,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   groupContainers: "at-least-2",
   cpuDisplayMode: "utilization",
   topBarCollapsed: false,
+  primaryColor: "",
 };
 
 export const settings = useProfileStorage("settings", DEFAULT_SETTINGS);
@@ -78,6 +81,7 @@ export const {
   groupContainers,
   cpuDisplayMode,
   topBarCollapsed,
+  primaryColor,
 } = toRefs(settings.value);
 
 // Reset the sidebar to its default width, exposed in the sidebar itself. Lives

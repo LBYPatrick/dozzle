@@ -152,6 +152,7 @@ settings:
   datetime-format: Формат даты и времени
   font-size: Размер шрифта
   color-scheme: Цветовая схема
+  accent-color: "Акцентный цвет"
   options: Опции
   show-stopped-containers: Показывать остановленные контейнеры
   group-containers: Группировать контейнеры по пространству имён

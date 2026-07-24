@@ -153,6 +153,7 @@ settings:
   datetime-format: Datum- en tijdnotatie aanpassen
   font-size: Lettergrootte voor logs
   color-scheme: Kleurmodus
+  accent-color: "Accentkleur"
   options: Opties
   show-stopped-containers: Gestopte containers tonen
   group-containers: Groepeer containers op namespace

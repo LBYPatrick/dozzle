@@ -154,6 +154,7 @@ settings:
   datetime-format: Nadpisz format daty i godziny
   font-size: Rozmiar czcionki używany dla logów
   color-scheme: Motyw
+  accent-color: "Kolor akcentu"
   options: Opcje
   show-stopped-containers: Pokaż zatrzymane kontenery
   group-containers: Grupuj kontenery według przestrzeni nazw

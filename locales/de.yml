@@ -152,6 +152,7 @@ settings:
   datetime-format: Datums- und Zeitformat
   font-size: Schriftgröße für Logs
   color-scheme: Farbschema
+  accent-color: "Akzentfarbe"
   options: Optionen
   show-stopped-containers: Zeige gestoppte Container
   group-containers: Container nach Namespace gruppieren

@@ -209,6 +209,7 @@ settings:
   datetime-format: Sobrescribir el formato de fecha y hora
   font-size: Tamaño de letra a utilizar para los registros
   color-scheme: Esquema de colores
+  accent-color: "Color de acento"
   options: Opciones
   show-stopped-containers: Mostrar contenedores parados
   group-containers: Agrupar contenedores por namespace

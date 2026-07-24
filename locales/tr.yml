@@ -155,6 +155,7 @@ settings:
   datetime-format: Tarih ve saat biçimini geçersiz kıl
   font-size: Günlükler için kullanılacak yazı tipi boyutu
   color-scheme: Renk düzeni
+  accent-color: "Vurgu rengi"
   options: Seçenekler
   show-stopped-containers: Durdurulan konteynerleri göster
   group-containers: Konteynerleri ad alanına göre grupla

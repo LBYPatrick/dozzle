@@ -1,7 +1,9 @@
 <template>
   <!-- Single bordered card containing the input, results, and footer in one
        frame to match the design mock. No daisyUI input/dropdown chrome. -->
-  <div class="bg-base-200 border-base-content/15 w-full overflow-hidden rounded-xl border shadow-2xl">
+  <div
+    class="bg-base-200/95 border-base-content/15 w-full overflow-hidden rounded-xl border shadow-2xl backdrop-blur-xl"
+  >
     <!-- Input row -->
     <div class="flex items-center gap-3 px-4 py-3.5">
       <mdi:magnify class="text-base-content/60 size-5 shrink-0" />

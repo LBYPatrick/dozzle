@@ -46,7 +46,9 @@
       </span>
     </label>
   </div>
-  <dialog ref="modal" class="modal bg-base-300/50! items-start backdrop-blur-md transition-none!" @close="closeSearch">
+  <!-- Dim only, no screen-wide blur: glass is reserved for the container card
+       (FuzzySearchModal) itself. -->
+  <dialog ref="modal" class="modal bg-base-300/60! items-start transition-none!" @close="closeSearch">
     <div class="modal-box max-w-2xl overflow-visible! bg-transparent pt-20 shadow-none">
       <FuzzySearchModal @close="closeSearch" v-if="open" />
     </div>

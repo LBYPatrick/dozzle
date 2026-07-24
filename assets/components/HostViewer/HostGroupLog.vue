@@ -6,22 +6,22 @@
   </div>
   <ScrollableView :scrollable="scrollable" v-else>
     <template #header>
-      <div class="mx-2 flex items-center gap-2 md:ml-4">
-        <div class="flex flex-1 items-center gap-1.5 truncate md:gap-2">
-          <ph:computer-tower />
-          <div class="inline-flex font-mono text-sm">
-            <div class="font-semibold">{{ name }}</div>
-          </div>
-          <Tag class="font-mono max-md:hidden" size="small">
-            {{ $t("label.host-count", groupHosts.length) }}
-          </Tag>
-          <Tag class="font-mono max-md:hidden" size="small">
-            {{ $t("label.container", containers.length) }}
-          </Tag>
+      <div class="flex flex-1 items-center gap-1.5 truncate md:gap-2">
+        <ph:computer-tower />
+        <div class="inline-flex font-mono text-sm">
+          <div class="font-semibold">{{ name }}</div>
         </div>
-        <MultiContainerStat class="ml-auto" :containers="containers" />
-        <MultiContainerActionToolbar class="max-md:hidden" :name="name" @clear="viewer?.clear()" />
+        <Tag class="font-mono max-md:hidden" size="small">
+          {{ $t("label.host-count", groupHosts.length) }}
+        </Tag>
+        <Tag class="font-mono max-md:hidden" size="small">
+          {{ $t("label.container", containers.length) }}
+        </Tag>
       </div>
+      <MultiContainerStat class="ml-auto" :containers="containers" />
+    </template>
+    <template #actions>
+      <MultiContainerActionToolbar class="max-md:hidden" :name="name" @clear="viewer?.clear()" />
     </template>
     <template #default>
       <ViewerWithSource

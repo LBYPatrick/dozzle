@@ -28,12 +28,29 @@
         ref="barRow"
         class="border-base-content/10 bg-base-200/72 relative border-b shadow-sm backdrop-blur-xl backdrop-saturate-150"
       >
-        <div class="flex items-center py-0.5 md:py-1.5">
-          <div class="min-w-0 flex-1"><slot name="header"></slot></div>
-          <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
-            <!-- Search lives inside the bar: an icon that expands into a field in
-                 place, so there is no second row and no height animation. -->
+        <!-- Row 1: identity (tag + name) and stats (network / cpu / memory). -->
+        <div class="flex items-center gap-2 px-2 pt-1 md:px-4">
+          <slot name="header"></slot>
+        </div>
+
+        <!-- Row 2: log status on the left, controls on the trailing edge. -->
+        <div class="flex items-center gap-2 px-2 pt-0.5 pb-1 md:px-4">
+          <div class="text-base-content/60 flex min-w-0 items-center gap-2 text-xs">
+            <span
+              v-if="loadingMore || searchLoading"
+              class="loading loading-spinner loading-xs text-primary"
+              :title="$t('label.loading')"
+            ></span>
+            <template v-if="scrollContext.paused">
+              <span class="text-primary font-semibold tabular-nums">{{ progressPercent }}%</span>
+              <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />
+            </template>
+          </div>
+
+          <div class="ml-auto flex shrink-0 items-center gap-0.5">
+            <!-- Search: an icon that expands into a field in place. -->
             <Search v-if="showSearchControls" />
+            <slot name="actions"></slot>
             <button
               v-if="canCollapse"
               type="button"
@@ -47,15 +64,13 @@
           </div>
         </div>
 
-        <!-- Determinate scroll-position progress (how far back you've scrolled),
-             part of the bar: straddles its bottom edge. No z-index so the bar's
-             own dropdowns (which sit in this backdrop-blur stacking context) stay
-             above it. -->
+        <!-- The log progress bar spans both rows at the bar's bottom edge. No
+             z-index, so the bar's own dropdowns (in this backdrop-blur stacking
+             context) stay above it. -->
         <transition name="fade">
           <ScrollProgressBar
             v-show="scrollContext.paused"
             :progress="scrollContext.progress"
-            :date="scrollContext.currentDate"
             class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1/2"
           />
         </transition>
@@ -152,6 +167,8 @@ const collapsed = computed(() => canCollapse.value && topBarCollapsed.value);
 // bar is collapsed. Exposed to descendants (e.g. the sticky SearchStatus) as
 // --log-top-inset so they sit below the bar instead of under it.
 const topInset = computed(() => (collapsed.value ? 0 : barHeight.value));
+
+const progressPercent = computed(() => Math.round(Math.min(1, Math.max(0, scrollContext.progress)) * 100));
 
 // ⌘/⌃F opens the integrated search row. Lives here (not in Search.vue) because
 // the row is unmounted while the bar is collapsed — opening search must first

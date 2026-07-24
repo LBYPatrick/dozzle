@@ -1,25 +1,18 @@
 <template>
-  <!-- Determinate scroll-position progress for the expanded top bar: how far
-       back through the loaded history you have scrolled (driven by the visible
-       line's timestamp in LogList). A thin primary line plus a readout pill. -->
-  <div class="relative">
-    <div class="bg-base-content/10 h-[3px] w-full overflow-hidden">
-      <div
-        class="bg-primary h-full rounded-r-full transition-[width] duration-200 ease-out"
-        :style="{ width: `${clamped * 100}%` }"
-      ></div>
-    </div>
+  <!-- The log progress bar that spans the bottom of the two-row container bar.
+       Determinate: how far back through the loaded history you've scrolled
+       (driven by the visible line's timestamp in LogList). The percentage and
+       date readout live in the bar's second row, not here. -->
+  <div class="bg-base-content/10 h-[3px] w-full overflow-hidden">
     <div
-      class="border-base-content/10 bg-base-100/85 absolute top-1.5 right-3 flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs shadow-sm backdrop-blur"
-    >
-      <span class="text-primary font-semibold tabular-nums">{{ Math.ceil(clamped * 100) }}%</span>
-      <RelativeTime :date="date" class="text-base-content/50 whitespace-nowrap" />
-    </div>
+      class="bg-primary h-full rounded-r-full transition-[width] duration-200 ease-out"
+      :style="{ width: `${clamped * 100}%` }"
+    ></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const { progress, date } = defineProps<{ progress: number; date: Date }>();
+const { progress } = defineProps<{ progress: number }>();
 
 const clamped = computed(() => Math.min(1, Math.max(0, progress)));
 </script>

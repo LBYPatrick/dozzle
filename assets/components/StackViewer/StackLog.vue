@@ -1,17 +1,17 @@
 <template>
   <ScrollableView :scrollable="scrollable" v-if="stack.name">
     <template #header>
-      <div class="mx-2 flex items-center gap-2 md:ml-4">
-        <div class="@container flex flex-1 items-center gap-1.5 md:gap-2">
-          <ph:stack />
-          <div class="font-mono text-sm font-semibold">{{ stack.name }}</div>
-          <ContainerDropdown :containers="stack.containers">
-            {{ $t("label.container", stack.containers.length) }}
-          </ContainerDropdown>
-        </div>
-        <MultiContainerStat class="ml-auto" :containers="stack.containers" />
-        <MultiContainerActionToolbar class="max-md:hidden" :name="stack.name" @clear="viewer?.clear()" />
+      <div class="@container flex flex-1 items-center gap-1.5 md:gap-2">
+        <ph:stack />
+        <div class="font-mono text-sm font-semibold">{{ stack.name }}</div>
+        <ContainerDropdown :containers="stack.containers">
+          {{ $t("label.container", stack.containers.length) }}
+        </ContainerDropdown>
       </div>
+      <MultiContainerStat class="ml-auto" :containers="stack.containers" />
+    </template>
+    <template #actions>
+      <MultiContainerActionToolbar class="max-md:hidden" :name="stack.name" @clear="viewer?.clear()" />
     </template>
     <template #default>
       <ViewerWithSource

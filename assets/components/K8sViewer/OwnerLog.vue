@@ -1,17 +1,17 @@
 <template>
   <ScrollableView :scrollable="scrollable" v-if="owner.name">
     <template #header>
-      <div class="mx-2 flex items-center gap-2 md:ml-4">
-        <div class="@container flex flex-1 items-center gap-1.5 md:gap-2">
-          <ph:stack-simple />
-          <div class="font-mono text-sm font-semibold">{{ owner.kind }}/{{ owner.name }}</div>
-          <ContainerDropdown :containers="owner.containers">
-            {{ $t("label.container", owner.containers.length) }}
-          </ContainerDropdown>
-        </div>
-        <MultiContainerStat class="ml-auto" :containers="owner.containers" />
-        <MultiContainerActionToolbar class="max-md:hidden" :name="owner.name" @clear="viewer?.clear()" />
+      <div class="@container flex flex-1 items-center gap-1.5 md:gap-2">
+        <ph:stack-simple />
+        <div class="font-mono text-sm font-semibold">{{ owner.kind }}/{{ owner.name }}</div>
+        <ContainerDropdown :containers="owner.containers">
+          {{ $t("label.container", owner.containers.length) }}
+        </ContainerDropdown>
       </div>
+      <MultiContainerStat class="ml-auto" :containers="owner.containers" />
+    </template>
+    <template #actions>
+      <MultiContainerActionToolbar class="max-md:hidden" :name="owner.name" @clear="viewer?.clear()" />
     </template>
     <template #default>
       <ViewerWithSource

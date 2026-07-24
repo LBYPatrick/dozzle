@@ -1,22 +1,21 @@
 <template>
   <ScrollableView :scrollable="scrollable" v-if="container">
     <template #header v-if="showTitle">
-      <div class="@container mx-2 flex items-center gap-2 md:ml-4">
-        <ContainerTitle :container="container" />
-        <router-link
-          :to="{ name: '/container/[id]', params: { id: container.id } }"
-          class="btn btn-secondary btn-sm"
-          v-if="container.state === 'running'"
-        >
-          <mdi:lightning-bolt />
-          Live Logs
-        </router-link>
-
-        <ContainerActionsToolbar class="max-md:hidden" :container="container" historical />
-        <a class="btn btn-circle btn-xs" @click="close()" v-if="closable">
-          <mdi:close />
-        </a>
-      </div>
+      <ContainerTitle :container="container" />
+    </template>
+    <template #actions v-if="showTitle">
+      <router-link
+        :to="{ name: '/container/[id]', params: { id: container.id } }"
+        class="btn btn-secondary btn-sm"
+        v-if="container.state === 'running'"
+      >
+        <mdi:lightning-bolt />
+        Live Logs
+      </router-link>
+      <ContainerActionsToolbar class="max-md:hidden" :container="container" historical />
+      <a class="btn btn-circle btn-xs" @click="close()" v-if="closable">
+        <mdi:close />
+      </a>
     </template>
     <template #default>
       <ViewerWithSource

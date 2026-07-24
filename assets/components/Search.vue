@@ -65,7 +65,10 @@ const {
 const fieldClass = computed(() =>
   showSearch.value
     ? [
-        "w-52 cursor-text border md:w-60",
+        // Explicit padding so the leading icon and the trailing buttons are
+        // evenly inset (daisyUI's default input padding looks lopsided with the
+        // round buttons on the right).
+        "w-52 cursor-text border pr-1 pl-3 md:w-60",
         !isValidQuery.value ? "input-warning" : "border-base-content/15 bg-base-100 focus-within:border-primary",
       ]
     : "hover:bg-base-content/10 w-9 cursor-pointer justify-center border-transparent bg-transparent px-0",

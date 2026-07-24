@@ -1,13 +1,13 @@
 <template>
   <ScrollableView :scrollable="scrollable" v-if="group.containers.length && ready">
     <template #header>
-      <div class="mx-2 flex items-center gap-2 md:ml-4">
-        <ContainerDropdown :containers="group.containers">
-          {{ $t("label.container", group.containers.length) }}
-        </ContainerDropdown>
-        <MultiContainerStat class="ml-auto" :containers="group.containers" />
-        <MultiContainerActionToolbar class="max-md:hidden" :name="group.name" @clear="viewer?.clear()" />
-      </div>
+      <ContainerDropdown :containers="group.containers">
+        {{ $t("label.container", group.containers.length) }}
+      </ContainerDropdown>
+      <MultiContainerStat class="ml-auto" :containers="group.containers" />
+    </template>
+    <template #actions>
+      <MultiContainerActionToolbar class="max-md:hidden" :name="group.name" @clear="viewer?.clear()" />
     </template>
     <template #default>
       <ViewerWithSource

@@ -6,21 +6,10 @@
         Dozzle
       </router-link>
 
-      <div class="mt-4 flex items-center gap-2" v-if="hostname || canResetMenuWidth">
-        <small class="truncate text-sm font-light" v-if="hostname">{{ hostname }}</small>
-
-        <!-- Only rendered once the sidebar has been dragged off its default
-             width, so the control stays out of the way until it can do something. -->
-        <button
-          v-if="canResetMenuWidth"
-          type="button"
-          class="btn btn-ghost btn-xs btn-square ml-auto shrink-0"
-          :title="$t('toolbar.reset-sidebar-width')"
-          :aria-label="$t('toolbar.reset-sidebar-width')"
-          @click="resetMenuWidth"
-        >
-          <mdi:arrow-collapse-horizontal class="size-4" />
-        </button>
+      <!-- Sidebar width is reset from the command palette ("/sidebar reset"),
+           so no inline button here. -->
+      <div class="mt-4 flex items-center gap-2" v-if="hostname">
+        <small class="truncate text-sm font-light">{{ hostname }}</small>
       </div>
     </h1>
 

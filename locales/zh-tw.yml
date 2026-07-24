@@ -3,7 +3,6 @@ toolbar:
   download: 下載
   download-filtered: 下載篩選的日誌
   search: 搜尋
-  reset-sidebar-width: "重設側邊欄寬度"
   inverse-on: 排除符合項目（反向）
   inverse-off: 包含符合項目（一般）
   show: 僅顯示 {std}
@@ -429,10 +428,4 @@ command-palette:
   theme-auto: 使用系統主題
   theme-light: 切換到淺色主題
   theme-dark: 切換到深色主題
-  toggle-compact: 切換精簡模式
-  toggle-timestamps: 切換時間戳記
-  toggle-soft-wrap: 切換軟換行
-  toggle-stopped: 切換已停止的容器
-  toggle-std: 切換 stdout/stderr 標籤
-  toggle-scrollbars: 切換較小的捲軸
   open-settings: 開啟設定

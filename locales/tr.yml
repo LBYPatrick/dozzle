@@ -3,7 +3,6 @@ toolbar:
   download: İndir
   download-filtered: Filtrelenmiş Logları İndir
   search: Ara
-  reset-sidebar-width: "Kenar çubuğu genişliğini sıfırla"
   inverse-on: Eşleşenleri hariç tut (ters)
   inverse-off: Eşleşenleri dahil et (normal)
   show: Sadece {std} göster
@@ -430,10 +429,4 @@ command-palette:
   theme-auto: Sistem temasını kullan
   theme-light: Açık temaya geç
   theme-dark: Koyu temaya geç
-  toggle-compact: Kompakt modu aç/kapat
-  toggle-timestamps: Zaman damgalarını aç/kapat
-  toggle-soft-wrap: Yumuşak kaydırmayı aç/kapat
-  toggle-stopped: Durdurulmuş konteynerleri aç/kapat
-  toggle-std: stdout/stderr etiketlerini aç/kapat
-  toggle-scrollbars: Daha küçük kaydırma çubuklarını aç/kapat
   open-settings: Ayarları aç

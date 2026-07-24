@@ -3,7 +3,6 @@ toolbar:
   download: 下载
   download-filtered: 下载筛选的日志
   search: 搜索
-  reset-sidebar-width: "重置侧边栏宽度"
   inverse-on: 排除匹配项（反向）
   inverse-off: 包含匹配项（正常）
   show: 显示 {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: 使用系统主题
   theme-light: 切换到浅色主题
   theme-dark: 切换到深色主题
-  toggle-compact: 切换紧凑模式
-  toggle-timestamps: 切换时间戳
-  toggle-soft-wrap: 切换软换行
-  toggle-stopped: 切换已停止的容器
-  toggle-std: 切换 stdout/stderr 标签
-  toggle-scrollbars: 切换更小的滚动条
   open-settings: 打开设置

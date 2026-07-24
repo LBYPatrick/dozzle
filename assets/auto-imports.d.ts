@@ -19,6 +19,7 @@ declare global {
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
   const automaticRedirect: typeof import('./stores/settings').automaticRedirect
   const canResetMenuWidth: typeof import('./stores/settings').canResetMenuWidth
+  const canScroll: typeof import('./composable/scrollControls').canScroll
   const collapseNav: typeof import('./stores/settings').collapseNav
   const colorize: typeof import('./utils/index').colorize
   const compact: typeof import('./stores/settings').compact
@@ -154,6 +155,8 @@ declare global {
   const resolveComponent: typeof import('vue').resolveComponent
   const resolveRef: typeof import('@vueuse/core').resolveRef
   const scrollContextKey: typeof import('./composable/scrollContext').scrollContextKey
+  const scrollLogsToBottom: typeof import('./composable/scrollControls').scrollLogsToBottom
+  const scrollLogsToTop: typeof import('./composable/scrollControls').scrollLogsToTop
   const search: typeof import('./stores/settings').search
   const sessionHost: typeof import('./composable/storage').sessionHost
   const setActivePinia: typeof import('pinia').setActivePinia
@@ -347,6 +350,7 @@ declare global {
   const useScriptTag: typeof import('@vueuse/core').useScriptTag
   const useScroll: typeof import('@vueuse/core').useScroll
   const useScrollContext: typeof import('./composable/scrollContext').useScrollContext
+  const useScrollControlsProvider: typeof import('./composable/scrollControls').useScrollControlsProvider
   const useScrollLock: typeof import('@vueuse/core').useScrollLock
   const useSearchFilter: typeof import('./composable/search').useSearchFilter
   const useSeoMeta: typeof import('@vueuse/head').useSeoMeta
@@ -477,6 +481,7 @@ declare module 'vue' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly automaticRedirect: UnwrapRef<typeof import('./stores/settings')['automaticRedirect']>
     readonly canResetMenuWidth: UnwrapRef<typeof import('./stores/settings')['canResetMenuWidth']>
+    readonly canScroll: UnwrapRef<typeof import('./composable/scrollControls')['canScroll']>
     readonly collapseNav: UnwrapRef<typeof import('./stores/settings')['collapseNav']>
     readonly colorize: UnwrapRef<typeof import('./utils/index')['colorize']>
     readonly compact: UnwrapRef<typeof import('./stores/settings')['compact']>
@@ -609,6 +614,8 @@ declare module 'vue' {
     readonly resetMenuWidth: UnwrapRef<typeof import('./stores/settings')['resetMenuWidth']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly scrollContextKey: UnwrapRef<typeof import('./composable/scrollContext')['scrollContextKey']>
+    readonly scrollLogsToBottom: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToBottom']>
+    readonly scrollLogsToTop: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToTop']>
     readonly search: UnwrapRef<typeof import('./stores/settings')['search']>
     readonly sessionHost: UnwrapRef<typeof import('./composable/storage')['sessionHost']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
@@ -800,6 +807,7 @@ declare module 'vue' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollContext: UnwrapRef<typeof import('./composable/scrollContext')['useScrollContext']>
+    readonly useScrollControlsProvider: UnwrapRef<typeof import('./composable/scrollControls')['useScrollControlsProvider']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSearchFilter: UnwrapRef<typeof import('./composable/search')['useSearchFilter']>
     readonly useSeoMeta: UnwrapRef<typeof import('@vueuse/head')['useSeoMeta']>

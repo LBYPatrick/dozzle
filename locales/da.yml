@@ -3,7 +3,6 @@ toolbar:
   download: Download
   download-filtered: Download Filtrerede Logs
   search: Søg
-  reset-sidebar-width: "Nulstil sidepanelbredde"
   inverse-on: Ekskluder matchende (inverteret)
   inverse-off: Inkluder matchende (normal)
   show: Vis kun {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: Brug systemtema
   theme-light: Skift til lyst tema
   theme-dark: Skift til mørkt tema
-  toggle-compact: Skift kompakt tilstand
-  toggle-timestamps: Skift tidsstempler
-  toggle-soft-wrap: Skift blød ombrydning
-  toggle-stopped: Skift stoppede containere
-  toggle-std: Skift stdout/stderr-etiketter
-  toggle-scrollbars: Skift mindre rullepaneler
   open-settings: Åbn indstillinger

@@ -3,7 +3,6 @@ toolbar:
   download: Unduh
   download-filtered: Unduh Log yang Difilter
   search: Cari
-  reset-sidebar-width: "Atur ulang lebar bilah sisi"
   inverse-on: Kecualikan yang cocok (inversi)
   inverse-off: Sertakan yang cocok (normal)
   show: Tampilkan {std}
@@ -438,10 +437,4 @@ command-palette:
   theme-auto: Gunakan tema sistem
   theme-light: Beralih ke tema terang
   theme-dark: Beralih ke tema gelap
-  toggle-compact: Alihkan mode ringkas
-  toggle-timestamps: Alihkan stempel waktu
-  toggle-soft-wrap: Alihkan bungkus lembut
-  toggle-stopped: Alihkan kontainer yang dihentikan
-  toggle-std: Alihkan label stdout/stderr
-  toggle-scrollbars: Alihkan bilah gulir lebih kecil
   open-settings: Buka pengaturan

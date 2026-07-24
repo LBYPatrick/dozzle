@@ -3,7 +3,6 @@ toolbar:
   download: Scarica
   download-filtered: Scarica Log Filtrati
   search: Cerca
-  reset-sidebar-width: "Reimposta larghezza barra laterale"
   inverse-on: Escludi corrispondenze (inverso)
   inverse-off: Includi corrispondenze (normale)
   show: Mostra solo {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: Usa tema di sistema
   theme-light: Passa al tema chiaro
   theme-dark: Passa al tema scuro
-  toggle-compact: Attiva/disattiva modalità compatta
-  toggle-timestamps: Attiva/disattiva timestamp
-  toggle-soft-wrap: Attiva/disattiva a capo automatico
-  toggle-stopped: Attiva/disattiva container fermati
-  toggle-std: Attiva/disattiva etichette stdout/stderr
-  toggle-scrollbars: Attiva/disattiva barre di scorrimento più piccole
   open-settings: Apri impostazioni

@@ -3,7 +3,6 @@ toolbar:
   download: Herunterladen
   download-filtered: Gefilterte Logs Herunterladen
   search: Suchen
-  reset-sidebar-width: "Seitenleistenbreite zurücksetzen"
   inverse-on: Übereinstimmungen ausschließen (invertiert)
   inverse-off: Übereinstimmungen einschließen (normal)
   show: Zeige nur {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: Systemdesign verwenden
   theme-light: Zu hellem Design wechseln
   theme-dark: Zu dunklem Design wechseln
-  toggle-compact: Kompaktmodus umschalten
-  toggle-timestamps: Zeitstempel umschalten
-  toggle-soft-wrap: Zeilenumbruch umschalten
-  toggle-stopped: Gestoppte Container umschalten
-  toggle-std: stdout/stderr-Labels umschalten
-  toggle-scrollbars: Kleinere Scrollleisten umschalten
   open-settings: Einstellungen öffnen

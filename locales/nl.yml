@@ -3,7 +3,6 @@ toolbar:
   download: Downloaden
   download-filtered: Gefilterde Logs Downloaden
   search: Zoeken
-  reset-sidebar-width: "Zijbalkbreedte herstellen"
   inverse-on: Overeenkomsten uitsluiten (omgekeerd)
   inverse-off: Overeenkomsten opnemen (normaal)
   show: Toon {std}
@@ -427,10 +426,4 @@ command-palette:
   theme-auto: Systeemthema gebruiken
   theme-light: Overschakelen naar licht thema
   theme-dark: Overschakelen naar donker thema
-  toggle-compact: Compacte modus omschakelen
-  toggle-timestamps: Tijdstempels omschakelen
-  toggle-soft-wrap: Zachte terugloop omschakelen
-  toggle-stopped: Gestopte containers omschakelen
-  toggle-std: stdout/stderr-labels omschakelen
-  toggle-scrollbars: Kleinere schuifbalken omschakelen
   open-settings: Instellingen openen

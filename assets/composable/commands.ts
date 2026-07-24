@@ -1,6 +1,8 @@
 import type { Component } from "vue";
+import type { Ref } from "vue";
 import { Container } from "@/models/Container";
 import { useContainerActions } from "@/composable/containerActions";
+import { canScroll, scrollLogsToTop, scrollLogsToBottom } from "@/composable/scrollControls";
 import config from "@/stores/config";
 import {
   lightTheme,
@@ -10,6 +12,10 @@ import {
   showAllContainers,
   showStd,
   smallerScrollbars,
+  collapseNav,
+  cpuDisplayMode,
+  canResetMenuWidth,
+  resetMenuWidth,
 } from "@/stores/settings";
 
 import mdiThemeLightDark from "~icons/mdi/theme-light-dark";
@@ -22,6 +28,11 @@ import mdiEyeOutline from "~icons/mdi/eye-outline";
 import mdiFormatListBulleted from "~icons/mdi/format-list-bulleted";
 import mdiUnfoldMoreHorizontal from "~icons/mdi/unfold-more-horizontal";
 import mdiCogOutline from "~icons/mdi/cog-outline";
+import mdiChip from "~icons/mdi/chip";
+import mdiChevronDoubleUp from "~icons/mdi/chevron-double-up";
+import mdiChevronDoubleDown from "~icons/mdi/chevron-double-down";
+import mdiDockLeft from "~icons/mdi/dock-left";
+import mdiArrowCollapseHorizontal from "~icons/mdi/arrow-collapse-horizontal";
 import carbonRestart from "~icons/carbon/restart";
 import mdiStop from "~icons/mdi/stop";
 import mdiPlay from "~icons/mdi/play";
@@ -42,9 +53,47 @@ export type Command = {
   perform: () => unknown;
 };
 
+// Every command sets an explicit final state so it is idempotent: running it
+// twice leaves the app in the same place. That rules out bare toggles, so each
+// boolean setting is exposed as an on/off pair instead of a single flip. This
+// helper builds that pair from one declaration to keep the registry DRY.
+function booleanStateCommands(opts: {
+  base: string; // slash + id stem, e.g. "compact" -> "/compact on|off"
+  flag: Ref<boolean>;
+  icon: Component;
+  onTitle: string;
+  offTitle: string;
+  keywords: string;
+  onWord?: string; // slash suffix for the enabled state (default "on")
+  offWord?: string; // slash suffix for the disabled state (default "off")
+}): Command[] {
+  const on = opts.onWord ?? "on";
+  const off = opts.offWord ?? "off";
+  return [
+    {
+      id: `settings.${opts.base}-${on}`,
+      section: "settings",
+      icon: opts.icon,
+      title: opts.onTitle,
+      slash: `/${opts.base} ${on}`,
+      keywords: opts.keywords,
+      perform: () => (opts.flag.value = true),
+    },
+    {
+      id: `settings.${opts.base}-${off}`,
+      section: "settings",
+      icon: opts.icon,
+      title: opts.offTitle,
+      slash: `/${opts.base} ${off}`,
+      keywords: opts.keywords,
+      perform: () => (opts.flag.value = false),
+    },
+  ];
+}
+
 // Central registry for the Cmd+K command palette. Commands are recomputed on
-// every access so context-sensitive entries (container actions, current
-// toggle labels) stay in sync with the route and settings.
+// every access so context-sensitive entries (container actions, scroll targets)
+// stay in sync with the route and settings.
 export function useCommands() {
   const { t } = useI18n();
   const router = useRouter();
@@ -112,6 +161,31 @@ export function useCommands() {
       });
     }
 
+    // Scroll targets, only while a log view is mounted. Both are idempotent:
+    // "top" always lands on the first line, "bottom" always rejoins the tail.
+    if (canScroll.value) {
+      list.push(
+        {
+          id: "navigation.scroll-to-top",
+          section: "navigation",
+          icon: mdiChevronDoubleUp,
+          title: t("command-palette.scroll-to-top"),
+          slash: "/scroll top",
+          keywords: "scroll top first oldest beginning",
+          perform: () => scrollLogsToTop(),
+        },
+        {
+          id: "navigation.scroll-to-bottom",
+          section: "navigation",
+          icon: mdiChevronDoubleDown,
+          title: t("command-palette.scroll-to-bottom"),
+          slash: "/scroll bottom",
+          keywords: "scroll bottom latest newest tail follow",
+          perform: () => scrollLogsToBottom(),
+        },
+      );
+    }
+
     list.push(
       // lightTheme is tri-state, so expose each value as its own command rather
       // than a single toggle — that keeps "auto" (follow OS) reachable and makes
@@ -143,59 +217,99 @@ export function useCommands() {
         keywords: "theme dark color mode appearance",
         perform: () => (lightTheme.value = "dark"),
       },
+      // CPU display is a two-value enum (whole-CPU utilization vs per-core), so
+      // expose both explicitly for the same idempotency reason as the theme.
       {
-        id: "settings.toggle-compact",
+        id: "settings.cpu-utilization",
         section: "settings",
+        icon: mdiChip,
+        title: t("command-palette.cpu-utilization"),
+        slash: "/cpu utilization",
+        keywords: "cpu utilization percent whole processor usage",
+        perform: () => (cpuDisplayMode.value = "utilization"),
+      },
+      {
+        id: "settings.cpu-cores",
+        section: "settings",
+        icon: mdiChip,
+        title: t("command-palette.cpu-cores"),
+        slash: "/cpu cores",
+        keywords: "cpu cores per-core top processor usage",
+        perform: () => (cpuDisplayMode.value = "cores"),
+      },
+      ...booleanStateCommands({
+        base: "compact",
+        flag: compact,
         icon: mdiFormatLineSpacing,
-        title: t("command-palette.toggle-compact"),
-        slash: "/compact",
+        onTitle: t("command-palette.compact-on"),
+        offTitle: t("command-palette.compact-off"),
         keywords: "compact density spacing",
-        perform: () => (compact.value = !compact.value),
-      },
-      {
-        id: "settings.toggle-timestamps",
-        section: "settings",
+      }),
+      ...booleanStateCommands({
+        base: "timestamps",
+        flag: showTimestamp,
         icon: mdiClockOutline,
-        title: t("command-palette.toggle-timestamps"),
-        slash: "/timestamps",
+        onTitle: t("command-palette.timestamps-show"),
+        offTitle: t("command-palette.timestamps-hide"),
         keywords: "timestamp time date",
-        perform: () => (showTimestamp.value = !showTimestamp.value),
-      },
-      {
-        id: "settings.toggle-soft-wrap",
-        section: "settings",
+        onWord: "show",
+        offWord: "hide",
+      }),
+      ...booleanStateCommands({
+        base: "wrap",
+        flag: softWrap,
         icon: mdiWrap,
-        title: t("command-palette.toggle-soft-wrap"),
-        slash: "/wrap",
+        onTitle: t("command-palette.soft-wrap-on"),
+        offTitle: t("command-palette.soft-wrap-off"),
         keywords: "wrap soft line",
-        perform: () => (softWrap.value = !softWrap.value),
-      },
-      {
-        id: "settings.toggle-stopped",
-        section: "settings",
+      }),
+      ...booleanStateCommands({
+        base: "stopped",
+        flag: showAllContainers,
         icon: mdiEyeOutline,
-        title: t("command-palette.toggle-stopped"),
-        slash: "/stopped",
+        onTitle: t("command-palette.stopped-show"),
+        offTitle: t("command-palette.stopped-hide"),
         keywords: "stopped hidden all containers exited",
-        perform: () => (showAllContainers.value = !showAllContainers.value),
-      },
-      {
-        id: "settings.toggle-std",
-        section: "settings",
+        onWord: "show",
+        offWord: "hide",
+      }),
+      ...booleanStateCommands({
+        base: "std",
+        flag: showStd,
         icon: mdiFormatListBulleted,
-        title: t("command-palette.toggle-std"),
-        slash: "/std",
+        onTitle: t("command-palette.std-show"),
+        offTitle: t("command-palette.std-hide"),
         keywords: "stdout stderr std labels stream",
-        perform: () => (showStd.value = !showStd.value),
+        onWord: "show",
+        offWord: "hide",
+      }),
+      ...booleanStateCommands({
+        base: "scrollbars",
+        flag: smallerScrollbars,
+        icon: mdiUnfoldMoreHorizontal,
+        onTitle: t("command-palette.scrollbars-on"),
+        offTitle: t("command-palette.scrollbars-off"),
+        keywords: "scrollbar smaller thin",
+      }),
+      // Sidebar collapse is also a boolean, mapped to explicit show/hide. The
+      // flag is inverted (collapseNav === hidden) so "show" clears it.
+      {
+        id: "settings.sidebar-show",
+        section: "settings",
+        icon: mdiDockLeft,
+        title: t("command-palette.sidebar-show"),
+        slash: "/sidebar show",
+        keywords: "sidebar navigation menu show expand",
+        perform: () => (collapseNav.value = false),
       },
       {
-        id: "settings.toggle-scrollbars",
+        id: "settings.sidebar-hide",
         section: "settings",
-        icon: mdiUnfoldMoreHorizontal,
-        title: t("command-palette.toggle-scrollbars"),
-        slash: "/scrollbars",
-        keywords: "scrollbar smaller thin",
-        perform: () => (smallerScrollbars.value = !smallerScrollbars.value),
+        icon: mdiDockLeft,
+        title: t("command-palette.sidebar-hide"),
+        slash: "/sidebar hide",
+        keywords: "sidebar navigation menu hide collapse",
+        perform: () => (collapseNav.value = true),
       },
       {
         id: "navigation.settings",
@@ -207,6 +321,20 @@ export function useCommands() {
         perform: () => router.push("/settings"),
       },
     );
+
+    // Resetting the sidebar width is only meaningful once it has been dragged
+    // off the default, so gate it the same way the (now removed) button was.
+    if (canResetMenuWidth.value) {
+      list.push({
+        id: "settings.reset-sidebar-width",
+        section: "settings",
+        icon: mdiArrowCollapseHorizontal,
+        title: t("command-palette.reset-sidebar-width"),
+        slash: "/sidebar reset",
+        keywords: "sidebar width reset default size",
+        perform: () => resetMenuWidth(),
+      });
+    }
 
     return list;
   });

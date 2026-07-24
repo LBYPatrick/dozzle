@@ -3,7 +3,6 @@ toolbar:
   download: Baixar
   download-filtered: Baixar Logs Filtrados
   search: Pesquisar
-  reset-sidebar-width: "Redefinir largura da barra lateral"
   inverse-on: Excluir correspondências (inverso)
   inverse-off: Incluir correspondências (normal)
   show: Mostrar {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: Usar tema do sistema
   theme-light: Mudar para tema claro
   theme-dark: Mudar para tema escuro
-  toggle-compact: Alternar modo compacto
-  toggle-timestamps: Alternar carimbos de data/hora
-  toggle-soft-wrap: Alternar quebra de linha
-  toggle-stopped: Alternar contêineres parados
-  toggle-std: Alternar rótulos stdout/stderr
-  toggle-scrollbars: Alternar barras de rolagem menores
   open-settings: Abrir configurações

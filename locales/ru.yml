@@ -3,7 +3,6 @@ toolbar:
   download: Скачать
   download-filtered: Скачать Отфильтрованные Логи
   search: Поиск
-  reset-sidebar-width: "Сбросить ширину боковой панели"
   inverse-on: Исключить совпадения (инверсия)
   inverse-off: Включить совпадения (обычно)
   show: Показать только {std}
@@ -426,10 +425,4 @@ command-palette:
   theme-auto: Использовать системную тему
   theme-light: Переключить на светлую тему
   theme-dark: Переключить на тёмную тему
-  toggle-compact: Переключить компактный режим
-  toggle-timestamps: Переключить метки времени
-  toggle-soft-wrap: Переключить мягкий перенос
-  toggle-stopped: Переключить остановленные контейнеры
-  toggle-std: Переключить метки stdout/stderr
-  toggle-scrollbars: Переключить уменьшенные полосы прокрутки
   open-settings: Открыть настройки

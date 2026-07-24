@@ -3,7 +3,6 @@ toolbar:
   download: Prenesi
   download-filtered: Prenesi Filtrirane Dnevnike
   search: Iskanje
-  reset-sidebar-width: "Ponastavi širino stranske vrstice"
   inverse-on: Izključi ujemanja (obratno)
   inverse-off: Vključi ujemanja (običajno)
   show: Prikaži {std}
@@ -432,10 +431,4 @@ command-palette:
   theme-auto: Uporabi sistemsko temo
   theme-light: Preklopi na svetlo temo
   theme-dark: Preklopi na temno temo
-  toggle-compact: Preklopi strnjeni način
-  toggle-timestamps: Preklopi časovne žige
-  toggle-soft-wrap: Preklopi mehko prelamljanje
-  toggle-stopped: Preklopi ustavljene vsebnike
-  toggle-std: Preklopi oznake stdout/stderr
-  toggle-scrollbars: Preklopi manjše drsnike
   open-settings: Odpri nastavitve

@@ -3,7 +3,6 @@ toolbar:
   download: 다운로드
   download-filtered: 필터링된 로그 다운로드
   search: 검색
-  reset-sidebar-width: "사이드바 너비 초기화"
   inverse-on: 일치 항목 제외 (반전)
   inverse-off: 일치 항목 포함 (일반)
   show: "{std} 보기"
@@ -430,10 +429,4 @@ command-palette:
   theme-auto: 시스템 테마 사용
   theme-light: 밝은 테마로 전환
   theme-dark: 어두운 테마로 전환
-  toggle-compact: 컴팩트 모드 전환
-  toggle-timestamps: 타임스탬프 전환
-  toggle-soft-wrap: 자동 줄바꿈 전환
-  toggle-stopped: 중지된 컨테이너 전환
-  toggle-std: stdout/stderr 라벨 전환
-  toggle-scrollbars: 작은 스크롤바 전환
   open-settings: 설정 열기

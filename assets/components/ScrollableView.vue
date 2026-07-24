@@ -59,6 +59,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useScrollControlsProvider } from "@/composable/scrollControls";
+
 const { scrollable = false } = defineProps<{ scrollable?: boolean }>();
 
 const hasMore = ref(false);
@@ -129,6 +131,13 @@ async function scrollToTop() {
   }
   scrollTopObserver.value?.scrollIntoView({ behavior: "auto" });
 }
+
+// Expose the scroll targets to the global command palette while this view is
+// mounted, so "/scroll top" and "/scroll bottom" drive the current log page.
+useScrollControlsProvider({
+  scrollToTop: () => scrollToTop(),
+  scrollToBottom: () => scrollToBottom("smooth"),
+});
 </script>
 <style scoped>
 .fade-enter-active,

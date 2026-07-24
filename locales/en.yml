@@ -3,7 +3,6 @@ toolbar:
   download: Download
   download-filtered: Download Filtered Logs
   search: Search
-  reset-sidebar-width: Reset sidebar width
   inverse-on: Exclude matching (inverse)
   inverse-off: Include matching (normal)
   show: Show {std}
@@ -174,12 +173,24 @@ command-palette:
   theme-auto: Use system theme
   theme-light: Switch to light theme
   theme-dark: Switch to dark theme
-  toggle-compact: Toggle compact mode
-  toggle-timestamps: Toggle timestamps
-  toggle-soft-wrap: Toggle soft wrap
-  toggle-stopped: Toggle stopped containers
-  toggle-std: Toggle stdout/stderr labels
-  toggle-scrollbars: Toggle smaller scrollbars
+  cpu-utilization: Show CPU as utilization
+  cpu-cores: Show CPU as cores
+  scroll-to-top: Scroll to top
+  scroll-to-bottom: Scroll to bottom
+  compact-on: Enable compact mode
+  compact-off: Disable compact mode
+  timestamps-show: Show timestamps
+  timestamps-hide: Hide timestamps
+  soft-wrap-on: Enable soft wrap
+  soft-wrap-off: Disable soft wrap
+  stopped-show: Show stopped containers
+  stopped-hide: Hide stopped containers
+  std-show: Show stdout/stderr labels
+  std-hide: Hide stdout/stderr labels
+  scrollbars-on: Use smaller scrollbars
+  scrollbars-off: Use normal scrollbars
+  sidebar-show: Show sidebar
+  sidebar-hide: Hide sidebar
   open-settings: Open settings
 settings:
   help-support: >

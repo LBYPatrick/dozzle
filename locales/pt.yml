@@ -449,3 +449,4 @@ command-palette:
   sidebar-hide: Ocultar barra lateral
   reset-sidebar-width: Redefinir largura da barra lateral
   open-settings: Abrir configurações
+  open-settings-json: "Editar configurações como JSON"

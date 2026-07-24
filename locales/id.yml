@@ -461,3 +461,4 @@ command-palette:
   sidebar-hide: Sembunyikan bilah sisi
   reset-sidebar-width: Atur ulang lebar bilah sisi
   open-settings: Buka pengaturan
+  open-settings-json: "Edit pengaturan sebagai JSON"

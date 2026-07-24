@@ -452,3 +452,4 @@ command-palette:
   sidebar-hide: Ukryj pasek boczny
   reset-sidebar-width: Zresetuj szerokość paska bocznego
   open-settings: Otwórz ustawienia
+  open-settings-json: "Edytuj ustawienia jako JSON"

@@ -453,3 +453,4 @@ command-palette:
   sidebar-hide: Kenar çubuğunu gizle
   reset-sidebar-width: Kenar çubuğu genişliğini sıfırla
   open-settings: Ayarları aç
+  open-settings-json: "Ayarları JSON olarak düzenle"

@@ -449,3 +449,4 @@ command-palette:
   sidebar-hide: Скрыть боковую панель
   reset-sidebar-width: Сбросить ширину боковой панели
   open-settings: Открыть настройки
+  open-settings-json: "Редактировать настройки как JSON"

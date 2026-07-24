@@ -452,3 +452,4 @@ command-palette:
   sidebar-hide: 隱藏側邊欄
   reset-sidebar-width: 重設側邊欄寬度
   open-settings: 開啟設定
+  open-settings-json: "以 JSON 編輯設定"

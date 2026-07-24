@@ -3,6 +3,7 @@ import type { Ref } from "vue";
 import { Container } from "@/models/Container";
 import { useContainerActions } from "@/composable/containerActions";
 import { canScroll, scrollLogsToTop, scrollLogsToBottom } from "@/composable/scrollControls";
+import { useSettingsModal } from "@/composable/settingsModal";
 import config from "@/stores/config";
 import {
   lightTheme,
@@ -28,6 +29,7 @@ import mdiEyeOutline from "~icons/mdi/eye-outline";
 import mdiFormatListBulleted from "~icons/mdi/format-list-bulleted";
 import mdiUnfoldMoreHorizontal from "~icons/mdi/unfold-more-horizontal";
 import mdiCogOutline from "~icons/mdi/cog-outline";
+import mdiCodeJson from "~icons/mdi/code-json";
 import mdiChip from "~icons/mdi/chip";
 import mdiChevronDoubleUp from "~icons/mdi/chevron-double-up";
 import mdiChevronDoubleDown from "~icons/mdi/chevron-double-down";
@@ -96,9 +98,9 @@ function booleanStateCommands(opts: {
 // stay in sync with the route and settings.
 export function useCommands() {
   const { t } = useI18n();
-  const router = useRouter();
   const route = useRoute();
   const containerStore = useContainerStore();
+  const { openSettings } = useSettingsModal();
 
   const currentId = computed(() =>
     route?.name === "/container/[id]" && typeof route.params.id === "string" ? route.params.id : "",
@@ -318,7 +320,16 @@ export function useCommands() {
         title: t("command-palette.open-settings"),
         slash: "/settings",
         keywords: "settings preferences options config",
-        perform: () => router.push("/settings"),
+        perform: () => openSettings("visual"),
+      },
+      {
+        id: "navigation.settings-json",
+        section: "navigation",
+        icon: mdiCodeJson,
+        title: t("command-palette.open-settings-json"),
+        slash: "/settings json",
+        keywords: "settings json edit raw import export config",
+        perform: () => openSettings("json"),
       },
     );
 

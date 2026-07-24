@@ -54,6 +54,14 @@
       <button>close</button>
     </form>
   </dialog>
+  <dialog ref="settingsDialog" class="modal bg-base-300/60! items-start" @close="closeSettings">
+    <div class="modal-box max-h-[95vh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5vh] shadow-none">
+      <SettingsModal v-if="settingsOpen" />
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
   <SideDrawer ref="drawer" :width="drawerWidth" v-slot="{ close }">
     <Suspense :timeout="0">
       <component :is="drawerComponent" v-bind="drawerProperties" :close="close" />
@@ -81,11 +89,23 @@ const { open, openSearch: showFuzzySearch, closeSearch } = useFuzzySearch();
 const searchParams = new URLSearchParams(window.location.search);
 const forceMenuHidden = ref(searchParams.has("hideMenu"));
 
+import { useSettingsModal } from "@/composable/settingsModal";
+const settingsDialog = ref<HTMLDialogElement>();
+const { open: settingsOpen, closeSettings } = useSettingsModal();
+
 watch(open, () => {
   if (open.value) {
     modal.value?.showModal();
   } else {
     modal.value?.close();
+  }
+});
+
+watch(settingsOpen, () => {
+  if (settingsOpen.value) {
+    settingsDialog.value?.showModal();
+  } else {
+    settingsDialog.value?.close();
   }
 });
 

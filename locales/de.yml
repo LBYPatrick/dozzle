@@ -449,3 +449,4 @@ command-palette:
   sidebar-hide: Seitenleiste ausblenden
   reset-sidebar-width: Seitenleistenbreite zurücksetzen
   open-settings: Einstellungen öffnen
+  open-settings-json: "Einstellungen als JSON bearbeiten"

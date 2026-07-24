@@ -449,3 +449,4 @@ command-palette:
   sidebar-hide: Skjul sidepanel
   reset-sidebar-width: Nulstil sidepanelbredde
   open-settings: Åbn indstillinger
+  open-settings-json: "Rediger indstillinger som JSON"

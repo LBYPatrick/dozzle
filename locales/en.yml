@@ -196,7 +196,19 @@ command-palette:
   sidebar-hide: Hide sidebar
   reset-sidebar-width: Reset sidebar width
   open-settings: Open settings
+  open-settings-json: Edit settings as JSON
 settings:
+  view-visual: Visual
+  view-json: JSON
+  export: Export
+  import: Import
+  apply: Apply
+  json-valid: Valid JSON
+  imported: Settings imported
+  exported: Copied settings to clipboard
+  applied: Settings applied
+  import-hint: Paste settings JSON, or a URL that returns application/json.
+  import-placeholder: Paste settings JSON here, or https://example.com/settings.json
   help-support: >
     Please support Dozzle by donating or sponsoring us on GitHub. Your contributions help us improve Dozzle for
     everyone. Thank you! 🙏🏼

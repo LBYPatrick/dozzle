@@ -453,3 +453,4 @@ command-palette:
   sidebar-hide: 사이드바 숨기기
   reset-sidebar-width: 사이드바 너비 초기화
   open-settings: 설정 열기
+  open-settings-json: "설정을 JSON으로 편집"

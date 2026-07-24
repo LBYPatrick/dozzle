@@ -455,3 +455,4 @@ command-palette:
   sidebar-hide: Skrij stransko vrstico
   reset-sidebar-width: Ponastavi širino stranske vrstice
   open-settings: Odpri nastavitve
+  open-settings-json: "Uredi nastavitve kot JSON"

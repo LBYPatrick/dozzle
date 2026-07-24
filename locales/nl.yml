@@ -450,3 +450,4 @@ command-palette:
   sidebar-hide: Zijbalk verbergen
   reset-sidebar-width: Zijbalkbreedte opnieuw instellen
   open-settings: Instellingen openen
+  open-settings-json: "Instellingen als JSON bewerken"

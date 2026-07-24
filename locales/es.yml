@@ -192,6 +192,7 @@ command-palette:
   sidebar-hide: Ocultar barra lateral
   reset-sidebar-width: Restablecer ancho de barra lateral
   open-settings: Abrir configuración
+  open-settings-json: "Editar ajustes como JSON"
 settings:
   help-support: >
     Por favor, apoya a Dozzle donando o patrocinándonos en GitHub. Tus contribuciones nos ayudan a mejorar Dozzle para todos. ¡Gracias! 🙏🏼

@@ -16,6 +16,7 @@ declare global {
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const allLevels: typeof import('./composable/logContext').allLevels
   const applyPrimaryColor: typeof import('./composable/primaryColor').applyPrimaryColor
+  const applySettings: typeof import('./stores/settings').applySettings
   const arrayEquals: typeof import('./utils/index').arrayEquals
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
@@ -44,6 +45,7 @@ declare global {
   const createExprEditor: typeof import('./composable/exprEditor').createExprEditor
   const createGlobalState: typeof import('@vueuse/core').createGlobalState
   const createInjectionState: typeof import('@vueuse/core').createInjectionState
+  const createJsonEditor: typeof import('./composable/jsonEditor').createJsonEditor
   const createLogHints: typeof import('./composable/exprEditor').createLogHints
   const createMetricHints: typeof import('./composable/exprEditor').createMetricHints
   const createPinia: typeof import('pinia').createPinia
@@ -85,6 +87,7 @@ declare global {
   const highlightSubstringInHtml: typeof import('./utils/index').highlightSubstringInHtml
   const hourStyle: typeof import('./stores/settings').hourStyle
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
+  const importSettingsJson: typeof import('./stores/settings').importSettingsJson
   const inject: typeof import('vue').inject
   const injectLocal: typeof import('@vueuse/core').injectLocal
   const isDefined: typeof import('@vueuse/core').isDefined
@@ -162,6 +165,7 @@ declare global {
   const scrollLogsToBottom: typeof import('./composable/scrollControls').scrollLogsToBottom
   const scrollLogsToTop: typeof import('./composable/scrollControls').scrollLogsToTop
   const search: typeof import('./stores/settings').search
+  const serializeSettings: typeof import('./stores/settings').serializeSettings
   const sessionHost: typeof import('./composable/storage').sessionHost
   const setActivePinia: typeof import('pinia').setActivePinia
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
@@ -362,6 +366,7 @@ declare global {
   const useSeoMeta: typeof import('@vueuse/head').useSeoMeta
   const useServiceStream: typeof import('./composable/eventStreams').useServiceStream
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
+  const useSettingsModal: typeof import('./composable/settingsModal').useSettingsModal
   const useShare: typeof import('@vueuse/core').useShare
   const useSimpleRefHistory: typeof import('./utils/index').useSimpleRefHistory
   const useSlots: typeof import('vue').useSlots
@@ -453,8 +458,14 @@ declare global {
   export type { ExprEditorOptions } from './composable/exprEditor'
   import('./composable/exprEditor')
   // @ts-ignore
+  export type { JsonEditorOptions } from './composable/jsonEditor'
+  import('./composable/jsonEditor')
+  // @ts-ignore
   export type { PrimaryColor } from './composable/primaryColor'
   import('./composable/primaryColor')
+  // @ts-ignore
+  export type { SettingsView } from './composable/settingsModal'
+  import('./composable/settingsModal')
   // @ts-ignore
   export type { TemplateEditorOptions } from './composable/templateEditor'
   import('./composable/templateEditor')
@@ -487,6 +498,7 @@ declare module 'vue' {
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly allLevels: UnwrapRef<typeof import('./composable/logContext')['allLevels']>
     readonly applyPrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['applyPrimaryColor']>
+    readonly applySettings: UnwrapRef<typeof import('./stores/settings')['applySettings']>
     readonly arrayEquals: UnwrapRef<typeof import('./utils/index')['arrayEquals']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -515,6 +527,7 @@ declare module 'vue' {
     readonly createExprEditor: UnwrapRef<typeof import('./composable/exprEditor')['createExprEditor']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
+    readonly createJsonEditor: UnwrapRef<typeof import('./composable/jsonEditor')['createJsonEditor']>
     readonly createLogHints: UnwrapRef<typeof import('./composable/exprEditor')['createLogHints']>
     readonly createMetricHints: UnwrapRef<typeof import('./composable/exprEditor')['createMetricHints']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
@@ -554,6 +567,7 @@ declare module 'vue' {
     readonly hashCode: UnwrapRef<typeof import('./utils/index')['hashCode']>
     readonly hourStyle: UnwrapRef<typeof import('./stores/settings')['hourStyle']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
+    readonly importSettingsJson: UnwrapRef<typeof import('./stores/settings')['importSettingsJson']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
@@ -630,6 +644,7 @@ declare module 'vue' {
     readonly scrollLogsToBottom: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToBottom']>
     readonly scrollLogsToTop: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToTop']>
     readonly search: UnwrapRef<typeof import('./stores/settings')['search']>
+    readonly serializeSettings: UnwrapRef<typeof import('./stores/settings')['serializeSettings']>
     readonly sessionHost: UnwrapRef<typeof import('./composable/storage')['sessionHost']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
@@ -828,6 +843,7 @@ declare module 'vue' {
     readonly useSeoMeta: UnwrapRef<typeof import('@vueuse/head')['useSeoMeta']>
     readonly useServiceStream: UnwrapRef<typeof import('./composable/eventStreams')['useServiceStream']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
+    readonly useSettingsModal: UnwrapRef<typeof import('./composable/settingsModal')['useSettingsModal']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useSimpleRefHistory: UnwrapRef<typeof import('./utils/index')['useSimpleRefHistory']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>

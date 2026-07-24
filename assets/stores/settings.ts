@@ -95,3 +95,41 @@ export const canResetMenuWidth = computed(
 export function resetMenuWidth() {
   if (canResetMenuWidth.value) menuWidth.value = DEFAULT_MENU_WIDTH;
 }
+
+// Pretty-printed JSON of the current settings, used by the export-to-clipboard
+// action and as the document backing the JSON editor view.
+export function serializeSettings(): string {
+  return JSON.stringify(settings.value, null, 2);
+}
+
+// Merges an incoming settings object, keeping only keys Dozzle knows about so a
+// hand-edited or imported document can never inject arbitrary state. Returns a
+// typed result instead of throwing so callers can surface a friendly message.
+export function applySettings(input: unknown): { ok: true } | { ok: false; error: string } {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { ok: false, error: "Expected a JSON object of settings." };
+  }
+  const incoming = input as Record<string, unknown>;
+  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
+    if (key in incoming && incoming[key] !== undefined) {
+      // Only accept values whose type matches the current/default value, so a
+      // bad type can't corrupt a setting (e.g. a string where a boolean lives).
+      const expected = typeof DEFAULT_SETTINGS[key];
+      if (typeof incoming[key] === expected) {
+        (settings.value as Record<string, unknown>)[key] = incoming[key];
+      }
+    }
+  }
+  return { ok: true };
+}
+
+// Parses a JSON string and applies it. Convenience wrapper over applySettings.
+export function importSettingsJson(json: string): { ok: true } | { ok: false; error: string } {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+  return applySettings(parsed);
+}

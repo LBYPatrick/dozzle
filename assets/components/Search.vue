@@ -5,9 +5,11 @@
   <transition name="search-row">
     <div v-show="showSearch" class="border-base-content/10 flex items-center justify-end border-t px-2 py-1.5 md:px-4">
       <label
-        class="input input-sm bg-base-100/70 border-base-content/10 flex w-full max-w-xs items-center gap-2 rounded-full border backdrop-blur-sm"
+        class="input input-sm bg-base-100/70 border-base-content/10 relative flex w-full max-w-xs items-center gap-2 rounded-full border backdrop-blur-sm"
         :class="!isValidQuery ? 'input-warning' : 'focus-within:border-primary'"
       >
+        <!-- Indeterminate spinning circuit while the stream scans history. -->
+        <CircuitRing v-if="searchLoading" indeterminate :stroke-width="1.5" />
         <mdi:magnify class="text-base-content/50 size-4 shrink-0" />
         <input
           class="grow bg-transparent"
@@ -39,7 +41,8 @@
 import { registerSearchInstance } from "@/composable/search";
 
 const input = ref<HTMLInputElement>();
-const { searchQueryFilter, showSearch, resetSearch, isValidQuery, inverseFilter, toggleInverse } = useSearchFilter();
+const { searchQueryFilter, showSearch, resetSearch, isValidQuery, inverseFilter, toggleInverse, searchLoading } =
+  useSearchFilter();
 
 // Focus the field whenever it opens, no matter the trigger (bar button, the
 // ⌘/⌃F shortcut in ScrollableView, or a deep-linked ?search= query).

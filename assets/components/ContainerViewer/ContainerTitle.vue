@@ -8,7 +8,7 @@
     <!-- Loading indicator: right of the pin star, left of the name. Animates in
          and out so it doesn't shift the title abruptly. -->
     <transition name="spinner">
-      <span v-if="loadingMore" class="loading loading-spinner loading-xs text-primary shrink-0"></span>
+      <span v-if="loadingMore || searchLoading" class="loading loading-spinner loading-xs text-primary shrink-0"></span>
     </transition>
     <div class="inline-flex min-w-0 items-center text-sm">
       <div class="breadcrumbs min-w-0 overflow-x-visible p-0 font-mono">
@@ -75,6 +75,7 @@ import { Container } from "@/models/Container";
 const { container } = defineProps<{ container: Container }>();
 
 const { loadingMore } = useLoggingContext();
+const { searchLoading } = useSearchFilter();
 
 const { t } = useI18n();
 const { copy, copied, isSupported } = useClipboard({ legacy: true });

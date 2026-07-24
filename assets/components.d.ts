@@ -36,6 +36,7 @@ declare module 'vue' {
     'Cil:circle': typeof import('~icons/cil/circle')['default']
     'Cil:columns': typeof import('~icons/cil/columns')['default']
     'Cil:xCircle': typeof import('~icons/cil/x-circle')['default']
+    CircuitRing: typeof import('./components/common/CircuitRing.vue')['default']
     CloudDestinationForm: typeof import('./components/Notification/CloudDestinationForm.vue')['default']
     CloudPopover: typeof import('./components/CloudPopover.vue')['default']
     CloudSearchInline: typeof import('./components/CloudSearchInline.vue')['default']

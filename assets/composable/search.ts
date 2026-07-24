@@ -2,6 +2,10 @@ const searchQueryFilter = ref<string>("");
 const debouncedSearchFilter = refDebounced(searchQueryFilter);
 const showSearch = ref(false);
 const inverseFilter = ref(false);
+// True while the log stream is actively scanning history for matches. Progress
+// is unknown, so the UI shows this as an indeterminate (spinning) indicator.
+// Published by the active log stream (see EventSource.vue).
+const searchLoading = ref(false);
 
 const searchParams = new URLSearchParams(window.location.search);
 if (searchParams.get("search") !== null && searchParams.get("search") !== "") {
@@ -39,6 +43,7 @@ export function useSearchFilter() {
     isSearching,
     inverseFilter,
     toggleInverse,
+    searchLoading,
   };
 }
 

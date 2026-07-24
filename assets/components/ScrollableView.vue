@@ -9,8 +9,8 @@
   >
     <main
       :data-scrolling="scrollable ? true : undefined"
-      class="relative min-h-[300px] flex-1 snap-y overflow-auto transition-[padding-top] duration-200 ease-out"
-      :style="hasHeader ? { paddingTop: `${collapsed ? 0 : barHeight}px` } : undefined"
+      class="relative min-h-[300px] flex-1 overflow-auto transition-[padding-top] duration-200 ease-out"
+      :style="hasHeader ? { paddingTop: `${topInset}px`, '--log-top-inset': `${topInset}px` } : undefined"
     >
       <div ref="scrollTopObserver" class="h-px"></div>
       <div ref="scrollableContent">
@@ -55,29 +55,15 @@
       </div>
 
       <!-- Integrated search: a second row of the bar. In-flow, so opening it
-           grows the header and pushes the progress strip below it. -->
+           grows the header. -->
       <Search v-if="showSearchControls" />
-
-      <!-- Determinate scroll progress: a horizontal strip along the bar's foot.
-           Anchored to the header bottom (below the search row when it is open)
-           and rendered last so nothing covers it. -->
-      <transition name="fade">
-        <ScrollProgressBar
-          v-show="scrollContext.paused"
-          :progress="scrollContext.progress"
-          :date="scrollContext.currentDate"
-          class="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-full"
-        />
-      </transition>
     </header>
 
     <transition name="widget-pop">
       <TopBarStatWidget
         v-if="collapsed"
         :containers="containers"
-        :loading="loadingMore"
-        :paused="scrollContext.paused"
-        :progress="scrollContext.progress"
+        :loading="loadingMore || searchLoading"
         @expand="topBarCollapsed = false"
       />
     </transition>
@@ -126,7 +112,7 @@ const { scrollable = false } = defineProps<{ scrollable?: boolean }>();
 const slots = useSlots();
 const hasHeader = computed(() => !!slots.header);
 
-const { showSearch, isSearching, resetSearch } = useSearchFilter();
+const { showSearch, isSearching, resetSearch, searchLoading } = useSearchFilter();
 
 const hasMore = ref(false);
 const atTop = ref(true);
@@ -157,6 +143,10 @@ const showSearchControls = computed(() => search.value && !historical.value);
 const hasRunningStats = computed(() => containers.value.some((c) => c.state === "running"));
 const canCollapse = computed(() => !scrollable && !historical.value && hasRunningStats.value);
 const collapsed = computed(() => canCollapse.value && topBarCollapsed.value);
+// Space reserved at the top of the scroll area for the floating bar; 0 when the
+// bar is collapsed. Exposed to descendants (e.g. the sticky SearchStatus) as
+// --log-top-inset so they sit below the bar instead of under it.
+const topInset = computed(() => (collapsed.value ? 0 : barHeight.value));
 
 // ⌘/⌃F opens the integrated search row. Lives here (not in Search.vue) because
 // the row is unmounted while the bar is collapsed — opening search must first

@@ -31,26 +31,30 @@
         <!-- Row 1: identity (tag + name) and stats (network / cpu / memory).
              @container so the stats' container-query visibility (they hide when
              the bar is too narrow to fit them) has a context to measure. -->
-        <div class="@container flex items-center gap-2 px-2 pt-1 md:px-4">
+        <div class="@container flex min-w-0 items-center gap-2 px-3 py-1.5 md:px-4">
           <slot name="header"></slot>
         </div>
 
         <!-- Row 2: log status on the left, controls on the trailing edge. A
              slightly recessed background sets it apart from the identity row. -->
-        <div class="border-base-content/8 bg-base-content/[0.03] flex items-center gap-2 border-t px-2 py-1 md:px-4">
-          <div class="text-base-content/60 flex min-w-0 items-center gap-2 text-xs">
-            <span
-              v-if="loadingMore || searchLoading"
-              class="loading loading-spinner loading-xs text-primary"
-              :title="$t('label.loading')"
-            ></span>
+        <div
+          class="border-base-content/8 bg-base-content/[0.03] flex min-w-0 items-center gap-2 border-t px-3 py-1 md:px-4"
+        >
+          <div class="text-base-content/60 flex min-w-0 flex-1 items-center gap-2 text-xs">
+            <transition name="status-fade">
+              <span
+                v-if="loadingMore || searchLoading"
+                class="loading loading-spinner loading-xs text-primary shrink-0"
+                :title="$t('label.loading')"
+              ></span>
+            </transition>
             <template v-if="scrollContext.paused">
-              <span class="text-primary font-semibold tabular-nums">{{ progressPercent }}%</span>
+              <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
               <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />
             </template>
           </div>
 
-          <div class="ml-auto flex shrink-0 items-center gap-0.5">
+          <div class="flex shrink-0 items-center gap-0.5">
             <!-- Search: an icon that expands into a field in place. -->
             <Search v-if="showSearchControls" />
             <slot name="actions"></slot>
@@ -284,6 +288,24 @@ useScrollControlsProvider({
 .widget-pop-leave-to {
   opacity: 0;
   transform: translateY(-0.5rem) scale(0.96);
+}
+
+/* Loading spinner in row 2: ease its width/opacity so it doesn't pop the
+   adjacent status text sideways. */
+.status-fade-enter-active,
+.status-fade-leave-active {
+  transition:
+    opacity 200ms ease,
+    max-width 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    margin 220ms cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+  max-width: 1.25rem;
+}
+.status-fade-enter-from,
+.status-fade-leave-to {
+  opacity: 0;
+  max-width: 0;
+  margin-right: -0.5rem;
 }
 </style>
 

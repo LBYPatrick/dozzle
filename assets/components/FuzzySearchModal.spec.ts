@@ -125,7 +125,7 @@ describe("<FuzzySearchModal />", () => {
     const wrapper = createFuzzySearchModal();
     await wrapper.find("input").setValue("theme");
     const items = wrapper.findAll("li").map((li) => li.text());
-    expect(items).toContain("command-palette.theme-dark");
+    expect(items.some((text) => text.includes("command-palette.theme-dark"))).toBe(true);
   });
 
   test("theme commands set the theme explicitly", async () => {
@@ -143,5 +143,51 @@ describe("<FuzzySearchModal />", () => {
     await wrapper.find("input").setValue("system theme");
     await wrapper.find("input").trigger("keydown.enter");
     expect(lightTheme.value).toBe("auto");
+  });
+
+  test("renders the slash command dimmed on each command row", async () => {
+    const wrapper = createFuzzySearchModal();
+    await wrapper.find("input").setValue("theme");
+    const rows = wrapper.findAll("li").map((li) => li.text());
+    expect(rows.some((text) => text.includes("/theme dark"))).toBe(true);
+  });
+
+  test("a leading slash enters command mode and hides containers", async () => {
+    const wrapper = createFuzzySearchModal();
+    await wrapper.find("input").setValue("/theme");
+    const rows = wrapper.findAll("li").map((li) => li.text());
+    expect(rows.every((text) => text.includes("/theme"))).toBe(true);
+    // Containers ("test", "foo bar", "baz") must not appear in command mode.
+    expect(wrapper.findAll("ul [data-name]").length).toBe(0);
+  });
+
+  test("slash command autocompletes and runs on enter", async () => {
+    lightTheme.value = "auto";
+    const wrapper = createFuzzySearchModal();
+
+    await wrapper.find("input").setValue("/theme dark");
+    expect(wrapper.findAll("li").length).toBe(1);
+    await wrapper.find("input").trigger("keydown.enter");
+    expect(lightTheme.value).toBe("dark");
+  });
+
+  test("bare slash lists all commands", async () => {
+    const wrapper = createFuzzySearchModal();
+    await wrapper.find("input").setValue("/");
+    const rows = wrapper.findAll("li").map((li) => li.text());
+    expect(rows.some((text) => text.includes("/theme dark"))).toBe(true);
+    expect(rows.some((text) => text.includes("/settings"))).toBe(true);
+  });
+
+  test("an escaped slash searches literally instead of running commands", async () => {
+    const wrapper = createFuzzySearchModal();
+
+    // "/foo" is command mode: no slash command matches, containers are hidden.
+    await wrapper.find("input").setValue("/foo");
+    expect(wrapper.findAll("ul [data-name]").length).toBe(0);
+
+    // "\/foo" is an escaped literal search: the "foo bar" container shows.
+    await wrapper.find("input").setValue("\\/foo");
+    expect(wrapper.findAll("ul [data-name]").length).toBe(1);
   });
 });

@@ -213,6 +213,77 @@ body {
   @apply shadow-base-content/8;
 }
 
+/* iOS-style switches. daisyUI defines .toggle inside @layer daisyui, so these
+ * unlayered rules win the cascade and replace the outlined toggle with a solid
+ * track + white knob that slides. Accent (on) respects the theme color. */
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 999px;
+  box-shadow: none;
+  background-color: color-mix(in oklab, var(--color-base-content) 22%, transparent);
+  transition: background-color 0.2s ease;
+}
+.toggle::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.5rem - 4px);
+  height: calc(1.5rem - 4px);
+  border-radius: 999px;
+  background: oklch(100% 0 0);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.toggle:checked,
+.toggle[aria-checked="true"] {
+  background-color: var(--color-primary);
+}
+.toggle-secondary:checked {
+  background-color: var(--color-secondary);
+}
+.toggle-success:checked {
+  background-color: var(--color-success);
+}
+.toggle:checked::before,
+.toggle[aria-checked="true"]::before {
+  transform: translateX(1rem);
+}
+.toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.toggle-sm {
+  width: 2.1rem;
+  height: 1.25rem;
+}
+.toggle-sm::before {
+  width: calc(1.25rem - 4px);
+  height: calc(1.25rem - 4px);
+}
+.toggle-sm:checked::before {
+  transform: translateX(0.85rem);
+}
+.toggle-xs {
+  width: 1.75rem;
+  height: 1rem;
+}
+.toggle-xs::before {
+  width: calc(1rem - 4px);
+  height: calc(1rem - 4px);
+}
+.toggle-xs:checked::before {
+  transform: translateX(0.75rem);
+}
+
 .splitpanes--vertical .splitpanes__pane {
   transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
 }

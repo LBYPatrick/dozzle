@@ -1,42 +1,37 @@
 <template>
-  <div class="toast toast-end max-md:toast-center max-md:toast-bottom whitespace-normal max-md:w-full max-md:px-2">
-    <div
-      class="alert max-w-xl shadow-sm max-md:w-full max-md:rounded-lg"
-      v-for="{ toast, options: { timed } } in toasts"
+  <TransitionGroup
+    tag="div"
+    name="toast"
+    class="toast toast-end max-md:toast-center max-md:toast-bottom z-100 gap-2 whitespace-normal max-md:w-full max-md:px-2"
+  >
+    <ToastItem
+      v-for="{ toast, options } in toasts"
       :key="toast.id"
-      :class="{
-        'alert-error': toast.type === 'error',
-        'alert-info': toast.type === 'info',
-        'alert-warning': toast.type === 'warning',
-      }"
-    >
-      <carbon:information class="size-5 shrink-0 stroke-current" v-if="toast.type === 'info'" />
-      <carbon:warning class="size-5 shrink-0 stroke-current" v-else-if="toast.type === 'error'" />
-      <carbon:warning class="size-5 shrink-0 stroke-current" v-else-if="toast.type === 'warning'" />
-      <div class="min-w-0">
-        <h3 class="text-lg font-bold max-md:text-base" v-if="toast.title">{{ toast.title }}</h3>
-        <div v-html="toast.message" class="max-md:text-sm [&>a]:underline"></div>
-      </div>
-      <div class="shrink-0">
-        <TimedButton
-          v-if="timed"
-          class="btn-primary btn-sm"
-          :duration="timed"
-          @finished="
-            removeToast(toast.id);
-            toast.action?.handler();
-          "
-          @cancelled="removeToast(toast.id)"
-        >
-          {{ toast.action?.label }}
-        </TimedButton>
-        <button class="btn btn-circle btn-xs" @click="removeToast(toast.id)" v-else>
-          <mdi:close />
-        </button>
-      </div>
-    </div>
-  </div>
+      :toast="toast"
+      :expire="options.expire ?? -1"
+      :timed="options.timed"
+      @dismiss="removeToast(toast.id)"
+    />
+  </TransitionGroup>
 </template>
+
 <script lang="ts" setup>
 const { toasts, removeToast } = useToast();
 </script>
+
+<style scoped>
+.toast-enter-active {
+  transition: all 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.toast-leave-active {
+  transition: all 220ms ease;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(0.75rem) scale(0.96);
+}
+.toast-move {
+  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+</style>

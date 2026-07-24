@@ -43,12 +43,7 @@ const showToast = (
     toast: toastWithId,
     options: { expire, once, timed },
   });
-
-  if (expire > 0) {
-    setTimeout(() => {
-      removeToast(toastWithId.id);
-    }, expire);
-  }
+  // Expiry is driven by the ToastItem component so it can pause while hovered.
 };
 
 const removeToast = (id: Toast["id"]) => {

@@ -35,8 +35,9 @@
           <slot name="header"></slot>
         </div>
 
-        <!-- Row 2: log status on the left, controls on the trailing edge. -->
-        <div class="flex items-center gap-2 px-2 pt-0.5 pb-1 md:px-4">
+        <!-- Row 2: log status on the left, controls on the trailing edge. A
+             slightly recessed background sets it apart from the identity row. -->
+        <div class="border-base-content/8 bg-base-content/[0.03] flex items-center gap-2 border-t px-2 py-1 md:px-4">
           <div class="text-base-content/60 flex min-w-0 items-center gap-2 text-xs">
             <span
               v-if="loadingMore || searchLoading"

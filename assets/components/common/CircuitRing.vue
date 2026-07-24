@@ -24,11 +24,15 @@ const {
   indeterminate = false,
   track = false,
   strokeWidth = 1.5,
+  radius,
 } = defineProps<{
   progress?: number;
   indeterminate?: boolean;
   track?: boolean;
   strokeWidth?: number;
+  // Corner radius in px so the ring can match a rounded-rect parent. Defaults to
+  // a full pill (half the height).
+  radius?: number;
 }>();
 
 const root = ref<HTMLElement>();
@@ -50,7 +54,7 @@ const ringPath = computed(() => {
   const w = size.w - inset * 2;
   const h = size.h - inset * 2;
   if (w <= 0 || h <= 0) return "";
-  const r = h / 2;
+  const r = Math.min(radius ?? h / 2, h / 2, w / 2);
   const x = inset;
   const y = inset;
   const cx = x + w / 2;

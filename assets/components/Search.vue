@@ -6,13 +6,14 @@
        forwarded click bubbles back here and would re-open search right after the
        close button clears it. -->
   <div
-    class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-full transition-[width,background-color,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
+    class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-[var(--control-radius)] transition-[width,background-color,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
     :class="fieldClass"
     :title="showSearch ? undefined : $t('toolbar.search')"
     @click="open"
   >
-    <!-- Indeterminate spinning circuit while the stream scans history. -->
-    <CircuitRing v-if="searchLoading" indeterminate :stroke-width="1.5" />
+    <!-- Indeterminate spinning circuit while the stream scans history. Its corner
+         radius matches the field so the ring hugs it. -->
+    <CircuitRing v-if="searchLoading" indeterminate :stroke-width="1.5" :radius="controlRadiusPx" />
     <mdi:magnify class="size-5 shrink-0" :class="isSearching ? 'text-primary' : 'text-base-content/60'" />
     <input
       v-show="showSearch"
@@ -73,6 +74,9 @@ const fieldClass = computed(() =>
       ]
     : "hover:bg-base-content/10 w-9 cursor-pointer justify-center border-transparent bg-transparent px-0",
 );
+
+// --control-radius is 0.5rem; the SVG ring needs it in px.
+const controlRadiusPx = 8;
 
 function open() {
   if (!showSearch.value) showSearch.value = true;

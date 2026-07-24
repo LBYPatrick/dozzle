@@ -103,7 +103,7 @@
     <!-- Scroll controls: a floating glass capsule, single chevrons. -->
     <transition name="fade">
       <div
-        class="border-base-content/10 bg-base-200/70 fixed right-6 bottom-6 z-10 flex flex-col overflow-hidden rounded-full border shadow-lg backdrop-blur-xl"
+        class="border-base-content/10 bg-base-200/70 fixed right-6 bottom-6 z-10 flex flex-col overflow-hidden rounded-[var(--control-radius)] border shadow-lg backdrop-blur-xl"
         v-if="!historical"
         v-show="!atTop || scrollContext.paused"
       >

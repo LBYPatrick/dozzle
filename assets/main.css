@@ -204,6 +204,11 @@ body {
  * they stay locked together. The safe-area inset is already handled by body. */
 :root {
   --mobile-nav-height: 57px;
+  /* Shared roundedness for standalone floating controls (the search field, the
+     scroll buttons, the collapsed stat pill) so they match the app's boxes
+     instead of each choosing their own pill/rounding. Tracks the daisyUI box
+     radius used by cards, dropdowns, and modals. */
+  --control-radius: var(--radius-box, 0.5rem);
 }
 
 [class*="shadow-"] {
@@ -255,8 +260,8 @@ body {
   transform: translateX(1.125rem);
 }
 .toggle:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+  outline-offset: 1px;
 }
 .toggle-sm {
   width: 2.4rem;

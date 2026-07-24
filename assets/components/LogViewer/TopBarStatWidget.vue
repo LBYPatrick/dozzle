@@ -5,16 +5,16 @@
   <div class="fixed top-[calc(var(--mobile-nav-height)+0.6rem)] right-4 z-30">
     <button
       type="button"
-      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-visible:ring-primary/60 relative flex items-center gap-3 rounded-full py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[background-color,box-shadow] duration-200 hover:shadow-xl focus:outline-none focus-visible:ring-2"
+      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-visible:ring-primary/60 relative flex items-center gap-3 rounded-[var(--control-radius)] py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[background-color,box-shadow] duration-200 hover:shadow-xl focus:outline-none focus-visible:ring-2"
       :title="$t('button.expand-top-bar')"
       :aria-label="$t('button.expand-top-bar')"
       @click="$emit('expand')"
     >
-      <!-- Circuit on the pill edge: spins indeterminately while logs load
+      <!-- Circuit on the widget edge: spins indeterminately while logs load
            (unknown progress), otherwise fills clockwise with the scroll-position
-           progress once you scroll up from the tail. -->
-      <CircuitRing v-if="loading" indeterminate :stroke-width="1.5" />
-      <CircuitRing v-else-if="paused" :progress="progress" :stroke-width="1.5" />
+           progress once you scroll up from the tail. Radius matches the widget. -->
+      <CircuitRing v-if="loading" indeterminate :stroke-width="1.5" :radius="8" />
+      <CircuitRing v-else-if="paused" :progress="progress" :stroke-width="1.5" :radius="8" />
 
       <!-- Scroll-position percentage on the left, while scrolled up. -->
       <transition name="pct">

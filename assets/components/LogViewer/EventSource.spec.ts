@@ -9,7 +9,6 @@ import { computed, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createRouter, createWebHistory } from "vue-router";
 import { default as Component } from "./EventSource.vue";
-import SearchStatus from "./SearchStatus.vue";
 import LogViewer from "@/components/LogViewer/LogViewer.vue";
 import { Container } from "@/models/Container";
 import { Level } from "@/models/LogEntry";
@@ -194,8 +193,9 @@ describe("<ContainerEventSource />", () => {
       vi.advanceTimersByTime(3000);
       await nextTick();
 
+      // The search status now renders in the container bar (see ScrollableView),
+      // not inside EventSource; here we only assert the no-logs suppression.
       expect(wrapper.find('[data-testid="no-logs"]').exists()).toBe(false);
-      expect(wrapper.findComponent(SearchStatus).exists()).toBe(true);
     });
   });
 

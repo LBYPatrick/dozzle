@@ -10,6 +10,7 @@
     <main
       :data-scrolling="scrollable ? true : undefined"
       class="relative min-h-[300px] flex-1 overflow-auto transition-[padding-top] duration-200 ease-out"
+      :class="{ '[scrollbar-gutter:stable]': hasHeader }"
       :style="hasHeader ? { paddingTop: `${topInset}px`, '--log-top-inset': `${topInset}px` } : undefined"
     >
       <div ref="scrollTopObserver" class="h-px"></div>
@@ -48,6 +49,8 @@
                 :title="$t('label.loading')"
               ></span>
             </transition>
+            <!-- Search status ("N matches · searched back to …"), on demand. -->
+            <SearchStatus :status="activeSearchStatus" class="min-w-0" />
             <transition name="progress-status">
               <div v-if="scrollContext.paused" class="flex min-w-0 items-center gap-2">
                 <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
@@ -134,6 +137,7 @@
 
 <script lang="ts" setup>
 import { useScrollControlsProvider } from "@/composable/scrollControls";
+import { activeSearchStatus } from "@/composable/eventStreams";
 import { search, topBarCollapsed } from "@/stores/settings";
 
 const { scrollable = false } = defineProps<{ scrollable?: boolean }>();

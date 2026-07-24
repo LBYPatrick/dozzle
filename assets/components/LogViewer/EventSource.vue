@@ -1,5 +1,4 @@
 <template>
-  <SearchStatus :status="searchStatus" class="sticky top-[var(--log-top-inset,0px)] z-10" />
   <ul class="flex animate-pulse flex-col gap-4 p-4" v-if="loading || (noLogs && waitingForMoreLog && !inSearch)">
     <div class="flex flex-row gap-2" v-for="size in sizes">
       <div class="bg-base-content/50 h-3 w-40 shrink-0 rounded-full opacity-50"></div>
@@ -15,7 +14,7 @@
 </template>
 
 <script lang="ts" setup generic="T">
-import { LogStreamSource } from "@/composable/eventStreams";
+import { LogStreamSource, activeSearchStatus } from "@/composable/eventStreams";
 const route = useRoute();
 
 const { entity, streamSource } = $defineProps<{
@@ -31,11 +30,18 @@ const { messages, opened, loading, error, searchStatus } = streamSource(toRef(()
 // messaging, so suppress the generic "no logs" state to avoid the false signal.
 const inSearch = computed(() => searchStatus.value.active || searchStatus.value.done);
 
-// Publish this stream's active-search state to the shared indicator used by the
-// search bar. Cleared on unmount so a torn-down view can't leave it spinning.
+// Publish this stream's search state to the shared indicators used by the
+// container bar (the row-2 status text and the search spinner). Cleared on
+// unmount so a torn-down view can't leave them stuck.
 const { searchLoading } = useSearchFilter();
-watchEffect(() => (searchLoading.value = searchStatus.value.active));
-onUnmounted(() => (searchLoading.value = false));
+watchEffect(() => {
+  searchLoading.value = searchStatus.value.active;
+  activeSearchStatus.value = searchStatus.value;
+});
+onUnmounted(() => {
+  searchLoading.value = false;
+  activeSearchStatus.value = { active: false, done: false, matches: 0 };
+});
 
 const color = computed(() => {
   if (error.value) return "error";

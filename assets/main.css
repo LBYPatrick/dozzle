@@ -187,13 +187,10 @@
   }
 }
 
-/* Reserve the document scrollbar gutter so the layout width stays constant when
- * a page-level scrollbar appears (e.g. once a container's logs load). Without
- * this, the width jump makes the percentage-based splitpanes recompute and the
- * sidebar visibly flicks. */
-html {
-  scrollbar-gutter: stable;
-}
+/* The log view scrolls internally now, so the page itself rarely scrolls. A
+ * stable gutter on the document would just reserve an empty strip to the right
+ * of the log view's own scrollbar. Reserve the gutter on the scroll containers
+ * that actually scroll instead (the log view's <main>, below). */
 
 body {
   padding-top: env(safe-area-inset-top);

@@ -14,6 +14,7 @@ declare global {
   const MIN_MENU_WIDTH: typeof import('./stores/settings').MIN_MENU_WIDTH
   const PRIMARY_COLORS: typeof import('./composable/primaryColor').PRIMARY_COLORS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const activeSearchStatus: typeof import('./composable/eventStreams').activeSearchStatus
   const allLevels: typeof import('./composable/logContext').allLevels
   const applyPrimaryColor: typeof import('./composable/primaryColor').applyPrimaryColor
   const applySettings: typeof import('./stores/settings').applySettings
@@ -497,6 +498,7 @@ declare module 'vue' {
     readonly MIN_MENU_WIDTH: UnwrapRef<typeof import('./stores/settings')['MIN_MENU_WIDTH']>
     readonly PRIMARY_COLORS: UnwrapRef<typeof import('./composable/primaryColor')['PRIMARY_COLORS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly activeSearchStatus: UnwrapRef<typeof import('./composable/eventStreams')['activeSearchStatus']>
     readonly allLevels: UnwrapRef<typeof import('./composable/logContext')['allLevels']>
     readonly applyPrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['applyPrimaryColor']>
     readonly applySettings: UnwrapRef<typeof import('./stores/settings')['applySettings']>

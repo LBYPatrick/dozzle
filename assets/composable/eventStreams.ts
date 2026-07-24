@@ -75,6 +75,10 @@ export type SearchStatus = {
   reason?: "capped" | "exhausted";
 };
 
+// The active log stream publishes its search status here so the container bar's
+// second row can show it on demand, instead of a strip over the logs.
+export const activeSearchStatus = ref<SearchStatus>({ active: false, done: false, matches: 0 });
+
 export type LogStreamSource = ReturnType<typeof useLogStream>;
 
 function useLogStream(url: Ref<string>, container?: Ref<Container>) {

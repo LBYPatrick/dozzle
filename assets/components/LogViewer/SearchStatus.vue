@@ -1,15 +1,10 @@
 <template>
-  <div
-    v-if="state"
-    :data-state="state"
-    class="bg-base-200/80 text-base-content/70 flex items-center gap-2 px-4 py-1.5 text-xs backdrop-blur"
-  >
-    <template v-if="state === 'searching'">
-      <span>{{
-        status.scannedTo ? $t("label.search-status.searching-to", { time }) : $t("label.search-status.searching")
-      }}</span>
-      <IndeterminateBar color="primary" class="ml-auto" />
-    </template>
+  <!-- Inline search status for the container bar's second row. Renders nothing
+       unless there is something to report, so it only takes space on demand. -->
+  <span v-if="state" :data-state="state" class="truncate whitespace-nowrap">
+    <template v-if="state === 'searching'">{{
+      status.scannedTo ? $t("label.search-status.searching-to", { time }) : $t("label.search-status.searching")
+    }}</template>
     <span v-else-if="state === 'empty'">{{ $t("label.search-status.empty") }}</span>
     <span v-else-if="state === 'capped'" class="tabular-nums">
       {{ $t("label.search-status.capped", { count: status.matches, time }) }}
@@ -17,7 +12,7 @@
     <span v-else-if="state === 'exhausted'" class="tabular-nums">
       {{ $t("label.search-status.exhausted", { count: status.matches }) }}
     </span>
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>

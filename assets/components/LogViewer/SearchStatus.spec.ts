@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import SearchStatus from "./SearchStatus.vue";
-import IndeterminateBar from "@/components/common/IndeterminateBar.vue";
 
 /**
  * @vitest-environment jsdom
@@ -55,7 +54,6 @@ describe("<SearchStatus />", () => {
     vi.advanceTimersByTime(400);
     await nextTick();
     expect(wrapper.find('[data-state="searching"]').exists()).toBe(true);
-    expect(wrapper.findComponent(IndeterminateBar).exists()).toBe(true);
   });
 
   test("reveals the searching bar even when progress events arrive faster than the delay", async () => {

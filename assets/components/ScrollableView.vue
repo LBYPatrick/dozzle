@@ -23,11 +23,14 @@
          scroll area a constant size, so opening search or collapsing never
          reflows the logs. Glass (backdrop blur) is allowed here: it is a
          container background layered over its own content. -->
-    <header
-      v-if="hasHeader && !collapsed"
-      class="border-base-content/10 bg-base-200/72 absolute inset-x-0 top-0 z-20 border-b shadow-sm backdrop-blur-xl backdrop-saturate-150"
-    >
-      <div ref="barRow" class="flex items-stretch py-0.5 md:py-1.5">
+    <header v-if="hasHeader && !collapsed" class="absolute inset-x-0 top-0 z-20">
+      <!-- Glass lives on the fixed-size primary row (computed once), not the
+           whole header. Animating the search row below it therefore never
+           re-blurs a changing region, which keeps the open/close smooth. -->
+      <div
+        ref="barRow"
+        class="border-base-content/10 bg-base-200/72 flex items-stretch border-b py-0.5 shadow-sm backdrop-blur-xl backdrop-saturate-150 md:py-1.5"
+      >
         <div class="min-w-0 flex-1"><slot name="header"></slot></div>
         <div class="flex shrink-0 items-center gap-0.5 pr-1.5 md:pr-2.5">
           <button

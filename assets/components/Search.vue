@@ -3,9 +3,15 @@
        not a detached floating widget). Right-aligned with a compact field.
        Opening it never reflows the logs because the bar floats over them. -->
   <transition name="search-row">
-    <div v-show="showSearch" class="border-base-content/10 flex items-center justify-end border-t px-2 py-1.5 md:px-4">
+    <!-- Solid (not blurred) recessed row: the glass on the primary row already
+         provides the frosted look, and keeping this row un-blurred means its
+         height animation doesn't trigger a backdrop-filter repaint each frame. -->
+    <div
+      v-show="showSearch"
+      class="border-base-content/10 bg-base-300 flex items-center justify-end border-b px-2 py-1.5 md:px-4"
+    >
       <label
-        class="input input-sm bg-base-100/70 border-base-content/10 relative flex w-full max-w-xs items-center gap-2 rounded-full border backdrop-blur-sm"
+        class="input input-sm bg-base-100 border-base-content/10 relative flex w-full max-w-xs items-center gap-2 rounded-full border"
         :class="!isValidQuery ? 'input-warning' : 'focus-within:border-primary'"
       >
         <!-- Indeterminate spinning circuit while the stream scans history. -->
@@ -61,10 +67,13 @@ registerSearchInstance();
 .search-row-enter-active,
 .search-row-leave-active {
   transition:
-    max-height 220ms cubic-bezier(0.32, 0.72, 0, 1),
-    opacity 160ms ease;
+    max-height 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 140ms ease;
   overflow: hidden;
-  max-height: 4rem;
+  /* Tight cap matching the row height so it doesn't animate past the content
+     and appear to finish early. */
+  max-height: 3rem;
+  will-change: max-height;
 }
 .search-row-enter-from,
 .search-row-leave-to {

@@ -28,8 +28,10 @@
         ref="barRow"
         class="border-base-content/10 bg-base-200/72 relative border-b shadow-sm backdrop-blur-xl backdrop-saturate-150"
       >
-        <!-- Row 1: identity (tag + name) and stats (network / cpu / memory). -->
-        <div class="flex items-center gap-2 px-2 pt-1 md:px-4">
+        <!-- Row 1: identity (tag + name) and stats (network / cpu / memory).
+             @container so the stats' container-query visibility (they hide when
+             the bar is too narrow to fit them) has a context to measure. -->
+        <div class="@container flex items-center gap-2 px-2 pt-1 md:px-4">
           <slot name="header"></slot>
         </div>
 

@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <HostGroupLog :name="route.params.name" :scrollable="pinnedLogs.length > 0" />
 </template>
 

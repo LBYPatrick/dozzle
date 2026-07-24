@@ -10,12 +10,6 @@
       @click="hideMenu"
     >
       <li v-if="!historical">
-        <a @click="showSearch = true">
-          <mdi:magnify /> {{ $t("toolbar.search") }}
-          <KeyShortcut char="f" />
-        </a>
-      </li>
-      <li v-if="!historical">
         <a @click="clear()">
           <octicon:trash-24 /> {{ $t("toolbar.clear") }}
           <KeyShortcut char="l" :modifiers="['shift', 'meta']" />
@@ -189,7 +183,6 @@ import { allLevels } from "@/composable/logContext";
 import LogAnalytics from "../LogViewer/LogAnalytics.vue";
 import Terminal from "@/components/Terminal.vue";
 
-const { showSearch } = useSearchFilter();
 const { enableActions, enableShell, enableDownload } = config;
 const { streamConfig, hasComplexLogs, levels } = useLoggingContext();
 const showDrawer = useDrawer();

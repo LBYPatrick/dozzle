@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Прокрутить вниз"
   show-sidebar: "Показать боковую панель"
   hide-sidebar: "Скрыть боковую панель"
+  collapse-top-bar: Свернуть верхнюю панель
+  expand-top-bar: Развернуть верхнюю панель
 placeholder:
   search-containers: Поиск контейнеров (⌘ + k, ⌃k)
   search: Поиск
+  find-regex: Найти / RegEx
 settings:
   help-support: >
     Пожалуйста, поддержите Dozzle, сделав пожертвование или спонсорство на GitHub. Ваши вклады помогают нам улучшать Dozzle для всех. Спасибо! 🙏🏼
@@ -425,4 +428,23 @@ command-palette:
   theme-auto: Использовать системную тему
   theme-light: Переключить на светлую тему
   theme-dark: Переключить на тёмную тему
+  cpu-utilization: Показывать ЦП как загрузку
+  cpu-cores: Показывать ЦП как ядра
+  scroll-to-top: Прокрутить вверх
+  scroll-to-bottom: Прокрутить вниз
+  compact-on: Включить компактный режим
+  compact-off: Выключить компактный режим
+  timestamps-show: Показать метки времени
+  timestamps-hide: Скрыть метки времени
+  soft-wrap-on: Включить перенос строк
+  soft-wrap-off: Выключить перенос строк
+  stopped-show: Показать остановленные контейнеры
+  stopped-hide: Скрыть остановленные контейнеры
+  std-show: Показать метки stdout/stderr
+  std-hide: Скрыть метки stdout/stderr
+  scrollbars-on: Использовать меньшие полосы прокрутки
+  scrollbars-off: Использовать обычные полосы прокрутки
+  sidebar-show: Показать боковую панель
+  sidebar-hide: Скрыть боковую панель
+  reset-sidebar-width: Сбросить ширину боковой панели
   open-settings: Открыть настройки

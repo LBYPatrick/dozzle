@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Rul til bunden"
   show-sidebar: "Vis sidepanel"
   hide-sidebar: "Skjul sidepanel"
+  collapse-top-bar: Skjul topbjælke
+  expand-top-bar: Udvid topbjælke
 placeholder:
   search-containers: Søg containere (⌘ + k, ⌃k)
   search: Søg
+  find-regex: Find / RegEx
 settings:
   help-support: >
     Støt venligst Dozzle ved at donere eller sponsorere os på GitHub. Dine bidrag hjælper os med at forbedre Dozzle for alle. Tak! 🙏🏼
@@ -425,4 +428,23 @@ command-palette:
   theme-auto: Brug systemtema
   theme-light: Skift til lyst tema
   theme-dark: Skift til mørkt tema
+  cpu-utilization: Vis CPU som udnyttelse
+  cpu-cores: Vis CPU som kerner
+  scroll-to-top: Rul til toppen
+  scroll-to-bottom: Rul til bunden
+  compact-on: Aktivér kompakt tilstand
+  compact-off: Deaktivér kompakt tilstand
+  timestamps-show: Vis tidsstempler
+  timestamps-hide: Skjul tidsstempler
+  soft-wrap-on: Aktivér blød ombrydning
+  soft-wrap-off: Deaktivér blød ombrydning
+  stopped-show: Vis stoppede containere
+  stopped-hide: Skjul stoppede containere
+  std-show: Vis stdout/stderr-etiketter
+  std-hide: Skjul stdout/stderr-etiketter
+  scrollbars-on: Brug mindre rullepaneler
+  scrollbars-off: Brug normale rullepaneler
+  sidebar-show: Vis sidepanel
+  sidebar-hide: Skjul sidepanel
+  reset-sidebar-width: Nulstil sidepanelbredde
   open-settings: Åbn indstillinger

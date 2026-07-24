@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <MultiContainerLog :ids="ids" :scrollable="pinnedLogs.length > 0" />
 </template>
 

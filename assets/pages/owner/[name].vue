@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <OwnerLog :owner="owner" :scrollable="pinnedLogs.length > 0" v-if="owner" />
 </template>
 

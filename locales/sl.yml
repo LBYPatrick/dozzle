@@ -129,11 +129,14 @@ button:
   scroll-to-bottom: "Pomakni na dno"
   show-sidebar: "Pokaži stransko vrstico"
   hide-sidebar: "Skrij stransko vrstico"
+  collapse-top-bar: Strni zgornjo vrstico
+  expand-top-bar: Razširi zgornjo vrstico
   login: Prijava
   settings: Nastavitve
 placeholder:
   search-containers: Iskanje zabojnikov (⌘ + k, ⌃k)
   search: Iskanje
+  find-regex: Najdi / RegEx
 settings:
   about-desc: Informacije o vaši namestitvi Dozzle in kako podpreti projekt.
   display-desc: Prilagodite videz dnevnikov in preostalega dela aplikacije. Predogled v živo prikazuje vaše spremembe.
@@ -431,4 +434,23 @@ command-palette:
   theme-auto: Uporabi sistemsko temo
   theme-light: Preklopi na svetlo temo
   theme-dark: Preklopi na temno temo
+  cpu-utilization: Pokaži CPU kot izkoriščenost
+  cpu-cores: Pokaži CPU kot jedra
+  scroll-to-top: Pomakni na vrh
+  scroll-to-bottom: Pomakni na dno
+  compact-on: Omogoči strnjen način
+  compact-off: Onemogoči strnjen način
+  timestamps-show: Pokaži časovne žige
+  timestamps-hide: Skrij časovne žige
+  soft-wrap-on: Omogoči mehko prelamljanje
+  soft-wrap-off: Onemogoči mehko prelamljanje
+  stopped-show: Pokaži ustavljene vsebnike
+  stopped-hide: Skrij ustavljene vsebnike
+  std-show: Pokaži oznake stdout/stderr
+  std-hide: Skrij oznake stdout/stderr
+  scrollbars-on: Uporabi manjše drsnike
+  scrollbars-off: Uporabi običajne drsnike
+  sidebar-show: Pokaži stransko vrstico
+  sidebar-hide: Skrij stransko vrstico
+  reset-sidebar-width: Ponastavi širino stranske vrstice
   open-settings: Odpri nastavitve

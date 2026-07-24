@@ -133,9 +133,12 @@ button:
   scroll-to-bottom: Scroll to bottom
   show-sidebar: Show sidebar
   hide-sidebar: Hide sidebar
+  collapse-top-bar: Collapse top bar
+  expand-top-bar: Expand top bar
 placeholder:
   search-containers: Search containers (⌘ + k, ⌃k)
   search: Search
+  find-regex: Find / RegEx
 cloud-search:
   containers-section: Containers
   search-logs-for: Search logs for "{query}"
@@ -191,6 +194,7 @@ command-palette:
   scrollbars-off: Use normal scrollbars
   sidebar-show: Show sidebar
   sidebar-hide: Hide sidebar
+  reset-sidebar-width: Reset sidebar width
   open-settings: Open settings
 settings:
   help-support: >

@@ -186,6 +186,7 @@ declare global {
   const toRefs: typeof import('vue').toRefs
   const toRelativeTime: typeof import('./utils/index').toRelativeTime
   const toValue: typeof import('vue').toValue
+  const topBarCollapsed: typeof import('./stores/settings').topBarCollapsed
   const triggerRef: typeof import('vue').triggerRef
   const tryFormatJson: typeof import('./utils/index').tryFormatJson
   const tryOnBeforeMount: typeof import('@vueuse/core').tryOnBeforeMount
@@ -298,6 +299,7 @@ declare global {
   const useKeyModifier: typeof import('@vueuse/core').useKeyModifier
   const useLastChanged: typeof import('@vueuse/core').useLastChanged
   const useLink: typeof import('vue-router/auto').useLink
+  const useLiveStatTotals: typeof import('./composable/liveStatTotals').useLiveStatTotals
   const useLocalStorage: typeof import('@vueuse/core').useLocalStorage
   const useLogLoader: typeof import('./composable/logLoader').useLogLoader
   const useLoggingContext: typeof import('./composable/logContext').useLoggingContext
@@ -644,6 +646,7 @@ declare module 'vue' {
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toRelativeTime: UnwrapRef<typeof import('./utils/index')['toRelativeTime']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
+    readonly topBarCollapsed: UnwrapRef<typeof import('./stores/settings')['topBarCollapsed']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>
@@ -755,6 +758,7 @@ declare module 'vue' {
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLink: UnwrapRef<typeof import('vue-router/auto')['useLink']>
+    readonly useLiveStatTotals: UnwrapRef<typeof import('./composable/liveStatTotals')['useLiveStatTotals']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
     readonly useLogLoader: UnwrapRef<typeof import('./composable/logLoader')['useLogLoader']>
     readonly useLoggingContext: UnwrapRef<typeof import('./composable/logContext')['useLoggingContext']>

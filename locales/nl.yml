@@ -130,9 +130,12 @@ button:
   scroll-to-bottom: "Naar beneden scrollen"
   show-sidebar: "Zijbalk tonen"
   hide-sidebar: "Zijbalk verbergen"
+  collapse-top-bar: Bovenbalk inklappen
+  expand-top-bar: Bovenbalk uitklappen
 placeholder:
   search-containers: Zoek containers (⌘ + k, ⌃k)
   search: Zoeken
+  find-regex: Zoeken / RegEx
 settings:
   help-support: >
     Steun Dozzle door te doneren of door ons te sponsoren op GitHub. Jouw bijdrage helpt ons om Dozzle verder te verbeteren voor iedereen. Hartelijk dank! 🙏🏼
@@ -426,4 +429,23 @@ command-palette:
   theme-auto: Systeemthema gebruiken
   theme-light: Overschakelen naar licht thema
   theme-dark: Overschakelen naar donker thema
+  cpu-utilization: CPU als gebruik tonen
+  cpu-cores: CPU als cores tonen
+  scroll-to-top: Naar boven scrollen
+  scroll-to-bottom: Naar beneden scrollen
+  compact-on: Compacte modus inschakelen
+  compact-off: Compacte modus uitschakelen
+  timestamps-show: Tijdstempels tonen
+  timestamps-hide: Tijdstempels verbergen
+  soft-wrap-on: Zachte terugloop inschakelen
+  soft-wrap-off: Zachte terugloop uitschakelen
+  stopped-show: Gestopte containers tonen
+  stopped-hide: Gestopte containers verbergen
+  std-show: stdout/stderr-labels tonen
+  std-hide: stdout/stderr-labels verbergen
+  scrollbars-on: Kleinere schuifbalken gebruiken
+  scrollbars-off: Normale schuifbalken gebruiken
+  sidebar-show: Zijbalk tonen
+  sidebar-hide: Zijbalk verbergen
+  reset-sidebar-width: Zijbalkbreedte opnieuw instellen
   open-settings: Instellingen openen

@@ -21,12 +21,6 @@
           {{ isFiltered ? $t("toolbar.download-filtered") : $t("toolbar.download") }}
         </a>
       </li>
-      <li>
-        <a @click="showSearch = true">
-          <mdi:magnify /> {{ $t("toolbar.search") }}
-          <KeyShortcut char="f" />
-        </a>
-      </li>
       <li class="line"></li>
       <li>
         <a
@@ -90,7 +84,6 @@
 </template>
 
 <script lang="ts" setup>
-const { showSearch } = useSearchFilter();
 const { enableDownload } = config;
 const clear = defineEmit();
 

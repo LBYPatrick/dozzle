@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <NamespaceLog :namespace="namespace" :scrollable="pinnedLogs.length > 0" v-if="namespace" />
 </template>
 

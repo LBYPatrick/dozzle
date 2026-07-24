@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Nach unten scrollen"
   show-sidebar: "Seitenleiste anzeigen"
   hide-sidebar: "Seitenleiste ausblenden"
+  collapse-top-bar: Obere Leiste einklappen
+  expand-top-bar: Obere Leiste ausklappen
 placeholder:
   search-containers: Suche Container (⌘ + k, ⌃k)
   search: Suche
+  find-regex: Suchen / RegEx
 settings:
   help-support: >
     Bitte unterstützen Sie Dozzle durch Spenden oder Sponsoring auf GitHub. Ihre Beiträge helfen uns, Dozzle für alle zu verbessern. Vielen Dank! 🙏🏼
@@ -425,4 +428,23 @@ command-palette:
   theme-auto: Systemdesign verwenden
   theme-light: Zu hellem Design wechseln
   theme-dark: Zu dunklem Design wechseln
+  cpu-utilization: CPU als Auslastung anzeigen
+  cpu-cores: CPU als Kerne anzeigen
+  scroll-to-top: Nach oben scrollen
+  scroll-to-bottom: Nach unten scrollen
+  compact-on: Kompaktmodus aktivieren
+  compact-off: Kompaktmodus deaktivieren
+  timestamps-show: Zeitstempel anzeigen
+  timestamps-hide: Zeitstempel ausblenden
+  soft-wrap-on: Zeilenumbruch aktivieren
+  soft-wrap-off: Zeilenumbruch deaktivieren
+  stopped-show: Gestoppte Container anzeigen
+  stopped-hide: Gestoppte Container ausblenden
+  std-show: stdout/stderr-Labels anzeigen
+  std-hide: stdout/stderr-Labels ausblenden
+  scrollbars-on: Kleinere Bildlaufleisten verwenden
+  scrollbars-off: Normale Bildlaufleisten verwenden
+  sidebar-show: Seitenleiste anzeigen
+  sidebar-hide: Seitenleiste ausblenden
+  reset-sidebar-width: Seitenleistenbreite zurücksetzen
   open-settings: Einstellungen öffnen

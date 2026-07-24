@@ -131,9 +131,12 @@ button:
   scroll-to-bottom: "맨 아래로"
   show-sidebar: "사이드바 표시"
   hide-sidebar: "사이드바 숨기기"
+  collapse-top-bar: 상단 바 접기
+  expand-top-bar: 상단 바 펼치기
 placeholder:
   search-containers: 컨테이너 검색 (⌘ + k, ⌃k)
   search: 검색
+  find-regex: 찾기 / 정규식
 settings:
   help-support: >
     GitHub에서 후원하거나 기부로 Dozzle을 응원해 주세요. 여러분의 도움으로
@@ -429,4 +432,23 @@ command-palette:
   theme-auto: 시스템 테마 사용
   theme-light: 밝은 테마로 전환
   theme-dark: 어두운 테마로 전환
+  cpu-utilization: CPU를 사용률로 표시
+  cpu-cores: CPU를 코어로 표시
+  scroll-to-top: 맨 위로 스크롤
+  scroll-to-bottom: 맨 아래로 스크롤
+  compact-on: 간결 모드 켜기
+  compact-off: 간결 모드 끄기
+  timestamps-show: 타임스탬프 표시
+  timestamps-hide: 타임스탬프 숨기기
+  soft-wrap-on: 자동 줄바꿈 켜기
+  soft-wrap-off: 자동 줄바꿈 끄기
+  stopped-show: 중지된 컨테이너 표시
+  stopped-hide: 중지된 컨테이너 숨기기
+  std-show: stdout/stderr 레이블 표시
+  std-hide: stdout/stderr 레이블 숨기기
+  scrollbars-on: 작은 스크롤바 사용
+  scrollbars-off: 일반 스크롤바 사용
+  sidebar-show: 사이드바 표시
+  sidebar-hide: 사이드바 숨기기
+  reset-sidebar-width: 사이드바 너비 초기화
   open-settings: 설정 열기

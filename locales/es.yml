@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Desplazar abajo"
   show-sidebar: "Mostrar barra lateral"
   hide-sidebar: "Ocultar barra lateral"
+  collapse-top-bar: Contraer barra superior
+  expand-top-bar: Expandir barra superior
 placeholder:
   search-containers: Buscar contenedores (⌘ + K, CTRL + K)
   search: Buscar
+  find-regex: Buscar / RegEx
 cloud-search:
   containers-section: "Contenedores"
   search-logs-for: "Buscar logs por \"{query}\""
@@ -169,6 +172,25 @@ command-palette:
   theme-auto: Usar tema del sistema
   theme-light: Cambiar a tema claro
   theme-dark: Cambiar a tema oscuro
+  cpu-utilization: Mostrar CPU como utilización
+  cpu-cores: Mostrar CPU como núcleos
+  scroll-to-top: Desplazar al principio
+  scroll-to-bottom: Desplazar al final
+  compact-on: Activar modo compacto
+  compact-off: Desactivar modo compacto
+  timestamps-show: Mostrar marcas de tiempo
+  timestamps-hide: Ocultar marcas de tiempo
+  soft-wrap-on: Activar ajuste de línea
+  soft-wrap-off: Desactivar ajuste de línea
+  stopped-show: Mostrar contenedores detenidos
+  stopped-hide: Ocultar contenedores detenidos
+  std-show: Mostrar etiquetas stdout/stderr
+  std-hide: Ocultar etiquetas stdout/stderr
+  scrollbars-on: Usar barras de desplazamiento más pequeñas
+  scrollbars-off: Usar barras de desplazamiento normales
+  sidebar-show: Mostrar barra lateral
+  sidebar-hide: Ocultar barra lateral
+  reset-sidebar-width: Restablecer ancho de barra lateral
   open-settings: Abrir configuración
 settings:
   help-support: >

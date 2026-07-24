@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <GroupedLog :name="route.params.name" :scrollable="pinnedLogs.length > 0" />
 </template>
 

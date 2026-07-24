@@ -135,10 +135,13 @@ button:
   scroll-to-bottom: "Gulir ke bawah"
   show-sidebar: "Tampilkan bilah sisi"
   hide-sidebar: "Sembunyikan bilah sisi"
+  collapse-top-bar: Ciutkan bilah atas
+  expand-top-bar: Perluas bilah atas
 
 placeholder:
   search-containers: Cari kontainer (⌘ + k, ⌃k)
   search: Cari
+  find-regex: Cari / RegEx
 
 settings:
   help-support: >
@@ -437,4 +440,23 @@ command-palette:
   theme-auto: Gunakan tema sistem
   theme-light: Beralih ke tema terang
   theme-dark: Beralih ke tema gelap
+  cpu-utilization: Tampilkan CPU sebagai utilisasi
+  cpu-cores: Tampilkan CPU sebagai core
+  scroll-to-top: Gulir ke atas
+  scroll-to-bottom: Gulir ke bawah
+  compact-on: Aktifkan mode ringkas
+  compact-off: Nonaktifkan mode ringkas
+  timestamps-show: Tampilkan stempel waktu
+  timestamps-hide: Sembunyikan stempel waktu
+  soft-wrap-on: Aktifkan bungkus lembut
+  soft-wrap-off: Nonaktifkan bungkus lembut
+  stopped-show: Tampilkan kontainer yang dihentikan
+  stopped-hide: Sembunyikan kontainer yang dihentikan
+  std-show: Tampilkan label stdout/stderr
+  std-hide: Sembunyikan label stdout/stderr
+  scrollbars-on: Gunakan bilah gulir lebih kecil
+  scrollbars-off: Gunakan bilah gulir normal
+  sidebar-show: Tampilkan bilah sisi
+  sidebar-hide: Sembunyikan bilah sisi
+  reset-sidebar-width: Atur ulang lebar bilah sisi
   open-settings: Buka pengaturan

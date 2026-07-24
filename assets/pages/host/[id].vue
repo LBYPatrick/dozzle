@@ -1,5 +1,4 @@
 <template>
-  <Search />
   <HostLog :id="route.params.id" :scrollable="pinnedLogs.length > 0" />
 </template>
 

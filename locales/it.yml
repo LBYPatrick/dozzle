@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Scorri in basso"
   show-sidebar: "Mostra barra laterale"
   hide-sidebar: "Nascondi barra laterale"
+  collapse-top-bar: Comprimi barra superiore
+  expand-top-bar: Espandi barra superiore
 placeholder:
   search-containers: Ricerca container (⌘ + k, ⌃k)
   search: Cerca
+  find-regex: Trova / RegEx
 settings:
   help-support: >
     Per favore sostieni Dozzle donando o sponsorizzandoci su GitHub. I tuoi contributi ci aiutano a migliorare Dozzle per tutti. Grazie! 🙏🏼
@@ -425,4 +428,23 @@ command-palette:
   theme-auto: Usa tema di sistema
   theme-light: Passa al tema chiaro
   theme-dark: Passa al tema scuro
+  cpu-utilization: Mostra CPU come utilizzo
+  cpu-cores: Mostra CPU come core
+  scroll-to-top: Scorri in alto
+  scroll-to-bottom: Scorri in basso
+  compact-on: Attiva modalità compatta
+  compact-off: Disattiva modalità compatta
+  timestamps-show: Mostra timestamp
+  timestamps-hide: Nascondi timestamp
+  soft-wrap-on: Attiva a capo automatico
+  soft-wrap-off: Disattiva a capo automatico
+  stopped-show: Mostra container arrestati
+  stopped-hide: Nascondi container arrestati
+  std-show: Mostra etichette stdout/stderr
+  std-hide: Nascondi etichette stdout/stderr
+  scrollbars-on: Usa barre di scorrimento più piccole
+  scrollbars-off: Usa barre di scorrimento normali
+  sidebar-show: Mostra barra laterale
+  sidebar-hide: Nascondi barra laterale
+  reset-sidebar-width: Reimposta larghezza barra laterale
   open-settings: Apri impostazioni

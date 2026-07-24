@@ -132,9 +132,12 @@ button:
   scroll-to-bottom: "Aşağı kaydır"
   show-sidebar: "Kenar çubuğunu göster"
   hide-sidebar: "Kenar çubuğunu gizle"
+  collapse-top-bar: Üst çubuğu daralt
+  expand-top-bar: Üst çubuğu genişlet
 placeholder:
   search-containers: Konteynerlerde ara (⌘ + k, ⌃k)
   search: Ara
+  find-regex: Bul / RegEx
 settings:
   help-support: >
     Lütfen GitHub'da bağış yaparak veya bizi sponsor olarak destekleyerek Dozzle'ı destekleyin. Katkılarınız Dozzle'ı herkes için geliştirmemize yardımcı oluyor. Teşekkürler! 🙏🏼
@@ -429,4 +432,23 @@ command-palette:
   theme-auto: Sistem temasını kullan
   theme-light: Açık temaya geç
   theme-dark: Koyu temaya geç
+  cpu-utilization: CPU'yu kullanım olarak göster
+  cpu-cores: CPU'yu çekirdek olarak göster
+  scroll-to-top: Başa kaydır
+  scroll-to-bottom: Sona kaydır
+  compact-on: Kompakt modu aç
+  compact-off: Kompakt modu kapat
+  timestamps-show: Zaman damgalarını göster
+  timestamps-hide: Zaman damgalarını gizle
+  soft-wrap-on: Satır kaydırmayı aç
+  soft-wrap-off: Satır kaydırmayı kapat
+  stopped-show: Durdurulmuş konteynerleri göster
+  stopped-hide: Durdurulmuş konteynerleri gizle
+  std-show: stdout/stderr etiketlerini göster
+  std-hide: stdout/stderr etiketlerini gizle
+  scrollbars-on: Daha küçük kaydırma çubukları kullan
+  scrollbars-off: Normal kaydırma çubukları kullan
+  sidebar-show: Kenar çubuğunu göster
+  sidebar-hide: Kenar çubuğunu gizle
+  reset-sidebar-width: Kenar çubuğu genişliğini sıfırla
   open-settings: Ayarları aç

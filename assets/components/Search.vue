@@ -1,17 +1,24 @@
 <template>
-  <transition name="slide">
-    <div class="fixed z-50 flex w-full justify-end p-2" v-show="showSearch" ref="container" :style="style">
-      <div class="input input-primary flex items-center shadow-lg" :class="!isValidQuery ? 'input-warning' : ''">
-        <mdi:magnify />
+  <!-- Integrated search: a right-aligned glass pill overlaid just below the top
+       bar (absolute, so toggling it never changes the bar height or the scroll
+       area). Opened from the bar's search button or ⌘/⌃F. -->
+  <transition name="search-pop">
+    <div v-show="showSearch" class="absolute top-full right-2 z-10 mt-1 w-64 max-w-[calc(100%-1rem)]">
+      <label
+        class="input input-sm border-base-content/10 bg-base-200/80 flex w-full items-center gap-2 rounded-full border shadow-lg backdrop-blur-xl backdrop-saturate-150"
+        :class="!isValidQuery ? 'input-warning' : 'focus-within:border-primary'"
+      >
+        <mdi:magnify class="text-base-content/50 size-4 shrink-0" />
         <input
-          class="input input-ghost w-72 flex-1"
+          class="grow bg-transparent"
           type="text"
-          placeholder="Find / RegEx"
+          :placeholder="$t('placeholder.find-regex')"
           ref="input"
           v-model="searchQueryFilter"
           @keyup.esc="resetSearch()"
         />
         <button
+          type="button"
           class="btn btn-circle btn-xs"
           :class="inverseFilter ? 'btn-error' : 'btn-ghost'"
           @click="toggleInverse()"
@@ -20,53 +27,55 @@
           <mdi:filter-off-outline v-if="inverseFilter" />
           <mdi:filter-outline v-else />
         </button>
-        <a class="btn btn-circle btn-xs" @click="resetSearch()"> <mdi:close /></a>
-      </div>
+        <a class="btn btn-circle btn-ghost btn-xs" @click="resetSearch()" :title="$t('button.cancel')">
+          <mdi:close />
+        </a>
+      </label>
     </div>
   </transition>
 </template>
 
 <script lang="ts" setup>
 const input = ref<HTMLInputElement>();
-const container = ref<HTMLDivElement>();
 const { searchQueryFilter, showSearch, resetSearch, isValidQuery, inverseFilter, toggleInverse } = useSearchFilter();
 
-const { style } = useDraggable(container);
+// Focus the field whenever it opens, no matter the trigger (bar button, the
+// shortcut below, or a deep-linked ?search= query).
+watch(
+  showSearch,
+  (open) => {
+    if (open) nextTick(() => input.value?.focus());
+  },
+  { immediate: true },
+);
 
+// ⌘/⌃F opens the row (gated by the search setting). Plain F is left alone so it
+// still types into log fields.
 onKeyStroke("f", (e) => {
   if (!search.value) return;
   if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
     showSearch.value = true;
-    nextTick(() => input.value?.focus() || input.value?.select());
     e.preventDefault();
   }
-});
-
-onMounted(() => {
-  onKeyStroke(
-    "f",
-    (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.stopPropagation();
-        resetSearch();
-      }
-    },
-    { target: input.value },
-  );
 });
 
 onUnmounted(() => resetSearch());
 </script>
 
 <style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.search-pop-enter-active {
+  transition:
+    opacity 160ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateY(-150px);
+.search-pop-leave-active {
+  transition:
+    opacity 130ms ease,
+    transform 130ms ease;
+}
+.search-pop-enter-from,
+.search-pop-leave-to {
   opacity: 0;
+  transform: translateY(-0.4rem) scale(0.98);
 }
 </style>

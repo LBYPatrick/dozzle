@@ -131,9 +131,12 @@ button:
   scroll-to-bottom: "Przewiń w dół"
   show-sidebar: "Pokaż pasek boczny"
   hide-sidebar: "Ukryj pasek boczny"
+  collapse-top-bar: Zwiń górny pasek
+  expand-top-bar: Rozwiń górny pasek
 placeholder:
   search-containers: Przeszukaj kontery (⌘ + k, ⌃k)
   search: Szukaj
+  find-regex: Znajdź / RegEx
 settings:
   help-support: >
     Prosimy o wsparcie Dozzle poprzez darowizny lub sponsoring na GitHub. Twoje wkłady pomagają nam ulepszać Dozzle dla wszystkich. Dziękujemy! 🙏🏼
@@ -428,4 +431,23 @@ command-palette:
   theme-auto: Użyj motywu systemowego
   theme-light: Przełącz na jasny motyw
   theme-dark: Przełącz na ciemny motyw
+  cpu-utilization: Pokaż CPU jako wykorzystanie
+  cpu-cores: Pokaż CPU jako rdzenie
+  scroll-to-top: Przewiń na górę
+  scroll-to-bottom: Przewiń na dół
+  compact-on: Włącz tryb kompaktowy
+  compact-off: Wyłącz tryb kompaktowy
+  timestamps-show: Pokaż znaczniki czasu
+  timestamps-hide: Ukryj znaczniki czasu
+  soft-wrap-on: Włącz zawijanie wierszy
+  soft-wrap-off: Wyłącz zawijanie wierszy
+  stopped-show: Pokaż zatrzymane kontenery
+  stopped-hide: Ukryj zatrzymane kontenery
+  std-show: Pokaż etykiety stdout/stderr
+  std-hide: Ukryj etykiety stdout/stderr
+  scrollbars-on: Użyj mniejszych pasków przewijania
+  scrollbars-off: Użyj normalnych pasków przewijania
+  sidebar-show: Pokaż pasek boczny
+  sidebar-hide: Ukryj pasek boczny
+  reset-sidebar-width: Zresetuj szerokość paska bocznego
   open-settings: Otwórz ustawienia

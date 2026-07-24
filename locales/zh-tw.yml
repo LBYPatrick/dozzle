@@ -131,9 +131,12 @@ button:
   scroll-to-bottom: "捲動至底部"
   show-sidebar: "顯示側邊欄"
   hide-sidebar: "隱藏側邊欄"
+  collapse-top-bar: 收合頂部列
+  expand-top-bar: 展開頂部列
 placeholder:
   search-containers: 搜尋容器 (⌘ + k, ⌃k)
   search: 搜尋
+  find-regex: 尋找 / RegEx
 settings:
   help-support: >
     請透過在 GitHub 上捐款或贊助我們來支持 Dozzle。您的貢獻幫助我們為所有人改進 Dozzle。謝謝！ 🙏🏼
@@ -428,4 +431,23 @@ command-palette:
   theme-auto: 使用系統主題
   theme-light: 切換到淺色主題
   theme-dark: 切換到深色主題
+  cpu-utilization: 以使用率顯示 CPU
+  cpu-cores: 以核心數顯示 CPU
+  scroll-to-top: 捲動至頂部
+  scroll-to-bottom: 捲動至底部
+  compact-on: 啟用緊湊模式
+  compact-off: 停用緊湊模式
+  timestamps-show: 顯示時間戳記
+  timestamps-hide: 隱藏時間戳記
+  soft-wrap-on: 啟用軟換行
+  soft-wrap-off: 停用軟換行
+  stopped-show: 顯示已停止的容器
+  stopped-hide: 隱藏已停止的容器
+  std-show: 顯示 stdout/stderr 標籤
+  std-hide: 隱藏 stdout/stderr 標籤
+  scrollbars-on: 使用較小的捲軸
+  scrollbars-off: 使用正常捲軸
+  sidebar-show: 顯示側邊欄
+  sidebar-hide: 隱藏側邊欄
+  reset-sidebar-width: 重設側邊欄寬度
   open-settings: 開啟設定

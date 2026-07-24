@@ -129,9 +129,12 @@ button:
   scroll-to-bottom: "Rolar para o fim"
   show-sidebar: "Mostrar barra lateral"
   hide-sidebar: "Ocultar barra lateral"
+  collapse-top-bar: Recolher barra superior
+  expand-top-bar: Expandir barra superior
 placeholder:
   search-containers: Pesquisar containers (⌘ + k, ⌃k)
   search: Pesquisar
+  find-regex: Localizar / RegEx
 settings:
   help-support: >
     Por favor, apoie o Dozzle doando ou nos patrocinando no GitHub. Suas contribuições nos ajudam a melhorar o Dozzle para todos. Obrigado! 🙏🏼
@@ -425,4 +428,23 @@ command-palette:
   theme-auto: Usar tema do sistema
   theme-light: Mudar para tema claro
   theme-dark: Mudar para tema escuro
+  cpu-utilization: Mostrar CPU como utilização
+  cpu-cores: Mostrar CPU como núcleos
+  scroll-to-top: Rolar para o topo
+  scroll-to-bottom: Rolar para o fim
+  compact-on: Ativar modo compacto
+  compact-off: Desativar modo compacto
+  timestamps-show: Mostrar carimbos de data/hora
+  timestamps-hide: Ocultar carimbos de data/hora
+  soft-wrap-on: Ativar quebra de linha
+  soft-wrap-off: Desativar quebra de linha
+  stopped-show: Mostrar contêineres parados
+  stopped-hide: Ocultar contêineres parados
+  std-show: Mostrar rótulos stdout/stderr
+  std-hide: Ocultar rótulos stdout/stderr
+  scrollbars-on: Usar barras de rolagem menores
+  scrollbars-off: Usar barras de rolagem normais
+  sidebar-show: Mostrar barra lateral
+  sidebar-hide: Ocultar barra lateral
+  reset-sidebar-width: Redefinir largura da barra lateral
   open-settings: Abrir configurações

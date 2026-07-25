@@ -27,7 +27,7 @@
       <button
         type="button"
         class="border-base-content/15 bg-base-200/40 hover:border-base-content/30 flex items-center gap-3 rounded-lg border p-4 text-left transition-colors"
-        @click="openNotifications"
+        @click="openSubview('notifications')"
       >
         <mdi:bell-outline class="text-base-content/60 size-6 shrink-0" />
         <span class="text-base-content/80 flex-1 text-sm font-medium">{{ $t("settings.open-notifications") }}</span>
@@ -222,13 +222,8 @@ import { useSettingsModal } from "@/composable/settingsModal";
 
 const { t } = useI18n();
 
-// Notifications is still a full page; the popup section just links to it.
-const router = useRouter();
-const { closeSettings } = useSettingsModal();
-function openNotifications() {
-  closeSettings();
-  router.push({ name: "/notifications" });
-}
+// Notifications and What's New open as secondary drill-in screens of the popup.
+const { openSubview } = useSettingsModal();
 
 const now = new Date();
 const hoursAgo = (hours: number) => {

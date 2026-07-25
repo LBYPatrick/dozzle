@@ -13,11 +13,11 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 39
-- **Files changed:** 109
-- **Lines:** +4609 / -1204 (net +3405)
+- **Commits ahead:** 40
+- **Files changed:** 112
+- **Lines:** +4883 / -1151 (net +3732)
 
-Roughly split: frontend Vue/TS UI (~88 files), locales (16 files, i18n parity),
+Roughly split: frontend Vue/TS UI (~90 files), locales (16 files, i18n parity),
 Go backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
 `Makefile`, and regenerated e2e visual snapshots (4 PNGs).
 
@@ -104,6 +104,12 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   becomes a section linking to the page. The mobile menu gains a settings gear,
   and the cloud OAuth-return plus WelcomeModal handling moved to the default
   layout. `CloudPopover.vue` and `Announcements.vue` deleted.
+- **Secondary drill-in screens** (iOS-settings style — back button, slide-in
+  over the main list, tracked as `subview` in `useSettingsModal`): What's New
+  (the scrollable release list, `Settings/WhatsNewPanel.vue`) drilled into from
+  the About card's nav row, and Notifications (the management UI, extracted into a
+  reusable `Notification/NotificationsPanel.vue` shared by the `/notifications`
+  route and the popup — destination/alert drawers open over the popup).
 - **Visual / JSON toggle:** JSON view uses a lazily-loaded CodeMirror editor with
   an Apply action and live validity feedback. Segmented control toggles the view.
 - **Export** settings to clipboard as JSON; **import** from pasted JSON or a URL

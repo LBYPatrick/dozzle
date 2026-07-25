@@ -19,27 +19,17 @@
       </span>
     </div>
 
-    <!-- What's new: the release list the announcements dropdown used to show -->
-    <div v-if="announcements.length" class="flex flex-col gap-4 p-4">
-      <div class="text-base-content/50 text-xs font-semibold tracking-wide uppercase">
-        {{ $t("settings.whats-new") }}
-      </div>
-      <ul class="flex max-h-64 flex-col gap-4 overflow-y-auto">
-        <li v-for="release in announcements" :key="release.tag" class="flex flex-col gap-1">
-          <div class="flex items-baseline gap-2">
-            <carbon:warning v-if="release.breaking > 0" class="stroke-orange self-center" />
-            <carbon:information v-else class="text-info self-center" />
-            <a :href="release.htmlUrl" target="_blank" rel="noopener noreferrer" class="link-primary font-bold">
-              {{ release.name }}
-            </a>
-            <span class="text-base-content/50 ml-auto text-xs whitespace-nowrap">
-              <RelativeTime :date="release.createdAt" />
-            </span>
-          </div>
-          <p class="text-base-content/70 text-sm">{{ release.announcement ? release.body : summary(release) }}</p>
-        </li>
-      </ul>
-    </div>
+    <!-- What's new — drills into the secondary screen with the full release list -->
+    <button
+      type="button"
+      class="hover:bg-base-content/5 flex w-full items-center gap-3 p-4 text-left transition-colors"
+      @click="openSubview('whats-new')"
+    >
+      <mdi:party-popper class="text-base-content/60 size-5 shrink-0" />
+      <span class="flex-1 text-sm font-medium">{{ $t("settings.whats-new") }}</span>
+      <span v-if="hasRelease" class="bg-warning size-2 shrink-0 rounded-full"></span>
+      <mdi:chevron-right class="text-base-content/40 size-5 shrink-0" />
+    </button>
 
     <!-- Support -->
     <div class="flex flex-col gap-3 p-4">
@@ -69,43 +59,12 @@
 
 <script setup lang="ts">
 import { useAnnouncements } from "@/stores/announcements";
+import { useSettingsModal } from "@/composable/settingsModal";
 
-const { announcements, latestRelease, hasRelease, fetchReleases } = useAnnouncements();
-const { t } = useI18n();
+const { latestRelease, hasRelease, fetchReleases } = useAnnouncements();
+const { openSubview } = useSettingsModal();
 
-// The store only auto-fetches in 'automatic' release-check mode; make sure the
-// list is populated whenever this card mounts. fetchReleases is idempotent.
+// Fetch so the update pill / dot reflect reality before the user drills in.
+// fetchReleases is idempotent (no-op once loaded).
 onMounted(() => fetchReleases());
-
-// Same wording the announcements dropdown used to summarize a release.
-function summary(release: { features: number; bugFixes: number; breaking: number }) {
-  if (release.features > 0 && release.bugFixes > 0 && release.breaking > 0) {
-    return t("releases.three_parts", {
-      first: t("releases.breaking", { count: release.breaking }),
-      second: t("releases.features", { count: release.features }),
-      third: t("releases.bugFixes", { count: release.bugFixes }),
-    });
-  }
-  if (release.features > 0 && release.bugFixes > 0) {
-    return t("releases.two_parts", {
-      first: t("releases.features", { count: release.features }),
-      second: t("releases.bugFixes", { count: release.bugFixes }),
-    });
-  }
-  if (release.features > 0 && release.breaking > 0) {
-    return t("releases.two_parts", {
-      first: t("releases.features", { count: release.features }),
-      second: t("releases.breaking", { count: release.breaking }),
-    });
-  }
-  if (release.bugFixes > 0 && release.breaking > 0) {
-    return t("releases.two_parts", {
-      first: t("releases.bugFixes", { count: release.bugFixes }),
-      second: t("releases.breaking", { count: release.breaking }),
-    });
-  }
-  if (release.features > 0) return t("releases.features", { count: release.features });
-  if (release.bugFixes > 0) return t("releases.bugFixes", { count: release.bugFixes });
-  if (release.breaking > 0) return t("releases.breaking", { count: release.breaking });
-}
 </script>

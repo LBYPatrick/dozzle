@@ -466,7 +466,7 @@ declare global {
   export type { PrimaryColor } from './composable/primaryColor'
   import('./composable/primaryColor')
   // @ts-ignore
-  export type { SettingsView, SettingsSection } from './composable/settingsModal'
+  export type { SettingsView, SettingsSection, SettingsSubview } from './composable/settingsModal'
   import('./composable/settingsModal')
   // @ts-ignore
   export type { TemplateEditorOptions } from './composable/templateEditor'

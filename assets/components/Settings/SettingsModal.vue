@@ -7,40 +7,56 @@
   >
     <!-- Header -->
     <div class="border-base-content/10 flex flex-wrap items-center gap-2 border-b px-4 py-3">
-      <mdi:cog-outline class="text-base-content/60 size-5 shrink-0" />
-      <h2 class="text-base font-semibold">{{ $t("title.settings") }}</h2>
-
-      <SegmentedControl
-        class="ml-2"
-        v-model="view"
-        :options="[
-          { label: $t('settings.view-visual'), value: 'visual' },
-          { label: $t('settings.view-json'), value: 'json' },
-        ]"
-      />
-
-      <div class="ml-auto flex items-center gap-1">
-        <button class="btn btn-ghost btn-sm gap-1" @click="exportToClipboard">
-          <mdi:content-copy class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.export") }}</span>
+      <!-- Secondary screen: back to the main list -->
+      <template v-if="subview">
+        <button class="btn btn-ghost btn-sm -ml-1 gap-1 pl-1" @click="closeSubview">
+          <mdi:chevron-left class="size-5" /> {{ $t("title.settings") }}
         </button>
-        <button
-          class="btn btn-ghost btn-sm gap-1"
-          :class="{ 'text-primary': showImport }"
-          @click="showImport = !showImport"
-        >
-          <mdi:import class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.import") }}</span>
-        </button>
-        <form method="dialog">
+        <h2 class="text-base font-semibold">{{ subviewTitle }}</h2>
+        <form method="dialog" class="ml-auto">
           <button class="btn btn-ghost btn-sm btn-square" :aria-label="$t('button.cancel')">
             <mdi:close class="size-5" />
           </button>
         </form>
-      </div>
+      </template>
+
+      <!-- Main list -->
+      <template v-else>
+        <mdi:cog-outline class="text-base-content/60 size-5 shrink-0" />
+        <h2 class="text-base font-semibold">{{ $t("title.settings") }}</h2>
+
+        <SegmentedControl
+          class="ml-2"
+          v-model="view"
+          :options="[
+            { label: $t('settings.view-visual'), value: 'visual' },
+            { label: $t('settings.view-json'), value: 'json' },
+          ]"
+        />
+
+        <div class="ml-auto flex items-center gap-1">
+          <button class="btn btn-ghost btn-sm gap-1" @click="exportToClipboard">
+            <mdi:content-copy class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.export") }}</span>
+          </button>
+          <button
+            class="btn btn-ghost btn-sm gap-1"
+            :class="{ 'text-primary': showImport }"
+            @click="showImport = !showImport"
+          >
+            <mdi:import class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.import") }}</span>
+          </button>
+          <form method="dialog">
+            <button class="btn btn-ghost btn-sm btn-square" :aria-label="$t('button.cancel')">
+              <mdi:close class="size-5" />
+            </button>
+          </form>
+        </div>
+      </template>
     </div>
 
-    <!-- Import panel -->
+    <!-- Import panel (main list only) -->
     <transition name="import-panel">
-      <div v-if="showImport" class="border-base-content/10 bg-base-300/40 border-b p-3">
+      <div v-if="showImport && !subview" class="border-base-content/10 bg-base-300/40 border-b p-3">
         <label class="text-base-content/60 text-xs">{{ $t("settings.import-hint") }}</label>
         <textarea
           v-model="importText"
@@ -58,7 +74,7 @@
     </transition>
 
     <!-- Body -->
-    <div class="min-h-0 flex-1 overflow-hidden">
+    <div class="relative min-h-0 flex-1 overflow-hidden">
       <div ref="visualScroll" v-show="view === 'visual'" class="h-full overflow-y-auto p-4 md:p-6">
         <SettingsPanels />
       </div>
@@ -79,18 +95,39 @@
           </button>
         </div>
       </div>
+
+      <!-- Secondary screen slides in over the main list -->
+      <transition name="subview">
+        <div v-if="subview" class="bg-base-200/95 absolute inset-0 overflow-y-auto p-4 backdrop-blur-2xl md:p-6">
+          <WhatsNewPanel v-if="subview === 'whats-new'" />
+          <NotificationsPanel v-else-if="subview === 'notifications'" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import SettingsPanels from "@/components/Settings/SettingsPanels.vue";
+import WhatsNewPanel from "@/components/Settings/WhatsNewPanel.vue";
+import NotificationsPanel from "@/components/Notification/NotificationsPanel.vue";
 import JsonEditor from "@/components/common/JsonEditor.vue";
 import { useSettingsModal } from "@/composable/settingsModal";
 import { serializeSettings, importSettingsJson } from "@/stores/settings";
 
 const { t } = useI18n();
-const { view, section } = useSettingsModal();
+const { view, section, subview, closeSubview } = useSettingsModal();
+
+const subviewTitle = computed(() => {
+  switch (subview.value) {
+    case "whats-new":
+      return t("settings.whats-new");
+    case "notifications":
+      return t("notifications.title");
+    default:
+      return "";
+  }
+});
 const { copy, isSupported } = useClipboard({ legacy: true });
 const { showToast } = useToast();
 
@@ -190,6 +227,19 @@ function toast(message: string, type: "info" | "error", raw = false) {
 .import-panel-enter-from,
 .import-panel-leave-to {
   max-height: 0;
+  opacity: 0;
+}
+
+/* iOS-style push: the secondary screen slides in from the right. */
+.subview-enter-active,
+.subview-leave-active {
+  transition:
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease;
+}
+.subview-enter-from,
+.subview-leave-to {
+  transform: translateX(1.5rem);
   opacity: 0;
 }
 </style>

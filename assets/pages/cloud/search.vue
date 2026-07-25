@@ -1,8 +1,8 @@
 <template>
-  <PageWithLinks>
-    <section>
+  <PageWithLinks fill>
+    <section class="flex min-h-0 flex-1 flex-col">
       <!-- Header -->
-      <div class="mb-5 flex items-center gap-3">
+      <div class="mb-4 flex shrink-0 items-center gap-3">
         <h2 class="text-lg font-semibold">{{ $t("cloud-search.results-page-title") }}</h2>
         <span v-if="committedQuery" class="text-base-content/70 font-mono text-sm">"{{ committedQuery }}"</span>
         <span v-if="cloudSearch.available.value" class="status-pill status-pill-primary ml-auto">
@@ -11,7 +11,7 @@
       </div>
 
       <!-- Status line -->
-      <div class="text-base-content/70 mb-3 flex h-5 items-center gap-2 text-xs">
+      <div class="text-base-content/70 mb-3 flex h-5 shrink-0 items-center gap-2 text-xs">
         <template v-if="cloudSearch.loading.value">
           <span class="loading loading-spinner loading-xs"></span>
           <span>{{ $t("cloud-search.searching") }}</span>
@@ -32,88 +32,108 @@
         </template>
       </div>
 
-      <!-- Results table — matches the visual style of ContainerTable -->
-      <div v-if="hits.length" class="rounded-box border-base-content/10 overflow-x-auto border">
-        <table class="table-md md:table-lg table-zebra table">
+      <!-- Results table — scrolls internally so the page itself never scrolls. -->
+      <div
+        v-if="hits.length"
+        ref="scrollEl"
+        class="rounded-box border-base-content/10 min-h-0 flex-1 overflow-auto border"
+      >
+        <table class="table-md md:table-lg table-pin-rows table w-full table-fixed">
           <thead>
             <tr>
-              <th class="text-base-content/60 w-44 text-xs font-medium tracking-wider uppercase">
-                {{ $t("cloud-search.col-time") }}
+              <th
+                v-for="col in columns"
+                :key="col.key"
+                class="bg-base-200 text-base-content/60 border-base-content/10 border-b text-xs font-medium tracking-wider uppercase"
+                :class="col.thClass"
+                :aria-sort="ariaSort(col.key)"
+              >
+                <button
+                  type="button"
+                  class="group hover:text-base-content inline-flex items-center gap-1 transition-colors"
+                  @click="toggleSort(col.key)"
+                >
+                  {{ $t(col.label) }}
+                  <mdi:chevron-up v-if="sortKey === col.key && sortDir === 'asc'" class="text-primary size-3.5" />
+                  <mdi:chevron-down v-else-if="sortKey === col.key" class="text-primary size-3.5" />
+                  <mdi:unfold-more-horizontal
+                    v-else
+                    class="size-3.5 opacity-0 transition-opacity group-hover:opacity-40"
+                  />
+                </button>
               </th>
-              <th class="text-base-content/60 w-20 text-xs font-medium tracking-wider uppercase">
-                {{ $t("cloud-search.col-level") }}
-              </th>
-              <th class="text-base-content/60 w-1 text-xs font-medium tracking-wider uppercase">
-                {{ $t("cloud-search.col-container") }}
-              </th>
-              <th class="text-base-content/60 text-xs font-medium tracking-wider uppercase">
-                {{ $t("cloud-search.col-message") }}
-              </th>
+              <!-- trailing chevron column (not sortable) -->
+              <th class="bg-base-200 border-base-content/10 w-10 border-b"></th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="(hit, i) in hits"
+              v-for="(hit, i) in sortedHits"
               :key="`${hit.containerId}-${hit.ts}-${hit.logId ?? 0}-${i}`"
-              class="hover:bg-primary/5 transition-colors"
-              :class="{ 'cursor-pointer': isLive(hit) }"
-              @click="isLive(hit) && openContainer(hit)"
+              class="group hover:bg-primary/5 cursor-pointer transition-colors"
+              @click="openDetails(hit)"
             >
               <td class="text-base-content/70 font-mono text-xs whitespace-nowrap tabular-nums">
                 {{ formatTs(hit.ts) }}
               </td>
               <td>
-                <span class="status-pill" :class="levelPillClass(hit.level)">{{ hit.level || "info" }}</span>
+                <span
+                  class="inline-flex items-center rounded px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wide uppercase"
+                  :class="levelChipClass(hit.level)"
+                  >{{ hit.level || "info" }}</span
+                >
               </td>
-              <td class="whitespace-nowrap">
-                <span class="inline-flex items-center gap-2">
-                  <span :class="isLive(hit) ? 'text-base-content' : 'text-base-content/60'">
+              <td class="font-mono text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="truncate" :class="isLive(hit) ? 'text-base-content/80' : 'text-base-content/50'">
                     {{ hit.containerName }}
                   </span>
                   <span
                     v-if="!isLive(hit)"
                     :title="$t('cloud-search.container-removed')"
-                    class="status-pill status-pill-neutral"
+                    class="text-base-content/50 bg-base-content/10 shrink-0 rounded px-1.5 py-0.5 text-[0.65rem]"
                   >
                     {{ $t("cloud-search.container-removed-pill") }}
                   </span>
-                </span>
+                </div>
               </td>
               <td>
-                <JsonFormatted
-                  v-if="isJson(hit.message)"
-                  :value="hit.message"
-                  :highlight="committedQuery"
-                  class="text-xs"
+                <div class="truncate font-mono text-xs" v-html="highlight(hit.message, committedQuery)"></div>
+              </td>
+              <td class="w-10 text-right">
+                <mdi:chevron-right
+                  class="text-base-content/25 group-hover:text-base-content/60 inline size-4 transition-colors"
+                  :aria-label="$t('action.show-details')"
                 />
-                <span v-else class="font-mono text-xs" v-html="highlight(hit.message, committedQuery)"></span>
               </td>
             </tr>
           </tbody>
         </table>
+
+        <div
+          v-if="cloudSearch.hasMore.value || cloudSearch.loadingMore.value"
+          class="text-base-content/60 flex h-10 items-center justify-center text-xs"
+        >
+          <span v-if="cloudSearch.loadingMore.value" class="loading loading-spinner loading-xs"></span>
+        </div>
       </div>
 
-      <div
-        v-if="hits.length && (cloudSearch.hasMore.value || cloudSearch.loadingMore.value)"
-        class="text-base-content/60 mt-4 flex h-10 items-center justify-center text-xs"
-      >
-        <span v-if="cloudSearch.loadingMore.value" class="loading loading-spinner loading-xs"></span>
-      </div>
-
-      <!-- Cloud-not-available state -->
-      <div
-        v-if="!cloudSearch.available.value && committedQuery"
-        class="bg-base-200 border-base-content/10 rounded-box border p-8 text-center"
-      >
-        <mdi:cloud-off-outline class="text-base-content/40 mx-auto mb-3 size-10" />
-        <p class="text-base-content/80 text-sm">
-          {{
-            cloudConfig?.linked ? $t("cloud-search.enable-streaming-to-search") : $t("cloud-search.connect-to-enable")
-          }}
-        </p>
-        <RouterLink to="/settings/cloud" class="btn btn-primary btn-sm mt-4">
-          {{ $t("cloud-search.cta-settings") }}
-        </RouterLink>
+      <!-- Empty / cloud-not-available states, centered in the remaining space -->
+      <div v-else class="flex min-h-0 flex-1 items-center justify-center">
+        <div
+          v-if="!cloudSearch.available.value && committedQuery"
+          class="bg-base-200 border-base-content/10 rounded-box border p-8 text-center"
+        >
+          <mdi:cloud-off-outline class="text-base-content/40 mx-auto mb-3 size-10" />
+          <p class="text-base-content/80 text-sm">
+            {{
+              cloudConfig?.linked ? $t("cloud-search.enable-streaming-to-search") : $t("cloud-search.connect-to-enable")
+            }}
+          </p>
+          <RouterLink to="/settings/cloud" class="btn btn-primary btn-sm mt-4">
+            {{ $t("cloud-search.cta-settings") }}
+          </RouterLink>
+        </div>
       </div>
     </section>
   </PageWithLinks>
@@ -122,9 +142,9 @@
 <script lang="ts" setup>
 import { useCloudConfig } from "@/composable/cloudConfig";
 import { useCloudLogSearch, type CloudLogHit } from "@/composable/cloudLogSearch";
+import CloudLogDetails from "@/components/LogViewer/CloudLogDetails.vue";
 
 const route = useRoute();
-const router = useRouter();
 
 function readQ(q: unknown): string {
   return typeof q === "string" ? q : "";
@@ -137,19 +157,70 @@ const cloudSearch = useCloudLogSearch(committedQuery);
 const hits = computed<CloudLogHit[]>(() => cloudSearch.results.value);
 
 // Look up containers in the live store so we can mark hits whose containers
-// have been removed (or never existed for this Dozzle instance) as
-// non-clickable. Reactive — if a container is removed mid-session, the
-// corresponding row updates instantly.
+// have been removed. Rows stay clickable either way — the drawer renders from
+// the hit itself.
 const containerStore = useContainerStore();
 const liveIds = computed(() => new Set(Object.keys(containerStore.allContainersById)));
 function isLive(hit: CloudLogHit): boolean {
   return liveIds.value.has(hit.containerId);
 }
 
-// Infinite scroll: VueUse fires loadMore when the page is scrolled within
-// 200px of the bottom. canLoadMore short-circuits both during a fetch and
-// when the server reports no more pages, so we don't double-fire.
-useInfiniteScroll(document, () => cloudSearch.loadMore(), {
+// Sortable columns — each header cycles through three states on click:
+// ascending -> descending -> default (no column sort, server order = newest
+// first). A different column always starts fresh at ascending.
+type SortKey = "time" | "level" | "container" | "message";
+const columns: { key: SortKey; label: string; thClass: string }[] = [
+  { key: "time", label: "cloud-search.col-time", thClass: "w-44" },
+  { key: "level", label: "cloud-search.col-level", thClass: "w-24" },
+  { key: "container", label: "cloud-search.col-container", thClass: "w-52" },
+  { key: "message", label: "cloud-search.col-message", thClass: "" },
+];
+
+// null key = default order (whatever the server returned, newest first).
+const sortKey = ref<SortKey | null>(null);
+const sortDir = ref<"asc" | "desc">("asc");
+
+function toggleSort(key: SortKey) {
+  if (sortKey.value !== key) {
+    sortKey.value = key;
+    sortDir.value = "asc";
+  } else if (sortDir.value === "asc") {
+    sortDir.value = "desc";
+  } else {
+    sortKey.value = null; // third click resets to the default order
+  }
+}
+
+function ariaSort(key: SortKey): "ascending" | "descending" | "none" {
+  if (sortKey.value !== key) return "none";
+  return sortDir.value === "asc" ? "ascending" : "descending";
+}
+
+function compareBy(a: CloudLogHit, b: CloudLogHit, key: SortKey): number {
+  switch (key) {
+    // ts is nanoseconds (> Number.MAX_SAFE_INTEGER); compare, don't subtract.
+    case "time":
+      return a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0;
+    case "level":
+      return (a.level || "").localeCompare(b.level || "");
+    case "container":
+      return a.containerName.localeCompare(b.containerName);
+    case "message":
+      return a.message.localeCompare(b.message);
+  }
+}
+
+const sortedHits = computed(() => {
+  const key = sortKey.value;
+  if (key === null) return hits.value; // default: server order (newest first)
+  const dir = sortDir.value === "asc" ? 1 : -1;
+  return [...hits.value].sort((a, b) => dir * compareBy(a, b, key));
+});
+
+// Infinite scroll now watches the table's own scroll container, since the page
+// no longer scrolls.
+const scrollEl = ref<HTMLElement>();
+useInfiniteScroll(scrollEl, () => cloudSearch.loadMore(), {
   distance: 200,
   canLoadMore: () => cloudSearch.hasMore.value && !cloudSearch.loadingMore.value,
 });
@@ -161,6 +232,11 @@ watch(
   },
 );
 
+const showDrawer = useDrawer();
+function openDetails(hit: CloudLogHit) {
+  showDrawer(CloudLogDetails, { hit, query: committedQuery.value }, "lg");
+}
+
 function formatTs(ns: number): string {
   const d = new Date(ns / 1e6);
   const date = d.toLocaleDateString([], { month: "short", day: "numeric" });
@@ -168,18 +244,24 @@ function formatTs(ns: number): string {
   return `${date} ${time}`;
 }
 
-function levelPillClass(level: string): string {
+// Tonal level chips (colored tint + colored text, no outline). Colors mirror
+// the app's level palette (LogLevel.vue / the drawer's Tag) so a row chip and
+// the detail panel agree: green info, orange warn, red error, purple debug.
+function levelChipClass(level: string): string {
   switch ((level || "").toLowerCase()) {
     case "error":
     case "fatal":
-      return "status-pill-error";
+      return "bg-error/15 text-error";
     case "warn":
     case "warning":
-      return "status-pill-warning";
+      return "bg-warning/15 text-warning";
     case "info":
-      return "status-pill-primary";
+      return "bg-success/15 text-success";
+    case "debug":
+    case "trace":
+      return "bg-purple/15 text-purple";
     default:
-      return "status-pill-neutral";
+      return "bg-base-content/10 text-base-content/60";
   }
 }
 
@@ -198,35 +280,5 @@ function escapeHtml(s: string): string {
     /[&<>"']/g,
     (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string,
   );
-}
-
-function isJson(message: string): boolean {
-  const trimmed = message.trim();
-  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return false;
-  try {
-    const parsed = JSON.parse(trimmed);
-    return parsed !== null && typeof parsed === "object";
-  } catch {
-    return false;
-  }
-}
-
-function openContainer(hit: CloudLogHit) {
-  // Match Dozzle's permanent-link route: /container/:id/time/:datetime?logId=...
-  // hit.ts is unix nanoseconds; convert to ms then ISO 8601 with millis.
-  const datetime = new Date(hit.ts / 1e6).toISOString();
-  const query: Record<string, string> = {};
-  if (hit.logId !== undefined && hit.logId !== 0) {
-    // logId pinpoints the exact line; the historical-logs view scrolls to it.
-    query.logId = String(hit.logId);
-  }
-  if (committedQuery.value) {
-    query.q = committedQuery.value;
-  }
-  router.push({
-    name: "/container/[id].time.[datetime]",
-    params: { id: hit.containerId, datetime },
-    query,
-  });
 }
 </script>

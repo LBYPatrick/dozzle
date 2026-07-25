@@ -143,7 +143,10 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 			stream = "stderr"
 		}
 		hits = append(hits, map[string]any{
-			"ts":            ts / int64(time.Millisecond),
+			// Nanoseconds — the real backend returns TimestampNs and the UI
+			// divides by 1e6 to get millis. Emitting millis here rendered every
+			// row as Jan 1 1970.
+			"ts":            ts,
 			"hostId":        "localhost",
 			"containerId":   c.id,
 			"containerName": c.name,

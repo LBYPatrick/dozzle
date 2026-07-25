@@ -13,12 +13,13 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 40
-- **Files changed:** 112
-- **Lines:** +4883 / -1151 (net +3732)
+- **Commits ahead:** 46
+- **Files changed:** 225
+- **Lines:** +9717 / -1164 (net +8553)
 
-Roughly split: frontend Vue/TS UI (~90 files), locales (16 files, i18n parity),
-Go backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
+Roughly split: frontend Vue/TS UI (~95 files) plus a full Storybook suite (106
+component stories + `.storybook/` config), locales (16 files, i18n parity), Go
+backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
 `Makefile`, and regenerated e2e visual snapshots (4 PNGs).
 
 ## UI / Top bar
@@ -222,6 +223,32 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   export, apply and their toasts, primary-color label, etc. Achieves 417-key
   parity across every locale so nothing falls back to English.
 
+## Accessibility & polish fixes
+
+- **Accent contrast (WCAG):** the accent (primary) colors are all mid-to-light
+  (L ~69-80%), so near-white `--color-primary-content` failed WCAG AA on primary
+  buttons/badges (worst on light mode). Switched primary-content to dark text,
+  which clears AA on every swatch in both themes (`main.css`, `primaryColor.ts`).
+- **Sidebar menu hover clipping:** rows translate 3px on hover and the active row
+  draws an accent bar in the left gutter; the carousel's `overflow-x` (for
+  snap-scrolling) was clipping both. Padded the carousel slides so they render.
+- **Collapsed-sidebar search:** the `fixed` sidebar doesn't clip overflow, so the
+  foot search could linger past the zero-width collapsed pane; gated on
+  `!collapseNav` and allowed to shrink.
+
+## Storybook
+
+- **Full Storybook 10 suite** (`.storybook/` + `make storybook` /
+  `storybook-build`). The vue3-vite framework auto-loads the project's
+  `vite.config.ts`, so VueMacros/vue, auto-imports, icons, i18n, Tailwind and
+  svg-loader all apply unchanged. The preview installs Pinia, vue-i18n and a
+  stubbed vue-router, seeds the app `config` via `preview-head.html`, imports
+  `main.css`, and adds a light/dark theme toggle (addon-themes, `data-theme`).
+- **A co-located `.stories.ts` for all 106 components** (common, LogViewer,
+  Notification, Settings, ContainerViewer, per-mode viewers, top-level widgets),
+  CSF3 + `satisfies Meta`, with real model instances where practical. Verified:
+  `pnpm typecheck` clean and `storybook build` green (823 modules).
+
 ## Tests & snapshots
 
 - Regenerated Playwright visual snapshots (4 PNGs under
@@ -236,6 +263,7 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   examples (setup, dev, build, test, run/deploy sections).
 - New `make cloud-mock` target: runs the cloud mock proxy on `:3200` (proxies the
   `make dev` backend on `:3100`).
+- New `make storybook` / `make storybook-build` targets.
 
 ## Misc
 

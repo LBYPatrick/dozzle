@@ -13,6 +13,8 @@ Development
   cloud-mock      Mock Dozzle Cloud proxy on :3200: fakes the cloud UIs (linked + pro + streaming +
                   canned log search) and proxies everything else to :3100. Needs `make dev` running.
                   Then open http://localhost:3200 instead of :3100.
+  storybook       Component workshop (Storybook) on :6006. Open http://localhost:6006
+  storybook-build Build the static Storybook bundle into storybook-static/.
   preview         Build, then serve the production bundle locally.
 
 Build
@@ -52,6 +54,14 @@ cloud-mock:
 	@echo "Mock Dozzle Cloud on http://localhost:3200 (proxying http://localhost:3100)."
 	@echo "Make sure 'make dev' is running, then open http://localhost:3200"
 	go run ./scripts/cloudmock
+
+.PHONY: storybook
+storybook:
+	pnpm storybook
+
+.PHONY: storybook-build
+storybook-build:
+	pnpm build-storybook
 
 .PHONY: clean
 clean:

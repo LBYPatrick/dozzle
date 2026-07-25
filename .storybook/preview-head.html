@@ -1,0 +1,34 @@
+<!--
+  The app's config is normally injected by the Go server as a JSON <script>.
+  Stories have no server, so seed a representative config here; stores/config.ts
+  reads it at module load.
+-->
+<script id="config__json" type="application/json">
+  {
+    "version": "storybook",
+    "base": "",
+    "maxLogs": 400,
+    "hostname": "storybook",
+    "mode": "server",
+    "authProvider": "none",
+    "enableActions": true,
+    "enableShell": true,
+    "enableDownload": true,
+    "disableAvatars": false,
+    "releaseCheckMode": "manual",
+    "user": { "username": "dev", "email": "dev@example.com", "name": "Dev User" },
+    "hosts": [
+      {
+        "id": "localhost",
+        "name": "localhost",
+        "nCPU": 8,
+        "memTotal": 16000000000,
+        "type": "local",
+        "endpoint": "",
+        "available": true,
+        "dockerVersion": "24.0.7",
+        "agentVersion": ""
+      }
+    ]
+  }
+</script>

@@ -17,3 +17,6 @@ coverage.out
 tmp
 .claude/settings.local.json
 .claude/worktrees/
+
+# Storybook
+storybook-static

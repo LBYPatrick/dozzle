@@ -26,7 +26,9 @@
     "typecheck": "vue-tsc --noEmit",
     "docs:dev": "vitepress dev docs --open",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
@@ -90,6 +92,8 @@
     "@iconify/vue": "^5.0.1",
     "@pinia/testing": "^2.0.1",
     "@playwright/test": "^1.61.1",
+    "@storybook/addon-themes": "^10.5.3",
+    "@storybook/vue3-vite": "^10.5.3",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^25.9.5",
     "@vitejs/plugin-vue": "6.0.8",
@@ -104,6 +108,7 @@
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "simple-git-hooks": "^2.13.1",
+    "storybook": "^10.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",

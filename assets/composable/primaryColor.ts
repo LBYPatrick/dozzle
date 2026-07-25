@@ -11,7 +11,10 @@ export type PrimaryColor = {
   swatch: string; // vivid representative shown in the picker
 };
 
-const CONTENT = "oklch(98% 0.01 240)";
+// Dark text on the accent. The accent colors are all mid-to-light (L ~69-80%),
+// so near-white text failed WCAG contrast (worst on the light theme). Dark text
+// clears AA on every swatch in both themes.
+const CONTENT = "oklch(24% 0 0)";
 
 export const PRIMARY_COLORS: PrimaryColor[] = [
   {

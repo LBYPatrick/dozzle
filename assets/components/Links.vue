@@ -1,29 +1,9 @@
 <template>
   <div class="flex items-center justify-end gap-4">
     <slot name="more-items"></slot>
-    <Announcements />
 
-    <router-link
-      :to="{ name: '/notifications' }"
-      :aria-label="$t('title.notifications')"
-      data-testid="notifications"
-      class="btn btn-circle btn-sm"
-    >
-      <mdi:bell class="size-6" />
-    </router-link>
-
-    <CloudPopover />
-
-    <button
-      type="button"
-      @click="openSettings()"
-      :aria-label="$t('title.settings')"
-      data-testid="settings"
-      class="btn btn-circle btn-sm"
-    >
-      <mdi:cog class="size-6" />
-    </button>
-
+    <!-- Notifications, new-version alerts, cloud, and settings moved into the
+         settings popup (sidebar gear / Cmd+K). Only the account menu stays. -->
     <dropdown class="dropdown-end" v-if="config.user">
       <template #trigger>
         <template v-if="config.disableAvatars || !config.user.email">
@@ -58,9 +38,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useSettingsModal } from "@/composable/settingsModal";
-
-const { openSettings } = useSettingsModal();
 const { logoutUrl } = config;
 
 async function logout() {

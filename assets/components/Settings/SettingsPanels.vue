@@ -1,74 +1,38 @@
 <template>
   <div class="@container flex flex-col gap-8">
-    <!-- ABOUT -->
-    <section class="flex flex-col gap-4" v-if="!compactAbout">
+    <!-- ABOUT / UPDATES (was the top-right announcements bell) -->
+    <section class="flex flex-col gap-4">
       <div>
         <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.about") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.about-desc") }}</p>
       </div>
-
-      <div class="border-base-content/15 bg-base-200/40 divide-base-content/10 divide-y rounded-lg border">
-        <div class="flex flex-col gap-2 p-4">
-          <div class="flex flex-wrap items-center gap-3">
-            <span class="text-2xl font-semibold tracking-tight">Dozzle</span>
-            <span class="status-pill status-pill-neutral font-mono">{{ config.version }}</span>
-            <a
-              v-if="hasRelease"
-              :href="latestRelease?.htmlUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="status-pill status-pill-warning hover:bg-warning/15"
-            >
-              <span class="size-1.5 rounded-full bg-current"></span>
-              {{ latestRelease?.name }} available
-            </a>
-          </div>
-          <div class="text-base-content/60 font-mono text-xs">
-            <template v-if="hasRelease && latestRelease?.createdAt">
-              Latest release {{ latestRelease.name }} ·
-              {{ new Date(latestRelease.createdAt).toLocaleDateString(undefined, dateFmt) }}
-            </template>
-            <template v-else>You're running the latest version.</template>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 p-4">
-          <div>
-            <div class="text-sm font-medium">{{ $t("settings.support-title") }}</div>
-            <div class="text-base-content/60 text-xs">{{ $t("settings.help-support") }}</div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <a href="https://github.com/amir20/dozzle" target="_blank" rel="noopener noreferrer" class="btn btn-sm">
-              <mdi:github /> amir20/dozzle
-            </a>
-            <a
-              href="https://github.com/sponsors/amir20"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-primary btn-sm"
-            >
-              <mdi:heart /> Sponsor on GitHub
-            </a>
-            <a
-              href="https://buymeacoffee.com/amirraminfar"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-sm"
-            >
-              <mdi:beer /> Buy me a beer
-            </a>
-          </div>
-        </div>
-      </div>
+      <UpdatesCard />
     </section>
 
-    <!-- CLOUD -->
+    <!-- CLOUD (was the top-right cloud popover) -->
     <section id="settings-cloud" class="flex scroll-mt-4 flex-col gap-4">
       <div>
         <h2 class="text-xl font-semibold tracking-tight">{{ $t("cloud.title") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.cloud-desc") }}</p>
       </div>
       <CloudSettingsCard />
+    </section>
+
+    <!-- NOTIFICATIONS (was the top-right bell link) -->
+    <section class="flex flex-col gap-4">
+      <div>
+        <h2 class="text-xl font-semibold tracking-tight">{{ $t("notifications.title") }}</h2>
+        <p class="text-base-content/60 mt-1 text-sm">{{ $t("notifications.description") }}</p>
+      </div>
+      <button
+        type="button"
+        class="border-base-content/15 bg-base-200/40 hover:border-base-content/30 flex items-center gap-3 rounded-lg border p-4 text-left transition-colors"
+        @click="openNotifications"
+      >
+        <mdi:bell-outline class="text-base-content/60 size-6 shrink-0" />
+        <span class="text-base-content/80 flex-1 text-sm font-medium">{{ $t("settings.open-notifications") }}</span>
+        <mdi:chevron-right class="text-base-content/40 size-5 shrink-0" />
+      </button>
     </section>
 
     <!-- DISPLAY -->
@@ -254,16 +218,17 @@ import {
 } from "@/stores/settings";
 
 import { availableLocales, i18n } from "@/modules/i18n";
-
-// In the popup the version/support block is redundant with the app chrome, so
-// it can be hidden while the route page keeps it.
-const { compactAbout = false } = defineProps<{ compactAbout?: boolean }>();
+import { useSettingsModal } from "@/composable/settingsModal";
 
 const { t } = useI18n();
 
-const { latestRelease, hasRelease } = useAnnouncements();
-
-const dateFmt: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+// Notifications is still a full page; the popup section just links to it.
+const router = useRouter();
+const { closeSettings } = useSettingsModal();
+function openNotifications() {
+  closeSettings();
+  router.push({ name: "/notifications" });
+}
 
 const now = new Date();
 const hoursAgo = (hours: number) => {

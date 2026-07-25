@@ -13,11 +13,11 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 38
-- **Files changed:** 106
-- **Lines:** +4458 / -643 (net +3815)
+- **Commits ahead:** 39
+- **Files changed:** 109
+- **Lines:** +4609 / -1204 (net +3405)
 
-Roughly split: frontend Vue/TS UI (~86 files), locales (16 files, i18n parity),
+Roughly split: frontend Vue/TS UI (~88 files), locales (16 files, i18n parity),
 Go backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
 `Makefile`, and regenerated e2e visual snapshots (4 PNGs).
 
@@ -95,8 +95,15 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   lingering `/settings` / `/settings/cloud` URL or bookmark (cancelling in-app
   navigations, redirecting a cold load to the dashboard). Cloud CTAs deep-link to
   the popup's Cloud section via a section target in `useSettingsModal`.
-- Settings sections live in a shared `SettingsPanels` component (used by the
-  popup with `compact-about`).
+- Settings sections live in a shared `SettingsPanels` component. The top-right
+  header bar (home, notifications, cloud-search) is stripped to just the account
+  menu: the settings gear, notifications bell, new-version announcements bell, and
+  cloud popover all moved into the popup. New-version alerts, the version, and the
+  support links are redesigned into the popup's About section via a new
+  `Settings/UpdatesCard.vue`. Cloud stays in the Cloud section; notifications
+  becomes a section linking to the page. The mobile menu gains a settings gear,
+  and the cloud OAuth-return plus WelcomeModal handling moved to the default
+  layout. `CloudPopover.vue` and `Announcements.vue` deleted.
 - **Visual / JSON toggle:** JSON view uses a lazily-loaded CodeMirror editor with
   an Apply action and live validity feedback. Segmented control toggles the view.
 - **Export** settings to clipboard as JSON; **import** from pasted JSON or a URL

@@ -71,6 +71,7 @@
     </Suspense>
   </SideDrawer>
   <ToastModal />
+  <WelcomeModal ref="welcomeModal" />
 </template>
 
 <script lang="ts" setup>
@@ -132,6 +133,23 @@ function onResized({ panes }: { panes: { size: number }[] }) {
     menuWidth.value = Math.min(panes[0].size, 50);
   }
 }
+
+// Cloud OAuth linking redirects back here with #cloudLinked. Refresh the
+// now-linked config and show the welcome modal once. Moved off CloudPopover,
+// which was removed from the top bar.
+import { useCloudConfig } from "@/composable/cloudConfig";
+const { fetchCloudConfig } = useCloudConfig();
+const welcomeModal = ref<{ open: () => void }>();
+const cloudWelcomeShown = useProfileStorage("cloudWelcomeShown", false);
+onMounted(async () => {
+  if (window.location.hash !== "#cloudLinked") return;
+  await fetchCloudConfig();
+  if (!cloudWelcomeShown.value) {
+    cloudWelcomeShown.value = true;
+    nextTick(() => welcomeModal.value?.open());
+  }
+  history.replaceState(history.state, "", window.location.pathname + window.location.search);
+});
 </script>
 
 <style scoped>

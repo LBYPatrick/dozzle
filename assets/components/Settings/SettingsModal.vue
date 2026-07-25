@@ -60,7 +60,7 @@
     <!-- Body -->
     <div class="min-h-0 flex-1 overflow-hidden">
       <div ref="visualScroll" v-show="view === 'visual'" class="h-full overflow-y-auto p-4 md:p-6">
-        <SettingsPanels compact-about />
+        <SettingsPanels />
       </div>
 
       <div v-show="view === 'json'" class="flex h-full flex-col">

@@ -218,6 +218,8 @@ settings:
   cloud-desc: Stream logs to Dozzle Cloud for AI-powered investigations and search across instances.
   support-title: Support Dozzle
   support-help: Donations help keep Dozzle free and maintained. Thank you 🙏
+  whats-new: What's new
+  open-notifications: Manage notifications
   display: Display
   locale: Override language
   small-scrollbars: Use smaller scrollbars

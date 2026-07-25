@@ -10,6 +10,17 @@
           <a class="btn btn-circle flex" @click="$emit('search')" :title="$t('tooltip.search')">
             <mdi:magnify class="size-5" />
           </a>
+          <!-- Settings lives in the sidebar on desktop, which is hidden here, so
+               keep an entry to the popup on mobile. -->
+          <button
+            type="button"
+            class="btn btn-circle"
+            :title="$t('button.settings')"
+            :aria-label="$t('button.settings')"
+            @click="openSettings()"
+          >
+            <mdi:cog-outline class="size-5" />
+          </button>
           <label class="btn btn-circle swap swap-rotate" data-testid="hamburger">
             <input type="checkbox" v-model="show" />
             <mdi:close class="swap-on" />
@@ -29,7 +40,9 @@
 
 <script lang="ts" setup>
 import Logo from "@/logo.svg";
+import { useSettingsModal } from "@/composable/settingsModal";
 const route = useRoute();
+const { openSettings } = useSettingsModal();
 
 const show = ref(false);
 watch(route, () => {

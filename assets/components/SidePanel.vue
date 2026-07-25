@@ -15,6 +15,7 @@
         class="btn btn-ghost btn-sm btn-square group/gear mt-1 shrink-0"
         :title="$t('button.settings')"
         :aria-label="$t('button.settings')"
+        data-testid="settings"
         @click="openSettings()"
       >
         <mdi:cog-outline class="size-5 transition-transform duration-500 group-hover/gear:rotate-90" />

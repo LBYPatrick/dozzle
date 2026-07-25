@@ -13,8 +13,10 @@ test("has dashboard text", async ({ page }) => {
 });
 
 test("click on settings button", async ({ page }) => {
+  // Settings is now an in-place popup (no /settings route). The compact popup
+  // hides the About heading, so assert the Display section instead.
   await page.getByTestId("settings").click();
-  await expect(page.getByRole("heading", { name: "About" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Display" })).toBeVisible();
 });
 
 test("shortcut for fuzzy search", async ({ page }) => {

@@ -63,7 +63,7 @@
     </section>
 
     <!-- CLOUD -->
-    <section class="flex flex-col gap-4">
+    <section id="settings-cloud" class="flex scroll-mt-4 flex-col gap-4">
       <div>
         <h2 class="text-xl font-semibold tracking-tight">{{ $t("cloud.title") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.cloud-desc") }}</p>

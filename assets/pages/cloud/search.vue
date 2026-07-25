@@ -130,9 +130,9 @@
               cloudConfig?.linked ? $t("cloud-search.enable-streaming-to-search") : $t("cloud-search.connect-to-enable")
             }}
           </p>
-          <RouterLink to="/settings/cloud" class="btn btn-primary btn-sm mt-4">
+          <button type="button" class="btn btn-primary btn-sm mt-4" @click="openSettings('visual', 'cloud')">
             {{ $t("cloud-search.cta-settings") }}
-          </RouterLink>
+          </button>
         </div>
       </div>
     </section>
@@ -143,8 +143,10 @@
 import { useCloudConfig } from "@/composable/cloudConfig";
 import { useCloudLogSearch, type CloudLogHit } from "@/composable/cloudLogSearch";
 import CloudLogDetails from "@/components/LogViewer/CloudLogDetails.vue";
+import { useSettingsModal } from "@/composable/settingsModal";
 
 const route = useRoute();
+const { openSettings } = useSettingsModal();
 
 function readQ(q: unknown): string {
   return typeof q === "string" ? q : "";

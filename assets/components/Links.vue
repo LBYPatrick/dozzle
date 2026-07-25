@@ -14,14 +14,15 @@
 
     <CloudPopover />
 
-    <router-link
-      :to="{ name: '/settings' }"
+    <button
+      type="button"
+      @click="openSettings()"
       :aria-label="$t('title.settings')"
       data-testid="settings"
       class="btn btn-circle btn-sm"
     >
       <mdi:cog class="size-6" />
-    </router-link>
+    </button>
 
     <dropdown class="dropdown-end" v-if="config.user">
       <template #trigger>
@@ -57,6 +58,9 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useSettingsModal } from "@/composable/settingsModal";
+
+const { openSettings } = useSettingsModal();
 const { logoutUrl } = config;
 
 async function logout() {

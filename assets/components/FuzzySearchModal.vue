@@ -133,15 +133,15 @@
               </template>
               <template v-else-if="cloudConfig?.linked && !cloudConfig.streamLogs">
                 <mdi:cloud-off-outline class="size-3" />
-                <RouterLink to="/settings/cloud" class="link link-hover" @click.stop>
+                <button type="button" class="link link-hover" @click.stop="openCloudSettings">
                   {{ $t("cloud-search.enable-streaming-to-search") }}
-                </RouterLink>
+                </button>
               </template>
               <template v-else>
                 <mdi:cloud-off-outline class="size-3" />
-                <RouterLink to="/settings/cloud" class="link link-hover" @click.stop>
+                <button type="button" class="link link-hover" @click.stop="openCloudSettings">
                   {{ $t("cloud-search.connect-to-enable") }}
-                </RouterLink>
+                </button>
               </template>
             </span>
           </div>
@@ -170,15 +170,15 @@
       </span>
       <span v-else-if="cloudConfig?.linked" class="ml-auto flex items-center gap-1.5">
         <mdi:cloud-off-outline class="size-3.5" />
-        <RouterLink to="/settings/cloud" class="link link-hover" @click.stop>
+        <button type="button" class="link link-hover" @click.stop="openCloudSettings">
           {{ $t("cloud-search.enable-streaming-to-search") }}
-        </RouterLink>
+        </button>
       </span>
       <span v-else class="ml-auto flex items-center gap-1.5">
         <mdi:cloud-off-outline class="size-3.5" />
-        <RouterLink to="/settings/cloud" class="link link-hover" @click.stop>
+        <button type="button" class="link link-hover" @click.stop="openCloudSettings">
           {{ $t("cloud-search.connect-to-enable") }}
-        </RouterLink>
+        </button>
       </span>
     </div>
   </div>
@@ -191,8 +191,18 @@ import { type FuseResult } from "fuse.js";
 import { useCloudConfig } from "@/composable/cloudConfig";
 import { useCloudLogSearch } from "@/composable/cloudLogSearch";
 import { useCommands, type Command } from "@/composable/commands";
+import { useSettingsModal } from "@/composable/settingsModal";
 
 const close = defineEmit();
+
+const { openSettings } = useSettingsModal();
+
+// Close the palette first, then open the settings popup scrolled to the cloud
+// section (replaces the old /settings/cloud route link).
+function openCloudSettings() {
+  close();
+  openSettings("visual", "cloud");
+}
 
 const router = useRouter();
 const route = useRoute();

@@ -59,7 +59,7 @@
 
     <!-- Body -->
     <div class="min-h-0 flex-1 overflow-hidden">
-      <div v-show="view === 'visual'" class="h-full overflow-y-auto p-4 md:p-6">
+      <div ref="visualScroll" v-show="view === 'visual'" class="h-full overflow-y-auto p-4 md:p-6">
         <SettingsPanels compact-about />
       </div>
 
@@ -90,9 +90,18 @@ import { useSettingsModal } from "@/composable/settingsModal";
 import { serializeSettings, importSettingsJson } from "@/stores/settings";
 
 const { t } = useI18n();
-const { view } = useSettingsModal();
+const { view, section } = useSettingsModal();
 const { copy, isSupported } = useClipboard({ legacy: true });
 const { showToast } = useToast();
+
+// The modal is v-if-mounted fresh on each open, so scroll the requested section
+// (e.g. a "cloud settings" deep link) into view once the panels have rendered.
+const visualScroll = useTemplateRef<HTMLElement>("visualScroll");
+onMounted(async () => {
+  if (!section.value) return;
+  await nextTick();
+  visualScroll.value?.querySelector(`#settings-${section.value}`)?.scrollIntoView({ block: "start" });
+});
 
 const jsonText = ref(serializeSettings());
 const showImport = ref(false);

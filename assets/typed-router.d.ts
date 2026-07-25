@@ -129,13 +129,6 @@ declare module 'vue-router/auto-routes' {
       { name: ParamValue<false> },
       | never
     >,
-    '/settings': RouteRecordInfo<
-      '/settings',
-      '/settings',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/show': RouteRecordInfo<
       '/show',
       '/show',
@@ -275,14 +268,6 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | 'name'
-    }
-    'assets/pages/settings.vue': {
-      routes:
-        | '/settings'
-      views:
-        | never
-      pathParamNames:
-        | never
     }
     'assets/pages/show.vue': {
       routes:

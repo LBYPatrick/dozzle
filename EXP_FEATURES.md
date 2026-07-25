@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 37
-- **Files changed:** 102
-- **Lines:** +4455 / -882 (net +3573)
+- **Commits ahead:** 38
+- **Files changed:** 106
+- **Lines:** +4458 / -643 (net +3815)
 
 Roughly split: frontend Vue/TS UI (~86 files), locales (16 files, i18n parity),
 Go backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
@@ -89,10 +89,14 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 
 ## Settings popup, JSON/visual editor, import/export
 
-- The `/settings` route flow is replaced by a fullscreen in-place popup (dim
-  overlay + glass card). Settings sections extracted into a shared
-  `SettingsPanels` component reused by both the popup and the `/settings` route
-  (so `pages/settings.vue` shrank from ~311 lines to a thin wrapper).
+- The `/settings` route is **removed entirely** — settings is now only a
+  fullscreen in-place popup (dim overlay + glass card). The header gear, sidebar
+  gear, and command palette all open it. A router guard opens the popup for any
+  lingering `/settings` / `/settings/cloud` URL or bookmark (cancelling in-app
+  navigations, redirecting a cold load to the dashboard). Cloud CTAs deep-link to
+  the popup's Cloud section via a section target in `useSettingsModal`.
+- Settings sections live in a shared `SettingsPanels` component (used by the
+  popup with `compact-about`).
 - **Visual / JSON toggle:** JSON view uses a lazily-loaded CodeMirror editor with
   an Apply action and live validity feedback. Segmented control toggles the view.
 - **Export** settings to clipboard as JSON; **import** from pasted JSON or a URL

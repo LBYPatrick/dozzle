@@ -74,7 +74,7 @@ const { openSettings } = useSettingsModal();
   content: "";
   position: absolute;
   inset-block: 15%;
-  inset-inline-start: -0.35rem;
+  inset-inline-start: -0.25rem;
   width: 3px;
   border-radius: 9999px;
   background: var(--color-primary);

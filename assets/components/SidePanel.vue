@@ -29,8 +29,10 @@
     <SideMenu class="flex-1" :hide-title="!hasInlineSearch" />
 
     <!-- Sits at the sidebar foot, roughly where the carousel title shows on the
-         dashboard. The collapse toggle is lifted above it (see default.vue). -->
-    <CloudSearchInline v-if="!hasInlineSearch" class="shrink-0" />
+         dashboard. The collapse toggle is lifted above it (see default.vue).
+         Explicitly gated on !collapseNav so it can never linger (the fixed aside
+         doesn't clip overflow) when the sidebar collapses to zero width. -->
+    <CloudSearchInline v-if="!hasInlineSearch && !collapseNav" class="min-w-0 shrink-0" />
   </aside>
 </template>
 
@@ -38,6 +40,7 @@
 import Logo from "@/logo.svg";
 import { hasInlineSearch } from "@/composable/inlineSearch";
 import { useSettingsModal } from "@/composable/settingsModal";
+import { collapseNav } from "@/stores/settings";
 
 const { hostname } = config;
 const { openSettings } = useSettingsModal();

@@ -1,5 +1,12 @@
 <template>
-  <div class="relative flex w-full items-start gap-x-2 group-[.compact]:items-stretch">
+  <!-- --log-line is the row's first-line box height. Every leading element (the
+       level dot, the std/host/container tags, the timestamp) sizes itself to it
+       and centres its content, so they all land on the same horizontal line as
+       the message text instead of each sitting at its own offset. It is an em,
+       so it tracks the small/medium/large log size setting. -->
+  <div
+    class="relative flex w-full items-start gap-x-2 leading-[1.45] [--log-line:1.45em] group-[.compact]:items-stretch"
+  >
     <LogActions :logEntry :container />
 
     <LogStd :std="logEntry.std" class="shrink-0 select-none" v-if="showStd" />

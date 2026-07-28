@@ -24,21 +24,18 @@
 
     <small class="text-base-content/70 -mt-2 truncate text-sm font-light" v-if="hostname">{{ hostname }}</small>
 
-    <!-- Drop the carousel's "Hosts and Containers" title when the search bar
-         takes the bottom slot, so the sidebar foot isn't cluttered. -->
-    <SideMenu class="flex-1" :hide-title="!hasInlineSearch" />
+    <!-- Search sits at the head of the pane, directly under the identity and
+         above the navigation it searches. Gated on !collapseNav so it can never
+         linger when the sidebar collapses to zero width — the fixed aside does
+         not clip its own overflow. -->
+    <CloudSearchInline v-if="!collapseNav" class="min-w-0 shrink-0" />
 
-    <!-- Sits at the sidebar foot, roughly where the carousel title shows on the
-         dashboard. The collapse toggle is lifted above it (see default.vue).
-         Explicitly gated on !collapseNav so it can never linger (the fixed aside
-         doesn't clip overflow) when the sidebar collapses to zero width. -->
-    <CloudSearchInline v-if="!hasInlineSearch && !collapseNav" class="min-w-0 shrink-0" />
+    <SideMenu class="flex-1" />
   </aside>
 </template>
 
 <script lang="ts" setup>
 import Logo from "@/logo.svg";
-import { hasInlineSearch } from "@/composable/inlineSearch";
 import { useSettingsModal } from "@/composable/settingsModal";
 import { collapseNav } from "@/stores/settings";
 
@@ -50,23 +47,15 @@ const { openSettings } = useSettingsModal();
 @reference "@/main.css";
 
 /* Sidebar interaction polish, applied to every menu the carousel renders.
-   Rows lift slightly and reveal an accent bar on hover/active; group summaries
-   animate their disclosure chevron. Kept here (not per-menu) so all menus share
-   one source of truth. */
+   Rows tint on hover and reveal an accent bar on the active route; group
+   summaries animate their disclosure chevron. Kept here (not per-menu) so all
+   menus share one source of truth. Hover does not shift the row sideways: with
+   a dense outline that reads as the list jittering under the pointer. */
 :deep([data-testid="side-menu"] .menu :where(li > a, li > details > summary)) {
   position: relative;
   transition:
     background-color 150ms ease,
-    color 150ms ease,
-    transform 150ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-:deep([data-testid="side-menu"] .menu :where(li > a, li > details > summary):hover) {
-  transform: translateX(3px);
-}
-
-:deep([data-testid="side-menu"] .menu :where(li > a, li > details > summary):active) {
-  transform: translateX(3px) scale(0.99);
+    color 150ms ease;
 }
 
 /* Accent bar that grows in on the active route. */

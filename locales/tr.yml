@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Günlükleri kopyala
   copy-filtered-logs: Filtrelenmiş günlükleri kopyala
   copying-logs: Günlükler kopyalanıyor...
+  stat-display: İstatistik görünümü
+  stat-summary: Maks. ve ortalama
+  stat-chart: Eğilim grafiği
+  stat-current: Anlık hız
+  stat-cycle: Görünümü değiştirmek için tıklayın
+  stat-columns-resource: "Şu an / Maks. / Kullanılabilir"
+  stat-columns-io-2: "Şu an / Maks."
+  trend-shape: "Grafik biçimi"
+  shape-bars: "Çubuk"
+  shape-line: "Çizgi"
+  shape-area: "Alan"
 action:
   copy-log: Günlüğü kopyala
   copy-link: Kalıcı bağlantıyı kopyala
   see-in-context: Bağlamda gör
   show-details: Detayları göster
   create-alert: Uyarı oluştur
+  more-actions: Diğer eylemler
 label:
   containers: Konteynerlar
   container: Konteyner yok | 1 konteyner | {count} konteyner
@@ -70,6 +82,22 @@ label:
   collapse-all: Hepsini daralt
   collapse-group: Grubu daralt
   expand-all: Hepsini genişlet
+  max: Maks.
+  avg: Ort.
+  started: Başlatıldı
+  finished: Sonlandı
+  live-logs: Canlı
+  cpu-memory: CPU ve bellek
+  network-disk: Ağ ve disk
+  collapse-host: Sunucuyu daralt
+  expand-host: Sunucuyu genişlet
+  net: AĞ
+  disk: DISK
+  not-available: "Yok"
+  now: "Şimdi"
+  avail: "Mevcut"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Konteynerlerde ara (⌘ + k, ⌃k)
   pin-column: Sütun olarak sabitle
@@ -134,6 +162,7 @@ button:
   hide-sidebar: "Kenar çubuğunu gizle"
   collapse-top-bar: Üst çubuğu daralt
   expand-top-bar: Üst çubuğu genişlet
+  clear-input: Temizle
 placeholder:
   search-containers: Konteynerlerde ara (⌘ + k, ⌃k)
   search: Ara
@@ -409,7 +438,7 @@ cloud:
     later: "Bunu daha sonra yapacağım"
 cloud-search:
   containers-section: "Konteynerler"
-  search-logs-for: "\"{query}\" için logları ara"
+  search-logs-for: '"{query}" için logları ara'
   across-containers: "tüm konteynerleriniz arasında indekslenmiş"
   connect-to-enable: "Logları aramak için Dozzle Cloud'a bağlanın"
   enable-streaming-to-search: "Log akışını Cloud'a etkinleştirin"

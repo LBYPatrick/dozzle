@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import MultiContainerStat from "./MultiContainerStat.vue";
 import { Container, type Stat } from "@/models/Container";
+import { ioStatMode, resourceStatMode } from "@/stores/settings";
+import type { Settings } from "@/stores/settings";
 
 const makeStats = (base: number): Stat[] =>
   Array.from({ length: 120 }, (_, i) => ({
@@ -32,14 +34,22 @@ const makeContainer = (id: string, name: string, base: number) =>
 
 const containers = [makeContainer("abc123", "web-1", 30), makeContainer("def456", "worker-1", 55)];
 
+// The display modes live in the settings store rather than in props, so the
+// stories set them before rendering.
+const withModes = (resource: Settings["resourceStatMode"], io: Settings["ioStatMode"]) => (args: unknown) => ({
+  components: { MultiContainerStat },
+  setup() {
+    resourceStatMode.value = resource;
+    ioStatMode.value = io;
+    return { args };
+  },
+  template: `<div class="w-[720px]"><MultiContainerStat v-bind="args" /></div>`,
+});
+
 const meta = {
   title: "LogViewer/MultiContainerStat",
   component: MultiContainerStat,
-  render: (args) => ({
-    components: { MultiContainerStat },
-    setup: () => ({ args }),
-    template: `<div class="w-[720px]"><MultiContainerStat v-bind="args" /></div>`,
-  }),
+  render: withModes("summary", "current"),
 } satisfies Meta<typeof MultiContainerStat>;
 
 export default meta;
@@ -49,4 +59,16 @@ export const TwoContainers: Story = { args: { containers } };
 
 export const SingleContainer: Story = {
   args: { containers: [makeContainer("abc123", "web-1", 40)] },
+};
+
+/** The default: compact max/average for CPU and memory, live I/O rate. */
+export const CompactStats: Story = {
+  render: withModes("summary", "summary"),
+  args: { containers },
+};
+
+/** The trend sparklines, for CPU, memory, network and disk alike. */
+export const TrendCharts: Story = {
+  render: withModes("chart", "chart"),
+  args: { containers },
 };

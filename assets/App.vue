@@ -26,8 +26,11 @@ watchEffect(() => {
 </script>
 <style>
 html.has-custom-scrollbars {
+  /* Both axes: setting only `width` left the horizontal scrollbar without a
+     size of its own, so it rendered inconsistently against the vertical one. */
   ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
     display: content;
   }
 

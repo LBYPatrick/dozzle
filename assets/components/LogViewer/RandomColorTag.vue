@@ -1,7 +1,13 @@
 <template>
-  <div class="tag grid overflow-hidden rounded-sm text-center text-sm text-white">
+  <!-- Sized to the log row's line box, with the label's line-height matching it
+       so the text is optically centred without breaking `truncate` (which needs
+       a block box, not a flex one). -->
+  <div class="tag grid h-[var(--log-line,1.45em)] overflow-hidden rounded-sm text-center text-sm text-white">
     <div class="random-color col-start-1 row-start-1 brightness-75"></div>
-    <div class="col-start-1 row-start-1 truncate px-2 brightness-100" :class="truncateRight ? '[direction:rtl]' : ''">
+    <div
+      class="col-start-1 row-start-1 truncate px-2 leading-[var(--log-line,1.45em)] brightness-100"
+      :class="truncateRight ? '[direction:rtl]' : ''"
+    >
       <slot>{{ value }}</slot>
     </div>
   </div>

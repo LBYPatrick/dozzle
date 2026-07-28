@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Copiar registros
   copy-filtered-logs: Copiar registros filtrados
   copying-logs: Copiando registros...
+  stat-display: Visualización de estadísticas
+  stat-summary: Máx. y promedio
+  stat-chart: Gráfico de tendencia
+  stat-current: Tasa actual
+  stat-cycle: Haz clic para cambiar de forma
+  stat-columns-resource: "Actual / Máx. / Disponible"
+  stat-columns-io-2: "Actual / Máx."
+  trend-shape: "Forma del gráfico"
+  shape-bars: "Barras"
+  shape-line: "Línea"
+  shape-area: "Área"
 action:
   copy-log: Copiar registro
   copy-link: Copiar enlace permanente
   see-in-context: Ver en contexto
   show-details: Mostrar detalles
   create-alert: Crear alerta
+  more-actions: Más acciones
 label:
   containers: Contenedores
   container: No contenedores | 1 contenedor | {count} contenedores
@@ -70,6 +82,22 @@ label:
   collapse-all: Colapsar todo
   collapse-group: Colapsar grupo
   expand-all: Expandir todo
+  max: Máx.
+  avg: Prom.
+  started: Iniciado
+  finished: Finalizado
+  live-logs: En vivo
+  cpu-memory: CPU y memoria
+  network-disk: Red y disco
+  collapse-host: Contraer host
+  expand-host: Expandir host
+  net: RED
+  disk: DISCO
+  not-available: "N/D"
+  now: "Ahora"
+  avail: "Disp."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Buscar contenedores (⌘ + K, CTRL + K)
   pin-column: Anclar como columna
@@ -131,13 +159,14 @@ button:
   hide-sidebar: "Ocultar barra lateral"
   collapse-top-bar: Contraer barra superior
   expand-top-bar: Expandir barra superior
+  clear-input: Borrar
 placeholder:
   search-containers: Buscar contenedores (⌘ + K, CTRL + K)
   search: Buscar
   find-regex: Buscar / RegEx
 cloud-search:
   containers-section: "Contenedores"
-  search-logs-for: "Buscar logs por \"{query}\""
+  search-logs-for: 'Buscar logs por "{query}"'
   across-containers: "indexados en todos tus contenedores"
   connect-to-enable: "Conecta Dozzle Cloud para buscar logs"
   enable-streaming-to-search: "Activa el streaming de logs a Cloud"

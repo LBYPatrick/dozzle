@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Logs kopieren
   copy-filtered-logs: Gefilterte Logs kopieren
   copying-logs: Logs werden kopiert...
+  stat-display: Statistikanzeige
+  stat-summary: "Max. & Durchschnitt"
+  stat-chart: Verlaufsdiagramm
+  stat-current: Aktuelle Rate
+  stat-cycle: Klicken zum Umschalten der Ansicht
+  stat-columns-resource: "Aktuell / Max. / Verfügbar"
+  stat-columns-io-2: "Aktuell / Max."
+  trend-shape: "Diagrammform"
+  shape-bars: "Balken"
+  shape-line: "Linie"
+  shape-area: "Fläche"
 action:
   copy-log: Log kopieren
   copy-link: Permalink kopieren
   see-in-context: Im Kontext anzeigen
   show-details: Details anzeigen
   create-alert: Alarm erstellen
+  more-actions: Weitere Aktionen
 label:
   containers: Container
   container: Keine Container | 1 Container | {count} Container
@@ -70,6 +82,22 @@ label:
   collapse-all: Alle einklappen
   collapse-group: Gruppe einklappen
   expand-all: Alle ausklappen
+  max: Max.
+  avg: Ø
+  started: Gestartet
+  finished: Beendet
+  live-logs: Live
+  cpu-memory: "CPU & Speicher"
+  network-disk: "Netzwerk & Datenträger"
+  collapse-host: Host einklappen
+  expand-host: Host ausklappen
+  net: NETZ
+  disk: DATEN
+  not-available: "K. A."
+  now: "Jetzt"
+  avail: "Verf."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Suche Container (⌘ + k, ⌃k)
   pin-column: Als Spalte anheften
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "Seitenleiste ausblenden"
   collapse-top-bar: Obere Leiste einklappen
   expand-top-bar: Obere Leiste ausklappen
+  clear-input: Leeren
 placeholder:
   search-containers: Suche Container (⌘ + k, ⌃k)
   search: Suche
@@ -405,7 +434,7 @@ cloud:
     later: "Das mache ich später"
 cloud-search:
   containers-section: "Container"
-  search-logs-for: "Logs durchsuchen nach \"{query}\""
+  search-logs-for: 'Logs durchsuchen nach "{query}"'
   across-containers: "indexiert über alle deine Container"
   connect-to-enable: "Dozzle Cloud verbinden, um Logs zu durchsuchen"
   enable-streaming-to-search: "Log-Streaming zur Cloud aktivieren"

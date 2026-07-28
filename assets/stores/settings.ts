@@ -19,6 +19,14 @@ export type Settings = {
   locale: string;
   groupContainers: "always" | "at-least-2" | "never";
   cpuDisplayMode: "utilization" | "cores";
+  // How the log view's top bar renders CPU and memory. "summary" is the compact
+  // max/average readout; "chart" is the trend sparkline.
+  resourceStatMode: "summary" | "chart";
+  // Same choice for the network/disk card, which additionally keeps the live
+  // per-second rate ("current") it has always shown.
+  ioStatMode: "summary" | "current" | "chart";
+  /** How the expanded stat trends are drawn. */
+  trendShape: "bars" | "line" | "area";
   // When true the log view's top bar is collapsed into a small floating
   // CPU/memory widget. Persisted so the choice survives navigation and reload.
   topBarCollapsed: boolean;
@@ -48,6 +56,9 @@ export const DEFAULT_SETTINGS: Settings = {
   locale: "",
   groupContainers: "at-least-2",
   cpuDisplayMode: "utilization",
+  resourceStatMode: "summary",
+  ioStatMode: "current",
+  trendShape: "bars",
   topBarCollapsed: false,
   primaryColor: "",
 };
@@ -80,6 +91,9 @@ export const {
   automaticRedirect,
   groupContainers,
   cpuDisplayMode,
+  resourceStatMode,
+  ioStatMode,
+  trendShape,
   topBarCollapsed,
   primaryColor,
 } = toRefs(settings.value);
@@ -113,6 +127,9 @@ const ALLOWED_VALUES: Partial<Record<keyof Settings, readonly string[]>> = {
   automaticRedirect: ["instant", "delayed", "none"],
   groupContainers: ["always", "at-least-2", "never"],
   cpuDisplayMode: ["utilization", "cores"],
+  resourceStatMode: ["summary", "chart"],
+  ioStatMode: ["summary", "current", "chart"],
+  trendShape: ["bars", "line", "area"],
 };
 
 // Numeric settings clamped to a safe range on import.

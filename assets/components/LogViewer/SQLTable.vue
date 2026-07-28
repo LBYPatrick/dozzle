@@ -26,14 +26,14 @@
     <thead>
       <tr>
         <th v-for="i in 3" :key="i">
-          <div class="bg-base-content/50 h-4 w-20 animate-pulse opacity-50"></div>
+          <div class="bg-base-content/50 h-4 w-20 animate-pulse rounded-full opacity-50"></div>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="i in 9" :key="i">
         <td v-for="j in 3" :key="j">
-          <div class="bg-base-content/50 h-4 w-20 animate-pulse opacity-20"></div>
+          <div class="bg-base-content/50 h-4 w-20 animate-pulse rounded-full opacity-20"></div>
         </td>
       </tr>
     </tbody>

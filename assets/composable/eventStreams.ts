@@ -18,8 +18,7 @@ import { parseMessage, loadBetween, mergeLoadedLogs } from "@/composable/loadBet
 import { useLogLoader } from "@/composable/logLoader";
 import { loggingContextKey } from "@/composable/logContext";
 import { parseEventData } from "@/utils/events";
-
-const { isSearching, debouncedSearchFilter, inverseFilter } = useSearchFilter();
+import type { SearchStatus } from "@/composable/search";
 
 export function useContainerStream(container: Ref<Container>): LogStreamSource {
   const url = computed(() => `/api/hosts/${container.value.host}/containers/${container.value.id}/logs/stream`);
@@ -67,23 +66,19 @@ export function useOwnerStream(owner: Ref<{ label: string }>): LogStreamSource {
   return useLogStream(computed(() => `/api/labels/${labels.value}/logs/stream`));
 }
 
-export type SearchStatus = {
-  active: boolean;
-  done: boolean;
-  matches: number;
-  scannedTo?: string;
-  reason?: "capped" | "exhausted";
-};
-
-// The active log stream publishes its search status here so the container bar's
-// second row can show it on demand, instead of a strip over the logs.
-export const activeSearchStatus = ref<SearchStatus>({ active: false, done: false, matches: 0 });
-
 export type LogStreamSource = ReturnType<typeof useLogStream>;
 
 function useLogStream(url: Ref<string>, container?: Ref<Container>) {
+  // Resolved here rather than at module scope: search state is per log view, so
+  // it has to be injected from within the component that owns the stream.
+  const { isSearching, debouncedSearchFilter, inverseFilter } = useSearchFilter();
+
   const messages: ShallowRef<LogEntry<LogMessage>[]> = shallowRef([]);
-  const buffer: ShallowRef<LogEntry<LogMessage>[]> = shallowRef([]);
+  // Plain array, not a ref: nothing watches the buffer, and the old
+  // `buffer.value = [...buffer.value, entry]` copied the whole thing once per
+  // incoming line — quadratic against the burst of backfill that arrives every
+  // time the stream reconnects (a stdout/stderr toggle, a level change).
+  let buffer: LogEntry<LogMessage>[] = [];
   const opened = ref(false);
   const loading = ref(true);
   const error = ref(false);
@@ -141,33 +136,33 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
   }
 
   function flushNow() {
-    if (messages.value.length + buffer.value.length > config.maxLogs) {
+    if (messages.value.length + buffer.length > config.maxLogs) {
       if (scrollingPaused.value === true) {
         if (messages.value.at(-1) instanceof SkippedLogsEntry) {
           const lastEvent = messages.value.at(-1) as SkippedLogsEntry;
-          const lastItem = buffer.value.at(-1) as LogEntry<string | JSONObject>;
-          lastEvent.addSkippedEntries(buffer.value.length, lastItem);
+          const lastItem = buffer.at(-1) as LogEntry<string | JSONObject>;
+          lastEvent.addSkippedEntries(buffer.length, lastItem);
         } else {
-          const firstItem = buffer.value.at(0) as LogEntry<string | JSONObject>;
-          const lastItem = buffer.value.at(-1) as LogEntry<string | JSONObject>;
+          const firstItem = buffer.at(0) as LogEntry<string | JSONObject>;
+          const lastItem = buffer.at(-1) as LogEntry<string | JSONObject>;
           messages.value = [
             ...messages.value,
-            new SkippedLogsEntry(new Date(), buffer.value.length, firstItem, lastItem, loadSkippedLogs),
+            new SkippedLogsEntry(new Date(), buffer.length, firstItem, lastItem, loadSkippedLogs),
           ];
         }
-        buffer.value = [];
+        buffer = [];
       } else {
-        if (buffer.value.length > config.maxLogs / 2) {
-          messages.value = buffer.value.slice(-config.maxLogs / 2);
+        if (buffer.length > config.maxLogs / 2) {
+          messages.value = buffer.slice(-config.maxLogs / 2);
         } else {
-          messages.value = [...messages.value, ...buffer.value].slice(-config.maxLogs);
+          messages.value = [...messages.value, ...buffer].slice(-config.maxLogs);
         }
-        buffer.value = [];
+        buffer = [];
       }
     } else {
       if (initial) {
         // sort the buffer the very first time because of multiple logs in parallel
-        buffer.value.sort((a, b) => a.date.getTime() - b.date.getTime());
+        buffer.sort((a, b) => a.date.getTime() - b.date.getTime());
 
         if (container || containers.value.length > 0) {
           const loadMoreItem = new LoadMoreLogEntry(new Date(), loadOlderLogs);
@@ -175,8 +170,8 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
         }
         initial = false;
       }
-      messages.value = [...messages.value, ...buffer.value];
-      buffer.value = [];
+      messages.value = [...messages.value, ...buffer];
+      buffer = [];
     }
   }
   const flushBuffer = debounce(flushNow, 250, { maxWait: 1000 });
@@ -192,7 +187,7 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
   function clearMessages() {
     flushBuffer.cancel();
     messages.value = [];
-    buffer.value = [];
+    buffer = [];
   }
 
   const urlWithParams = computed(() => withBase(`${url.value}?${params.value.toString()}`));
@@ -219,7 +214,7 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
         event.name,
       );
 
-      buffer.value = [...buffer.value, containerEvent];
+      buffer.push(containerEvent);
       flushBuffer();
       flushBuffer.flush();
     });
@@ -248,7 +243,7 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
 
     es.onmessage = (e) => {
       if (e.data) {
-        buffer.value = [...buffer.value, parseMessage(e.data)];
+        buffer.push(parseMessage(e.data));
         flushBuffer();
       }
     };

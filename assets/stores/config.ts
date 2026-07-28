@@ -30,8 +30,9 @@ export interface Profile {
   pinned?: Set<string>;
   visibleKeys?: Map<string, Map<string[], boolean>>;
   releaseSeen?: string;
+  // Collapsed state for every sidebar outline node, keyed by the prefixed
+  // helpers in useCollapsedSections.
   collapsedGroups?: Set<string>;
-  collapsedHostGroups?: Set<string>;
   cloudWelcomeShown?: boolean;
 }
 

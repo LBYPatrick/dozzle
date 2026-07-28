@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Salin log
   copy-filtered-logs: Salin log terfilter
   copying-logs: Menyalin log...
+  stat-display: Tampilan statistik
+  stat-summary: "Maks & rata-rata"
+  stat-chart: Grafik tren
+  stat-current: Laju saat ini
+  stat-cycle: Klik untuk mengubah bentuk
+  stat-columns-resource: "Saat ini / Maks / Tersedia"
+  stat-columns-io-2: "Saat ini / Maks"
+  trend-shape: "Bentuk grafik"
+  shape-bars: "Batang"
+  shape-line: "Garis"
+  shape-area: "Area"
 action:
   copy-log: Salin log
   copy-link: Salin permalink
   see-in-context: Lihat dalam konteks
   show-details: Tampilkan detail
   create-alert: Buat peringatan
+  more-actions: Tindakan lainnya
 
 label:
   containers: Kontainer
@@ -71,6 +83,22 @@ label:
   collapse-all: Tutup semua
   collapse-group: Tutup grup
   expand-all: Buka semua
+  max: Maks
+  avg: Rata-rata
+  started: Dimulai
+  finished: Selesai
+  live-logs: Langsung
+  cpu-memory: "CPU & memori"
+  network-disk: "Jaringan & disk"
+  collapse-host: Ciutkan host
+  expand-host: Bentangkan host
+  net: JARINGAN
+  disk: DISK
+  not-available: "T/A"
+  now: "Kini"
+  avail: "Tersedia"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 
 tooltip:
   search: Cari kontainer (⌘ + k, ⌃k)
@@ -137,6 +165,7 @@ button:
   hide-sidebar: "Sembunyikan bilah sisi"
   collapse-top-bar: Ciutkan bilah atas
   expand-top-bar: Perluas bilah atas
+  clear-input: Hapus
 
 placeholder:
   search-containers: Cari kontainer (⌘ + k, ⌃k)
@@ -417,7 +446,7 @@ cloud:
     later: "Nanti saja"
 cloud-search:
   containers-section: "Kontainer"
-  search-logs-for: "Cari log untuk \"{query}\""
+  search-logs-for: 'Cari log untuk "{query}"'
   across-containers: "diindeks di semua kontainer Anda"
   connect-to-enable: "Hubungkan Dozzle Cloud untuk mencari log"
   enable-streaming-to-search: "Aktifkan streaming log ke Cloud"

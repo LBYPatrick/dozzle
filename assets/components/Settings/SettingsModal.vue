@@ -2,9 +2,7 @@
   <!-- Inner card for the settings popup. Presented inside the shared dialog
        overlay (see default.vue). Glass is intentional: this is a container
        background, the one place blur is allowed. -->
-  <div
-    class="bg-base-200/80 border-base-content/15 flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border shadow-2xl backdrop-blur-2xl backdrop-saturate-150"
-  >
+  <div class="glass-surface flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl">
     <!-- Header -->
     <div class="border-base-content/10 flex flex-wrap items-center gap-2 border-b px-4 py-3">
       <!-- Secondary screen: back to the main list -->
@@ -98,7 +96,10 @@
 
       <!-- Secondary screen slides in over the main list -->
       <transition name="subview">
-        <div v-if="subview" class="bg-base-200/95 absolute inset-0 overflow-y-auto p-4 backdrop-blur-2xl md:p-6">
+        <div
+          v-if="subview"
+          class="bg-base-200/85 absolute inset-0 overflow-y-auto p-4 backdrop-blur-2xl backdrop-saturate-150 md:p-6"
+        >
           <WhatsNewPanel v-if="subview === 'whats-new'" />
           <NotificationsPanel v-else-if="subview === 'notifications'" />
         </div>

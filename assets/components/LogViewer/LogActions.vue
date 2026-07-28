@@ -4,7 +4,8 @@
     :class="shouldShowBelow ? 'dropdown-right' : 'dropdown-right dropdown-end'"
     v-show="container"
     ref="dropdownRef"
-    @mouseenter="checkDropdownPosition"
+    @mouseenter="openMenu"
+    @focusin="openMenu"
   >
     <router-link
       v-if="isFiltered"
@@ -26,7 +27,12 @@
     >
       <ion:ellipsis-vertical />
     </button>
+    <!-- Built on first hover/focus. Every visible log line renders one of these,
+         so eagerly materializing the menu (five rows, two resolved routes) for
+         each of them is what made rebuilding the list — on a stdout/stderr
+         toggle, a level change, a search — lock the page up. -->
     <ul
+      v-if="menuMounted"
       tabindex="0"
       class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 text-sm shadow-sm"
       @click="hideMenu"
@@ -187,11 +193,13 @@ function hideMenu(e: MouseEvent) {
 
 const dropdownRef = useTemplateRef<HTMLDivElement>("dropdownRef");
 const shouldShowBelow = ref(false);
+const menuMounted = ref(false);
 
-function checkDropdownPosition() {
+function openMenu() {
   if (!dropdownRef.value) return;
 
   const rect = dropdownRef.value.getBoundingClientRect();
   shouldShowBelow.value = rect.top < 150;
+  menuMounted.value = true;
 }
 </script>

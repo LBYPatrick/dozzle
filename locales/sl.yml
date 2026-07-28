@@ -25,12 +25,24 @@ toolbar:
   update-done: Zabojnik uspešno posodobljen
   update-up-to-date: Že posodobljen
   show-hostname: Prikaži ime gostitelja
+  stat-display: Prikaz statistike
+  stat-summary: Najv. in povprečje
+  stat-chart: Graf trenda
+  stat-current: Trenutna hitrost
+  stat-cycle: Kliknite za spremembo oblike
+  stat-columns-resource: "Trenutno / Najv. / Na voljo"
+  stat-columns-io-2: "Trenutno / Najv."
+  trend-shape: "Oblika grafa"
+  shape-bars: "Stolpci"
+  shape-line: "Črta"
+  shape-area: "Površina"
 action:
   copy-log: Kopiraj dnevnik
   copy-link: Kopiraj trajno povezavo
   see-in-context: Glej v kontekstu
   show-details: Prikaži podrobnosti
   create-alert: Ustvari opozorilo
+  more-actions: Več dejanj
 label:
   containers: Zabojniki
   host-count: Ni Gostiteljev | 1 Gostitelj | {count} Gostiteljev
@@ -70,6 +82,22 @@ label:
     capped: "{count} zadetkov · iskano nazaj do {time}"
     exhausted: Preiskani vsi dnevniki · {count} zadetkov
     empty: Ni zadetkov · preiskani vsi dnevniki
+  max: Najv.
+  avg: Povpr.
+  started: Zagnano
+  finished: Končano
+  live-logs: V živo
+  cpu-memory: CPE in pomnilnik
+  network-disk: Omrežje in disk
+  collapse-host: Strni gostitelja
+  expand-host: Razširi gostitelja
+  net: OMREŽJE
+  disk: DISK
+  not-available: "Ni podatka"
+  now: "Zdaj"
+  avail: "Na voljo"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Iskanje zabojnikov (⌘ + k, ⌃k)
   pin-column: Pripni kot stolpec
@@ -133,6 +161,7 @@ button:
   expand-top-bar: Razširi zgornjo vrstico
   login: Prijava
   settings: Nastavitve
+  clear-input: Počisti
 placeholder:
   search-containers: Iskanje zabojnikov (⌘ + k, ⌃k)
   search: Iskanje
@@ -411,7 +440,7 @@ cloud:
     later: "To bom naredil pozneje"
 cloud-search:
   containers-section: "Vsebniki"
-  search-logs-for: "Iskanje dnevnikov za \"{query}\""
+  search-logs-for: 'Iskanje dnevnikov za "{query}"'
   across-containers: "indeksirano po vseh vaših vsebnikih"
   connect-to-enable: "Povežite Dozzle Cloud za iskanje po dnevnikih"
   enable-streaming-to-search: "Omogoči pretakanje dnevnikov v Cloud"

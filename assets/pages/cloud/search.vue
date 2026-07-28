@@ -33,90 +33,57 @@
       </div>
 
       <!-- Results table — scrolls internally so the page itself never scrolls. -->
-      <div
-        v-if="hits.length"
-        ref="scrollEl"
-        class="rounded-box border-base-content/10 min-h-0 flex-1 overflow-auto border"
-      >
-        <table class="table-md md:table-lg table-pin-rows table w-full table-fixed">
-          <thead>
-            <tr>
-              <th
-                v-for="col in columns"
-                :key="col.key"
-                class="bg-base-200 text-base-content/60 border-base-content/10 border-b text-xs font-medium tracking-wider uppercase"
-                :class="col.thClass"
-                :aria-sort="ariaSort(col.key)"
-              >
-                <button
-                  type="button"
-                  class="group hover:text-base-content inline-flex items-center gap-1 transition-colors"
-                  @click="toggleSort(col.key)"
-                >
-                  {{ $t(col.label) }}
-                  <mdi:chevron-up v-if="sortKey === col.key && sortDir === 'asc'" class="text-primary size-3.5" />
-                  <mdi:chevron-down v-else-if="sortKey === col.key" class="text-primary size-3.5" />
-                  <mdi:unfold-more-horizontal
-                    v-else
-                    class="size-3.5 opacity-0 transition-opacity group-hover:opacity-40"
-                  />
-                </button>
-              </th>
-              <!-- trailing chevron column (not sortable) -->
-              <th class="bg-base-200 border-base-content/10 w-10 border-b"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(hit, i) in sortedHits"
-              :key="`${hit.containerId}-${hit.ts}-${hit.logId ?? 0}-${i}`"
-              class="group hover:bg-primary/5 cursor-pointer transition-colors"
-              @click="openDetails(hit)"
-            >
-              <td class="text-base-content/70 font-mono text-xs whitespace-nowrap tabular-nums">
-                {{ formatTs(hit.ts) }}
-              </td>
-              <td>
-                <span
-                  class="inline-flex items-center rounded px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wide uppercase"
-                  :class="levelChipClass(hit.level)"
-                  >{{ hit.level || "info" }}</span
-                >
-              </td>
-              <td class="font-mono text-xs">
-                <div class="flex items-center gap-2">
-                  <span class="truncate" :class="isLive(hit) ? 'text-base-content/80' : 'text-base-content/50'">
-                    {{ hit.containerName }}
-                  </span>
-                  <span
-                    v-if="!isLive(hit)"
-                    :title="$t('cloud-search.container-removed')"
-                    class="text-base-content/50 bg-base-content/10 shrink-0 rounded px-1.5 py-0.5 text-[0.65rem]"
-                  >
-                    {{ $t("cloud-search.container-removed-pill") }}
-                  </span>
-                </div>
-              </td>
-              <td>
-                <div class="truncate font-mono text-xs" v-html="highlight(hit.message, committedQuery)"></div>
-              </td>
-              <td class="w-10 text-right">
-                <mdi:chevron-right
-                  class="text-base-content/25 group-hover:text-base-content/60 inline size-4 transition-colors"
-                  :aria-label="$t('action.show-details')"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div
-          v-if="cloudSearch.hasMore.value || cloudSearch.loadingMore.value"
-          class="text-base-content/60 flex h-10 items-center justify-center text-xs"
+      <DataTable v-if="hits.length" ref="table" class="min-h-0 flex-1" :columns v-model:sort="sort" fixed tristate>
+        <tr
+          v-for="(hit, i) in sortedHits"
+          :key="`${hit.containerId}-${hit.ts}-${hit.logId ?? 0}-${i}`"
+          class="group hover:bg-primary/5 cursor-pointer transition-colors"
+          @click="openDetails(hit)"
         >
-          <span v-if="cloudSearch.loadingMore.value" class="loading loading-spinner loading-xs"></span>
-        </div>
-      </div>
+          <td class="text-base-content/70 font-mono text-xs whitespace-nowrap tabular-nums">
+            {{ formatTs(hit.ts) }}
+          </td>
+          <td>
+            <span
+              class="inline-flex items-center rounded px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wide uppercase"
+              :class="levelChipClass(hit.level)"
+              >{{ hit.level || "info" }}</span
+            >
+          </td>
+          <td class="font-mono text-xs">
+            <div class="flex items-center gap-2">
+              <span class="truncate" :class="isLive(hit) ? 'text-base-content/80' : 'text-base-content/50'">
+                {{ hit.containerName }}
+              </span>
+              <span
+                v-if="!isLive(hit)"
+                :title="$t('cloud-search.container-removed')"
+                class="text-base-content/50 bg-base-content/10 shrink-0 rounded px-1.5 py-0.5 text-[0.65rem]"
+              >
+                {{ $t("cloud-search.container-removed-pill") }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="truncate font-mono text-xs" v-html="highlight(hit.message, committedQuery)"></div>
+          </td>
+          <td class="w-10 text-right">
+            <mdi:chevron-right
+              class="text-base-content/25 group-hover:text-base-content/60 inline size-4 transition-colors"
+              :aria-label="$t('action.show-details')"
+            />
+          </td>
+        </tr>
+
+        <template #footer>
+          <div
+            v-if="cloudSearch.hasMore.value || cloudSearch.loadingMore.value"
+            class="text-base-content/60 flex h-10 items-center justify-center text-xs"
+          >
+            <span v-if="cloudSearch.loadingMore.value" class="loading loading-spinner loading-xs"></span>
+          </div>
+        </template>
+      </DataTable>
 
       <!-- Empty / cloud-not-available states, centered in the remaining space -->
       <div v-else class="flex min-h-0 flex-1 items-center justify-center">
@@ -144,6 +111,7 @@ import { useCloudConfig } from "@/composable/cloudConfig";
 import { useCloudLogSearch, type CloudLogHit } from "@/composable/cloudLogSearch";
 import CloudLogDetails from "@/components/LogViewer/CloudLogDetails.vue";
 import { useSettingsModal } from "@/composable/settingsModal";
+import type { DataTableColumn, DataTableSort } from "@/components/common/DataTable.vue";
 
 const route = useRoute();
 const { openSettings } = useSettingsModal();
@@ -167,36 +135,20 @@ function isLive(hit: CloudLogHit): boolean {
   return liveIds.value.has(hit.containerId);
 }
 
-// Sortable columns — each header cycles through three states on click:
-// ascending -> descending -> default (no column sort, server order = newest
-// first). A different column always starts fresh at ascending.
+// Sortable columns. DataTable's tristate mode cycles ascending -> descending ->
+// default (no column sort, i.e. the server order, newest first).
 type SortKey = "time" | "level" | "container" | "message";
-const columns: { key: SortKey; label: string; thClass: string }[] = [
-  { key: "time", label: "cloud-search.col-time", thClass: "w-44" },
-  { key: "level", label: "cloud-search.col-level", thClass: "w-24" },
-  { key: "container", label: "cloud-search.col-container", thClass: "w-52" },
-  { key: "message", label: "cloud-search.col-message", thClass: "" },
-];
+const { t } = useI18n();
+const columns = computed<DataTableColumn[]>(() => [
+  { key: "time", label: t("cloud-search.col-time"), class: "w-44" },
+  { key: "level", label: t("cloud-search.col-level"), class: "w-24" },
+  { key: "container", label: t("cloud-search.col-container"), class: "w-52" },
+  { key: "message", label: t("cloud-search.col-message") },
+  // Trailing chevron column: a header cell for the layout, nothing to sort by.
+  { key: "details", label: "", class: "w-10", sortable: false },
+]);
 
-// null key = default order (whatever the server returned, newest first).
-const sortKey = ref<SortKey | null>(null);
-const sortDir = ref<"asc" | "desc">("asc");
-
-function toggleSort(key: SortKey) {
-  if (sortKey.value !== key) {
-    sortKey.value = key;
-    sortDir.value = "asc";
-  } else if (sortDir.value === "asc") {
-    sortDir.value = "desc";
-  } else {
-    sortKey.value = null; // third click resets to the default order
-  }
-}
-
-function ariaSort(key: SortKey): "ascending" | "descending" | "none" {
-  if (sortKey.value !== key) return "none";
-  return sortDir.value === "asc" ? "ascending" : "descending";
-}
+const sort = ref<DataTableSort>({ key: null, direction: 1 });
 
 function compareBy(a: CloudLogHit, b: CloudLogHit, key: SortKey): number {
   switch (key) {
@@ -213,19 +165,23 @@ function compareBy(a: CloudLogHit, b: CloudLogHit, key: SortKey): number {
 }
 
 const sortedHits = computed(() => {
-  const key = sortKey.value;
+  const key = sort.value.key as SortKey | null;
   if (key === null) return hits.value; // default: server order (newest first)
-  const dir = sortDir.value === "asc" ? 1 : -1;
+  const dir = sort.value.direction;
   return [...hits.value].sort((a, b) => dir * compareBy(a, b, key));
 });
 
-// Infinite scroll now watches the table's own scroll container, since the page
-// no longer scrolls.
-const scrollEl = ref<HTMLElement>();
-useInfiniteScroll(scrollEl, () => cloudSearch.loadMore(), {
-  distance: 200,
-  canLoadMore: () => cloudSearch.hasMore.value && !cloudSearch.loadingMore.value,
-});
+// Infinite scroll watches the table's own scroll container, since the page no
+// longer scrolls.
+const table = useTemplateRef<{ scroller: HTMLElement | null }>("table");
+useInfiniteScroll(
+  () => table.value?.scroller ?? null,
+  () => cloudSearch.loadMore(),
+  {
+    distance: 200,
+    canLoadMore: () => cloudSearch.hasMore.value && !cloudSearch.loadingMore.value,
+  },
+);
 
 watch(
   () => route.query.q,

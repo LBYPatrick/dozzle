@@ -1,12 +1,19 @@
 <template>
-  <div class="dropdown dropdown-end dropdown-hover z-20">
-    <label tabindex="0" class="btn btn-ghost btn-sm w-8 gap-0 px-0 md:gap-0.5">
+  <div class="dropdown dropdown-end dropdown-hover z-20" @mouseleave="collapseSubmenus" @focusout="onFocusOut">
+    <!-- The stream state lives on the trigger itself: one dot per stream that
+         is currently being shown. Compact, and it needs no room in the bar. -->
+    <label
+      tabindex="0"
+      class="btn btn-ghost btn-sm w-8 gap-0 px-0 md:gap-0.5"
+      :title="$t('action.more-actions')"
+      :aria-label="$t('action.more-actions')"
+    >
       <carbon:circle-solid class="text-red w-2 md:w-2.5" v-if="streamConfig.stderr" />
       <carbon:circle-solid class="text-blue w-2 md:w-2.5" v-if="streamConfig.stdout" />
     </label>
     <ul
       tabindex="0"
-      class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 shadow-sm"
+      class="menu dropdown-content glass-surface rounded-box z-50 max-h-[calc(100dvh-7rem)] w-52 flex-nowrap overflow-y-auto overscroll-contain p-1"
       @click="hideMenu"
     >
       <li v-if="!historical">
@@ -25,10 +32,7 @@
       <li>
         <details>
           <summary>
-            <div class="flex w-4">
-              <carbon:circle-solid class="text-red w-2.5" v-if="streamConfig.stderr" />
-              <carbon:circle-solid class="text-blue w-2.5" v-if="streamConfig.stdout" />
-            </div>
+            <ph:swap class="w-4" />
             Streams
           </summary>
           <ul class="menu">
@@ -72,17 +76,24 @@
         </details>
       </li>
       <li>
-        <details class="group/details">
+        <!-- Summary is icon + label only, like every other submenu here. The
+             "toggle all" switch used to sit in this row and landed underneath
+             daisyUI's disclosure chevron; it belongs with the choices it
+             governs, not in the row that opens them. -->
+        <details>
           <summary>
             <mdi:gauge />
             Levels
-            <Toggle
-              class="toggle-xs invisible group-open/details:visible"
-              v-model="toggleAllLevels"
-              title="Toggle all levels"
-            />
           </summary>
           <ul class="menu">
+            <li>
+              <a @click="showAllLevels()">
+                <mdi:check class="w-4" v-if="allLevelsShown" />
+                <div v-else class="w-4"></div>
+                {{ $t("toolbar.show-all") }}
+              </a>
+            </li>
+            <li class="line"></li>
             <li v-for="level in allLevels">
               <a class="capitalize" @click="levels.has(level) ? levels.delete(level) : levels.add(level)">
                 <mdi:check class="w-4" v-if="levels.has(level)" />
@@ -96,6 +107,8 @@
           </ul>
         </details>
       </li>
+
+      <StatDisplayMenu />
 
       <li class="line"></li>
       <li v-if="enableDownload">
@@ -185,6 +198,8 @@ import Terminal from "@/components/Terminal.vue";
 
 const { enableActions, enableShell, enableDownload } = config;
 const { streamConfig, hasComplexLogs, levels } = useLoggingContext();
+// Resolved during setup: useSearchFilter injects, so it cannot run from a click.
+const { debouncedSearchFilter } = useSearchFilter();
 const showDrawer = useDrawer();
 
 const { container, historical = false } = defineProps<{ container: Container; historical?: boolean }>();
@@ -236,7 +251,6 @@ async function copyLogs() {
   if (streamConfig.value.stderr) params.append("stderr", "1");
   params.append("everything", "1");
 
-  const { debouncedSearchFilter } = useSearchFilter();
   if (debouncedSearchFilter.value) {
     params.append("filter", debouncedSearchFilter.value);
   }
@@ -326,26 +340,12 @@ const { downloadUrl, isFiltered } = useDownloadUrl(
 
 const disableRestart = computed(() => actionStates.stop || actionStates.start || actionStates.restart);
 
-const toggleAllLevels = computed({
-  get: () => levels.value.size === allLevels.length,
-  set: (value) => {
-    if (value) {
-      allLevels.forEach((level) => levels.value.add(level));
-    } else {
-      levels.value.clear();
-    }
-  },
-});
+const allLevelsShown = computed(() => levels.value.size === allLevels.length);
+// Idempotent: "show all" always ends with everything on, never toggles the
+// whole set off underneath you.
+const showAllLevels = () => allLevels.forEach((level) => levels.value.add(level));
 
-const hideMenu = (e: MouseEvent) => {
-  if (e.target instanceof HTMLAnchorElement) {
-    setTimeout(() => {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    }, 50);
-  }
-};
+const { hideMenu, collapseSubmenus, onFocusOut } = useDropdownMenu();
 </script>
 
 <style scoped>

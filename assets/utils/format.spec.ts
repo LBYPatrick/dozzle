@@ -14,9 +14,9 @@ describe("formatBytes", () => {
 
   test("scales to KB/MB/GB", () => {
     expect(formatBytes(1024)).toBe("1 KB");
-    expect(formatBytes(1024, { short: true })).toBe("1K");
+    expect(formatBytes(1024, { short: true })).toBe("1KB");
     expect(formatBytes(1024 * 1024)).toBe("1 MB");
-    expect(formatBytes(1024 * 1024, { short: true })).toBe("1M");
+    expect(formatBytes(1024 * 1024, { short: true })).toBe("1MB");
     expect(formatBytes(1024 * 1024 * 1024)).toBe("1 GB");
   });
 

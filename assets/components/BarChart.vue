@@ -1,5 +1,9 @@
 <template>
-  <div ref="chartContainer" class="flex items-end gap-[2px]" @mousemove="onContainerHover">
+  <!-- Three shapes over one downsampled series. Bars stay the default and keep
+       their per-bar hover; line and area are drawn as a single stretched SVG
+       path, which is why they cost nothing extra to render and need no charting
+       library. -->
+  <div ref="chartContainer" class="flex items-end gap-[2px]" v-if="shape === 'bars'" @mousemove="onContainerHover">
     <div
       v-for="(bar, i) in downsampledBars"
       :key="i"
@@ -7,6 +11,22 @@
       :class="barClass"
       :style="{ '--height': `${maxValue > 0 ? (bar.percent / maxValue) * 100 : 0}%` }"
     ></div>
+  </div>
+  <div ref="chartContainer" class="relative" :class="toneClass" v-else>
+    <!-- preserveAspectRatio=none lets one 100x100 path stretch to any box; the
+         stroke is kept honest with vector-effect so it does not stretch too. -->
+    <svg class="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path v-if="shape === 'area'" :d="areaPath" fill="currentColor" opacity="0.22" />
+      <polyline
+        :points="linePoints"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        vector-effect="non-scaling-stroke"
+      />
+    </svg>
   </div>
 </template>
 
@@ -24,9 +44,20 @@ export interface BarDataPoint {
   value: number;
 }
 
-const { chartData, barClass = "" } = defineProps<{
+export type ChartShape = "bars" | "line" | "area";
+
+const {
+  chartData,
+  barClass = "",
+  shape = "bars",
+  toneClass = "",
+} = defineProps<{
   chartData: BarDataPoint[];
   barClass?: string;
+  /** Bars are the default; line and area are the same series, drawn as a path. */
+  shape?: ChartShape;
+  /** Text colour class for the line/area shapes, which paint with currentColor. */
+  toneClass?: string;
 }>();
 
 const hoverValue = defineEmit<[value: number]>();
@@ -75,6 +106,26 @@ watch(
 );
 
 defineExpose({ recalculate });
+
+// Series mapped into the 100x100 viewBox, top-down (SVG y grows downward).
+const points = computed(() => {
+  const bars = downsampledBars.value;
+  if (bars.length === 0) return [];
+  const step = bars.length > 1 ? 100 / (bars.length - 1) : 0;
+  return bars.map((bar, i) => {
+    const y = maxValue.value > 0 ? 100 - (bar.percent / maxValue.value) * 100 : 100;
+    return [bars.length > 1 ? i * step : 50, Math.min(100, Math.max(0, y))] as const;
+  });
+});
+
+const linePoints = computed(() => points.value.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(" "));
+
+const areaPath = computed(() => {
+  const pts = points.value;
+  if (pts.length === 0) return "";
+  const line = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`).join(" ");
+  return `${line} L${pts[pts.length - 1][0].toFixed(2)},100 L${pts[0][0].toFixed(2)},100 Z`;
+});
 
 function averageBucket(bucket: BarDataPoint[]): BarDataPoint {
   const percent = bucket.reduce((sum, d) => sum + d.percent, 0) / bucket.length;

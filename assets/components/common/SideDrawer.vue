@@ -2,13 +2,23 @@
   <dialog ref="panel" class="modal-right modal items-start outline-hidden backdrop:bg-none">
     <div class="modal-box" :width="width">
       <div class="pt-safe relative">
-        <form method="dialog" class="absolute right-0">
-          <button v-if="isMobile">
-            <mdi:close />
-          </button>
-          <button v-else class="swap hover:swap-active outline-hidden">
-            <mdi:keyboard-esc class="swap-off" />
-            <mdi:close class="swap-on" />
+        <!-- Dismiss control. A bare swap glyph read as decoration and gave no
+             hit target; this is a real glass button matching every other
+             control, with the Esc affordance spelled out on pointer devices and
+             collapsing to a plain close on touch. -->
+        <form method="dialog" class="absolute top-0 right-0 z-10">
+          <button
+            class="btn btn-sm group text-base-content/70 hover:text-base-content gap-1.5 px-2.5"
+            :aria-label="$t('button.cancel')"
+            :title="$t('button.cancel')"
+          >
+            <mdi:close class="size-4 shrink-0 transition-transform duration-200 group-hover:rotate-90" />
+            <kbd
+              v-if="!isMobile"
+              class="border-base-content/15 bg-base-content/5 rounded border px-1 font-sans text-[0.65rem] leading-4 tracking-wide"
+            >
+              esc
+            </kbd>
           </button>
         </form>
         <slot v-if="open" :close="close"></slot>

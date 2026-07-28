@@ -150,24 +150,15 @@
   }
 }
 
-@utility btn {
-  &:not(.btn-primary):not(.btn-secondary) {
-    @apply hover:bg-base-100;
-  }
-}
-
-/* daisyUI darkens the ghost button's border on hover, which reads as a
- * near-black ring on the dark theme. Use a theme-aware base-content tint so the
- * hover ring stays visible and legible in both themes (light on dark, dark on
- * light) instead of a fixed near-black. */
-.btn-ghost:hover {
-  border-color: color-mix(in oklab, var(--color-base-content) 40%, transparent) !important;
-}
-
+/* Selection in the sidebar is tonal, not a filled bar: a wash of the accent
+ * with accent-colored text. Reads as "current" without shouting over the rest
+ * of the list, and keeps contrast in both themes. */
 @utility menu-active {
   &,
   &:active {
-    --menu-active-bg: var(--color-primary);
+    --menu-active-bg: color-mix(in oklab, var(--color-primary) 18%, transparent);
+    --menu-active-fg: var(--color-primary);
+    font-weight: 500;
   }
 }
 
@@ -209,10 +200,168 @@ body {
      instead of each choosing their own pill/rounding. Tracks the daisyUI box
      radius used by cards, dropdowns, and modals. */
   --control-radius: var(--radius-box, 0.5rem);
+  /* Shadows are cast by light, so they are always dark — never a tint of
+     --color-base-content, which is near-white on the dark theme and turns every
+     "shadow" into a glow. */
+  --shadow-ink: 0 0 0;
 }
 
 [class*="shadow-"] {
   @apply shadow-base-content/8;
+}
+
+/* ---------------------------------------------------------------------------
+ * Controls: one shape, one texture.
+ *
+ * The app previously mixed flat daisyUI buttons with the hand-rolled glass
+ * capsules used by the floating widgets, each with its own corner radius. These
+ * unlayered rules converge everything on the glass treatment: the shared
+ * --control-radius, a translucent tonal surface over a hairline edge, a soft
+ * backdrop blur, and the same press feedback. Colored and ghost variants keep
+ * their intent (filled / quiet) and inherit only shape and motion.
+ * ------------------------------------------------------------------------- */
+.btn {
+  --btn-glass-tint: color-mix(in oklab, var(--color-base-content) 7%, transparent);
+  --btn-glass-edge: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+  border-radius: var(--control-radius);
+  backdrop-filter: blur(10px) saturate(150%);
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease,
+    transform 0.12s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Circles stay circular. Joined segments square their inner corners and round
+ * only the ends of the group — daisyUI does this in its own layer, which the
+ * unlayered rule above would otherwise override for every segment. */
+.btn.btn-circle {
+  border-radius: 999px;
+}
+
+.join > .btn {
+  border-radius: 0;
+}
+.join > .btn:first-child {
+  border-start-start-radius: var(--control-radius);
+  border-end-start-radius: var(--control-radius);
+}
+.join > .btn:last-child {
+  border-start-end-radius: var(--control-radius);
+  border-end-end-radius: var(--control-radius);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* The resting glass surface for neutral buttons. Colored variants (which carry
+ * their own --btn-bg) and the deliberately quiet ghost/link variants opt out. */
+.btn:not(.btn-ghost):not(.btn-link):not(.btn-outline):not([class*="btn-primary"]):not([class*="btn-secondary"]):not(
+    [class*="btn-accent"]
+  ):not([class*="btn-info"]):not([class*="btn-success"]):not([class*="btn-warning"]):not([class*="btn-error"]):not(
+    [class*="btn-neutral"]
+  ) {
+  background-color: var(--btn-glass-tint);
+  border-color: var(--btn-glass-edge);
+  box-shadow: 0 1px 2px rgb(var(--shadow-ink) / 0.16);
+}
+
+/* Ghost: transparent at rest, glass on hover, so hovering a toolbar reveals the
+ * same surface the rest of the buttons wear. A ghost button is quiet because of
+ * its surface, never because its label is hard to read — daisyUI dims the text
+ * as well, which puts it at 2.7:1 against a light panel and fails WCAG AA. */
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+/* Unlayered, so it would beat a `text-*` utility; skip any ghost button that
+ * was given an explicit colour (the sidebar's accent-coloured merge links). */
+.btn-ghost:not([class*="text-"]) {
+  color: var(--color-base-content);
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--btn-glass-tint) !important;
+  border-color: var(--btn-glass-edge) !important;
+}
+
+/* Outline buttons become tonal: a wash of their own color instead of a ring.
+ * currentColor is the variant color daisyUI already assigns, so this covers
+ * btn-outline btn-primary / btn-error / … without enumerating them. */
+.btn-outline:not(:hover):not(.btn-active) {
+  background-color: color-mix(in oklab, currentColor 13%, transparent);
+  border-color: transparent;
+}
+.btn-outline:hover:not(:disabled) {
+  background-color: color-mix(in oklab, currentColor 22%, transparent);
+  border-color: transparent;
+}
+
+/* Colored buttons keep their fill; only the elevation is unified. */
+.btn-primary,
+.btn-secondary,
+.btn-accent,
+.btn-info,
+.btn-success,
+.btn-warning,
+.btn-error,
+.btn-neutral {
+  box-shadow: 0 1px 3px rgb(var(--shadow-ink) / 0.2);
+}
+
+/* Log rows render one action button per line; hundreds of blurred layers is a
+ * real scroll cost for a control that is invisible until hover. Shape and tone
+ * still apply — only the blur is dropped. */
+[data-logs] .btn {
+  backdrop-filter: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Text fields.
+ *
+ * A single resting/hover/focus language for every input in the app: hairline
+ * edge at rest, a brighter edge on hover, and a soft focus ring that grows from
+ * the border rather than snapping on.
+ * ------------------------------------------------------------------------- */
+.input,
+.textarea,
+.select {
+  --field-edge: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  border-radius: var(--control-radius);
+  border-color: var(--field-edge);
+  /* Unlayered, so this wins over any `transition-*` utility a component puts on
+   * a field — which means the list has to carry everything those components
+   * animate. `width` is the log view's search field expanding in place; drop it
+   * and that control snaps open instead of growing. */
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    width 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.input:hover:not(:disabled):not(:focus-within),
+.textarea:hover:not(:disabled):not(:focus-within),
+.select:hover:not(:disabled):not(:focus-within) {
+  border-color: color-mix(in oklab, var(--color-base-content) 32%, transparent);
+  background-color: color-mix(in oklab, var(--color-base-content) 3%, transparent);
+}
+
+.input:focus-within,
+.textarea:focus-within,
+.select:focus-within,
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 22%, transparent);
+}
+
+.input.input-warning:focus-within,
+.input.input-error:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 22%, transparent);
 }
 
 /* iOS-style switches. daisyUI defines .toggle inside @layer daisyui, so these
@@ -334,6 +483,192 @@ body {
 
 .cm-scroller {
   font-family: var(--font-mono);
+}
+
+/* ---------------------------------------------------------------------------
+ * Sidebar navigation.
+ *
+ * Every sidebar menu (hosts, swarm, kubernetes, custom groups) is one grouped
+ * outline: a disclosure triangle on the leading edge, a quiet section header,
+ * tonal rows, and no outlined boxes anywhere. The hierarchy is expressed by
+ * indentation and label weight, not by borders.
+ * ------------------------------------------------------------------------- */
+.sidebar-menu {
+  width: 100%;
+  padding: 0;
+  font-size: 0.95rem;
+}
+
+/* daisyUI draws its own disclosure marker at the trailing edge; these menus put
+ * it on the leading edge (where the outline actually branches) instead. */
+.sidebar-menu :where(li > details > summary)::after {
+  display: none;
+}
+
+.sidebar-menu :where(summary, a, button) {
+  border-radius: 8px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* daisyUI sizes .menu (and every nested list inside it) to fit-content, so a
+ * long host name grew the row past the sidebar instead of truncating inside it
+ * — far enough that the row's trailing actions landed on top of the main pane
+ * and could not be clicked at all. Pin every level of the outline to the
+ * sidebar's width and let min-width:0 do the truncating. */
+.sidebar-menu :where(li),
+.sidebar-menu :where(li > details) {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Nested lists get `auto`, not `100%`: they carry an indent margin, and a full
+ * width on top of that offset pushes each level past its parent — which
+ * accumulates down the tree until a row's trailing controls (the pin button)
+ * sit outside the sidebar entirely. `auto` fills what is left after the
+ * margin. */
+.sidebar-menu :where(li > details > ul) {
+  width: auto;
+  min-width: 0;
+}
+
+.sidebar-menu :where(.summary-host, .summary-group) {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Every level reads at the same size, like a folder tree: depth is carried by
+ * indentation and the guide line, not by shrinking each level's label. Weight
+ * and contrast separate a branch from a leaf. */
+.sidebar-menu :where(.summary-host, .summary-group, li > a) {
+  padding: 0.28rem 0.4rem;
+  font-size: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* A host, or a group of hosts: the most prominent thing in the outline. */
+.sidebar-menu .summary-host {
+  font-weight: 500;
+  color: var(--color-base-content);
+}
+
+/* A group inside a host (a compose project, the pinned set, everything else). */
+.sidebar-menu .summary-group {
+  font-weight: 400;
+  color: color-mix(in oklab, var(--color-base-content) 72%, transparent);
+}
+
+.sidebar-menu .disclosure {
+  flex: none;
+  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+  color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+}
+
+.sidebar-menu details[open] > summary .disclosure {
+  transform: rotate(90deg);
+}
+
+.sidebar-menu .count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+}
+
+/* Secondary actions (merge-all, collapse) stay quiet until the row is hovered
+ * or keyboard-focused, so the list reads as names rather than as toolbars. */
+.sidebar-menu .row-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.125rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.sidebar-menu :where(summary:hover, summary:focus-within) .row-actions,
+.sidebar-menu li:hover > details > summary .row-actions {
+  opacity: 1;
+}
+
+/* Touch devices never hover; keep the actions reachable there. */
+@media (pointer: coarse) {
+  .sidebar-menu .row-actions {
+    opacity: 1;
+  }
+}
+
+/* One indent step per level, with a hairline guide so the branches are legible
+ * the way a file tree's are. The step is measured against the disclosure
+ * triangle, so a child sits just inside its parent's label. */
+.sidebar-menu :where(li > details > ul) {
+  margin-inline-start: 0.8rem;
+  padding-inline-start: 0.65rem;
+  border-inline-start: 1px solid color-mix(in oklab, var(--color-base-content) 13%, transparent);
+}
+
+.sidebar-menu :where(li > details > ul)::before {
+  display: none;
+}
+
+/* Leaves have no disclosure triangle of their own, so without this their icons
+ * would sit one triangle to the left of every branch icon at the same depth. */
+.sidebar-menu :where(li > a) {
+  padding-inline-start: 1.3rem;
+}
+
+/* The app's glass: a translucent tonal pane that blurs and saturates whatever
+ * it floats over, with a light top edge so it reads as glass rather than as a
+ * flat tint. Reserved for floating containers — menus, modals, small widgets —
+ * never screen-wide.
+ *
+ * Note for anyone adding one: backdrop-filter only samples content outside the
+ * nearest ancestor that itself has a backdrop-filter. Put glass on a floating
+ * element whose ancestors are clear, or the blur silently does nothing and you
+ * are left with plain transparency. */
+.glass-surface {
+  background-color: color-mix(in oklab, var(--color-base-200) 68%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, oklch(100% 0 0) 20%, transparent),
+    0 10px 30px rgb(var(--shadow-ink) / 0.22);
+}
+
+/* The log view's compact stat widgets. The CPU/memory card and the
+ * network/disk card share this chrome and this caption treatment so the two sit
+ * side by side as one object rather than two unrelated pills. */
+.stat-card {
+  display: grid;
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 0.3rem;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.55rem;
+  background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stat-card .name {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+}
+
+.stat-caption {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
 }
 
 .status-pill {

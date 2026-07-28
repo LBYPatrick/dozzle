@@ -1,5 +1,5 @@
 <template>
-  <Tag :std="std" class="items-start!">
+  <Tag :std="std" class="h-[var(--log-line,1.45em)] py-0!">
     {{ std }}
   </Tag>
 </template>

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type SearchStatus } from "@/composable/eventStreams";
+import { type SearchStatus } from "@/composable/search";
 
 const props = defineProps<{ status: SearchStatus }>();
 

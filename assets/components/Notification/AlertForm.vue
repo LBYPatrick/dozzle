@@ -10,15 +10,15 @@
     <!-- Alert Name -->
     <fieldset class="fieldset">
       <legend class="fieldset-legend text-lg">{{ $t("notifications.alert-form.alert-name") }}</legend>
-      <input
+      <TextField
         ref="alertNameInput"
         v-model="alertName"
-        type="text"
-        class="input focus:input-primary w-full text-base"
-        :class="alertName.trim() ? 'input-primary' : ''"
+        class="text-base"
         required
         :placeholder="$t('notifications.alert-form.alert-name-placeholder')"
-      />
+      >
+        <template #leading><mdi:bell-outline class="size-4" /></template>
+      </TextField>
     </fieldset>
 
     <!-- Alert Type Toggle -->
@@ -208,13 +208,13 @@ const {
 } = useAlertForm(props);
 
 // Template refs
-const alertNameInput = ref<HTMLInputElement>();
+const alertNameInput = useTemplateRef<{ focus: () => void }>("alertNameInput");
 const containerEditorRef = ref<HTMLElement>();
 const destinationDropdown = ref<HTMLDetailsElement>();
 const fieldsRef = ref<
   InstanceType<typeof LogAlertFields> | InstanceType<typeof MetricAlertFields> | InstanceType<typeof EventAlertFields>
 >();
-useFocus(alertNameInput, { initialValue: true });
+onMounted(() => alertNameInput.value?.focus());
 
 // Alert type
 const alertType = ref<"log" | "metric" | "event">(

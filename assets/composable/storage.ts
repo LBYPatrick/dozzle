@@ -1,11 +1,8 @@
 import { Container } from "@/models/Container";
 
-const DOZZLE_HOST = "DOZZLE_HOST";
-export const sessionHost = useSessionStorage<string | null>(DOZZLE_HOST, null);
-
-if (config.hosts.length === 1 && !sessionHost.value) {
-  sessionHost.value = config.hosts[0].id;
-}
+// `sessionHost` used to remember which host the sidebar had drilled into. The
+// sidebar is a single outline now, with per-host collapse state, so there is no
+// selected host to remember.
 
 const storage = useProfileStorage("visibleKeys", new Map<string, Map<string[], boolean>>(), {
   from(transformed: [string, [string[], boolean][]][]) {

@@ -5,8 +5,10 @@
   <!-- A div, not a label: a label forwards clicks to its input, and that
        forwarded click bubbles back here and would re-open search right after the
        close button clears it. -->
+  <!-- The width/colour transition lives on the shared `.input` rule in main.css
+       (which is unlayered, so a `transition-*` utility here would be ignored). -->
   <div
-    class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-[var(--control-radius)] transition-[width,background-color,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
+    class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-[var(--control-radius)]"
     :class="fieldClass"
     :title="showSearch ? undefined : $t('toolbar.search')"
     @click="open"
@@ -47,8 +49,6 @@
 </template>
 
 <script lang="ts" setup>
-import { registerSearchInstance } from "@/composable/search";
-
 const input = ref<HTMLInputElement>();
 const {
   searchQueryFilter,
@@ -59,6 +59,7 @@ const {
   inverseFilter,
   toggleInverse,
   searchLoading,
+  registerSearchInstance,
 } = useSearchFilter();
 
 // Collapsed: a ghost icon button. Expanded: a bordered field. Width is the only
@@ -92,5 +93,10 @@ watch(
   { immediate: true },
 );
 
-registerSearchInstance();
+registerSearchInstance(() => {
+  // Select as well as focus: pressing find with a term already in the box
+  // should let the user type a new one straight over it.
+  input.value?.focus();
+  input.value?.select();
+});
 </script>

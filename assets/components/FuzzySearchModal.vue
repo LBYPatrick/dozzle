@@ -5,8 +5,10 @@
     class="bg-base-200/95 border-base-content/15 w-full overflow-hidden rounded-xl border shadow-2xl backdrop-blur-xl"
   >
     <!-- Input row -->
-    <div class="flex items-center gap-3 px-4 py-3.5">
-      <mdi:magnify class="text-base-content/60 size-5 shrink-0" />
+    <div class="group/field flex items-center gap-3 px-4 py-3.5">
+      <mdi:magnify
+        class="text-base-content/60 group-focus-within/field:text-primary size-5 shrink-0 transition-colors"
+      />
       <input
         tabindex="0"
         class="text-base-content placeholder:text-base-content/40 flex-1 bg-transparent text-base outline-none"
@@ -19,6 +21,20 @@
         v-model="query"
         :placeholder="placeholderCopy"
       />
+      <!-- Clearing the query is a step back to the full command list, not a way
+           out of the palette, so it sits before the dismiss control. -->
+      <transition name="clear">
+        <button
+          v-if="query.length"
+          type="button"
+          class="text-base-content/40 hover:text-base-content flex shrink-0 items-center transition-colors"
+          :title="$t('button.clear-input')"
+          :aria-label="$t('button.clear-input')"
+          @click="clearQuery"
+        >
+          <mdi:close-circle class="size-4" />
+        </button>
+      </transition>
       <form method="dialog" class="flex">
         <button v-if="isMobile" class="text-base-content/50 hover:text-base-content">
           <mdi:close class="size-5" />
@@ -213,6 +229,11 @@ const route = useRoute();
 const initialQuery = route?.path === "/cloud/search" && typeof route.query?.q === "string" ? route.query.q : "";
 const query = ref(initialQuery);
 const input = ref<HTMLInputElement>();
+
+function clearQuery() {
+  query.value = "";
+  input.value?.focus();
+}
 const listItems = ref<(Element | null)[]>([]);
 const selectedIndex = ref(0);
 
@@ -459,5 +480,18 @@ function matchedName({ item, matches = [] }: FuseResult<Item>) {
 @reference "@/main.css";
 :deep(mark) {
   @apply bg-transparent text-inherit underline underline-offset-2;
+}
+
+.clear-enter-active,
+.clear-leave-active {
+  transition:
+    opacity 140ms ease,
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.clear-enter-from,
+.clear-leave-to {
+  opacity: 0;
+  transform: scale(0.6);
 }
 </style>

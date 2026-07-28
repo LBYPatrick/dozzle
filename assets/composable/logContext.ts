@@ -46,6 +46,12 @@ export const provideLoggingContext = (
   );
 };
 
+// `toRefs` allocates a ref per key on every call, and this composable is called
+// once per rendered log row (LogItem, LogActions) — several thousand throwaway
+// refs whenever the stream reconnects and the whole list is rebuilt. The refs
+// for a given context object are always equivalent, so hand back the same set.
+const refsByContext = new WeakMap<object, ReturnType<typeof toRefs<LogContext>>>();
+
 export const useLoggingContext = () => {
   const context = inject(
     loggingContextKey,
@@ -63,5 +69,10 @@ export const useLoggingContext = () => {
     }),
   );
 
-  return toRefs(context);
+  let refs = refsByContext.get(context);
+  if (!refs) {
+    refs = toRefs(context);
+    refsByContext.set(context, refs);
+  }
+  return refs;
 };

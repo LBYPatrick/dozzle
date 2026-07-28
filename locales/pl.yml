@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Kopiuj logi
   copy-filtered-logs: Kopiuj filtrowane logi
   copying-logs: Kopiowanie logów...
+  stat-display: Wyświetlanie statystyk
+  stat-summary: Maks. i średnia
+  stat-chart: Wykres trendu
+  stat-current: Bieżąca szybkość
+  stat-cycle: Kliknij, aby zmienić formę
+  stat-columns-resource: "Bieżące / Maks. / Dostępne"
+  stat-columns-io-2: "Bieżące / Maks."
+  trend-shape: "Kształt wykresu"
+  shape-bars: "Słupki"
+  shape-line: "Linia"
+  shape-area: "Obszar"
 action:
   copy-log: Skopiuj log
   copy-link: Skopiuj permalink
   see-in-context: Zobacz w kontekście
   show-details: Pokaż szczegóły
   create-alert: Utwórz alert
+  more-actions: Więcej akcji
 label:
   service: Brak usług | 1 usługa | {count} usług
   services: Usługi
@@ -70,6 +82,22 @@ label:
   collapse-all: Zwiń wszystkie
   collapse-group: Zwiń grupę
   expand-all: Rozwiń wszystkie
+  max: Maks.
+  avg: Śr.
+  started: Uruchomiono
+  finished: Zakończono
+  live-logs: Na żywo
+  cpu-memory: CPU i pamięć
+  network-disk: Sieć i dysk
+  collapse-host: Zwiń hosta
+  expand-host: Rozwiń hosta
+  net: SIEĆ
+  disk: DYSK
+  not-available: "Brak"
+  now: "Teraz"
+  avail: "Dost."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Przeszukaj kontenery (⌘ + k, ⌃k)
   pin-column: Przypnij jako kolumna
@@ -83,7 +111,7 @@ tooltip:
   volume-full: "{destination} zapełniony w {pct}"
 error:
   page-not-found: Ta strona nie istnieje
-  host-group-not-found: 'Nie znaleziono hostów w grupie „{name}”'
+  host-group-not-found: "Nie znaleziono hostów w grupie „{name}”"
   invalid-auth: Nazwa użytkownika lub hasło są niepoprawne
   copy-not-supported: Kopiowanie do schowka nie jest obsługiwane w twojej przeglądarce
   copy-not-supported-hint: Schowek niedostępny. Skopiuj poniższy link
@@ -133,6 +161,7 @@ button:
   hide-sidebar: "Ukryj pasek boczny"
   collapse-top-bar: Zwiń górny pasek
   expand-top-bar: Rozwiń górny pasek
+  clear-input: Wyczyść
 placeholder:
   search-containers: Przeszukaj kontery (⌘ + k, ⌃k)
   search: Szukaj
@@ -408,7 +437,7 @@ cloud:
     later: "Zrobię to później"
 cloud-search:
   containers-section: "Kontenery"
-  search-logs-for: "Przeszukaj logi pod kątem \"{query}\""
+  search-logs-for: 'Przeszukaj logi pod kątem "{query}"'
   across-containers: "zindeksowane we wszystkich Twoich kontenerach"
   connect-to-enable: "Połącz Dozzle Cloud, aby przeszukiwać logi"
   enable-streaming-to-search: "Włącz przesyłanie logów do Cloud"

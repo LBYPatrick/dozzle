@@ -1,10 +1,11 @@
 <template>
-  <div
-    :data-level="level"
-    :data-position="position"
-    class="mt-1.5 size-2.5 flex-none rounded-lg"
-    :class="{ showUnknown }"
-  ></div>
+  <!-- The dot lives inside a box exactly one log line tall and is centred in it,
+       so it lines up with the first line of the message no matter what font size
+       the log list is set to. The stretched variants (multi-line grouped
+       entries) let the dot fill the box instead. -->
+  <div :data-position="position" class="log-level w-2.5 flex-none">
+    <div :data-level="level" class="dot" :class="{ showUnknown }"></div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { Position, Level } from "@/models/LogEntry";
@@ -21,7 +22,18 @@ const {
 </script>
 
 <style scoped>
-@reference "@/main.css";
+.log-level {
+  display: flex;
+  align-items: center;
+  height: var(--log-line, 1.45em);
+}
+
+.dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 0.5rem;
+}
+
 [data-position="start"],
 [data-position="middle"],
 [data-position="end"] {
@@ -29,18 +41,22 @@ const {
   height: auto;
 }
 
-[data-position="start"] {
+[data-position="start"] .dot,
+[data-position="middle"] .dot,
+[data-position="end"] .dot {
+  height: 100%;
+}
+
+[data-position="start"] .dot {
   border-radius: 0.375rem 0.375rem 0 0;
 }
 
-[data-position="middle"] {
+[data-position="middle"] .dot {
   border-radius: 0;
-  margin-top: 0;
 }
 
-[data-position="end"] {
+[data-position="end"] .dot {
   border-radius: 0 0 0.375rem 0.375rem;
-  margin-top: 0;
 }
 </style>
 <style>

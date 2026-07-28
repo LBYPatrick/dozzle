@@ -63,53 +63,31 @@
         </div>
       </div>
     </div>
-    <div class="rounded-box border-base-content/10 overflow-x-auto border">
-      <table class="table-md md:table-lg table-zebra table">
-        <thead>
-          <tr :data-direction="direction > 0 ? 'asc' : 'desc'">
-            <th
-              v-for="(value, key) in fields"
-              :key="key"
-              @click.prevent="sort(key)"
-              :class="[value.customClass, { 'selected-sort': key === sortField }]"
-              v-show="isVisible(key)"
-            >
-              <a class="inline-flex cursor-pointer gap-2 text-sm uppercase">
-                <span>{{ $t(isMobile && value.mobileLabel ? value.mobileLabel : value.label) }}</span>
-                <span class="h-4" data-icon>
-                  <mdi:arrow-up />
-                </span>
-              </a>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-base-300/30">
-          <tr
-            v-for="container in paginated"
-            :key="container.id"
-            v-memo="[container.id, statMode, isMobile]"
-            class="hover:bg-base-100/80!"
-          >
-            <td v-if="isVisible('name')" class="max-w-80 truncate max-md:max-w-32">
-              <router-link :to="{ name: '/container/[id]', params: { id: container.id } }" :title="container.name">
-                {{ container.name }}
-              </router-link>
-            </td>
-            <td v-if="isVisible('host')">{{ container.hostLabel }}</td>
-            <td v-if="isVisible('state')">{{ container.state }}</td>
-            <td v-if="isVisible('created')">
-              <RelativeTime :date="container.created" />
-            </td>
-            <td v-if="isVisible('cpu')">
-              <ContainerStatCell :container="container" type="cpu" :host="hosts[container.host]" :mode="statMode" />
-            </td>
-            <td v-if="isVisible('mem')">
-              <ContainerStatCell :container="container" type="mem" :host="hosts[container.host]" :mode="statMode" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <DataTable :columns v-model:sort="sort">
+      <tr
+        v-for="container in paginated"
+        :key="container.id"
+        v-memo="[container.id, statMode, isMobile]"
+        class="hover:bg-base-100/80!"
+      >
+        <td v-if="isVisible('name')" class="max-w-80 truncate max-md:max-w-32">
+          <router-link :to="{ name: '/container/[id]', params: { id: container.id } }" :title="container.name">
+            {{ container.name }}
+          </router-link>
+        </td>
+        <td v-if="isVisible('host')">{{ container.hostLabel }}</td>
+        <td v-if="isVisible('state')">{{ container.state }}</td>
+        <td v-if="isVisible('created')">
+          <RelativeTime :date="container.created" />
+        </td>
+        <td v-if="isVisible('cpu')">
+          <ContainerStatCell :container="container" type="cpu" :host="hosts[container.host]" :mode="statMode" />
+        </td>
+        <td v-if="isVisible('mem')">
+          <ContainerStatCell :container="container" type="mem" :host="hosts[container.host]" :mode="statMode" />
+        </td>
+      </tr>
+    </DataTable>
     <div class="p-4 text-center">
       <nav class="join" v-if="isPaginated && totalPages <= 15">
         <input
@@ -134,6 +112,7 @@
 <script setup lang="ts">
 import { Container } from "@/models/Container";
 import { toRefs } from "@vueuse/core";
+import type { DataTableColumn } from "@/components/common/DataTable.vue";
 
 const { hosts } = useHosts();
 const selectedHost = ref(null);
@@ -203,6 +182,28 @@ const storage = useStorage<{ column: keys; direction: 1 | -1 }>("DOZZLE_TABLE_CO
   direction: -1 as 1 | -1,
 });
 const { column: sortField, direction } = toRefs(storage.value);
+
+// Adapter between the persisted shape and DataTable's model. This table always
+// sorts by something, so a null key from the shared control falls back to the
+// current column rather than clearing the order.
+const sort = computed({
+  get: () => ({ key: sortField.value as string, direction: direction.value }),
+  set: ({ key, direction: dir }) => {
+    if (key) sortField.value = key as keys;
+    direction.value = dir;
+  },
+});
+
+const { t } = useI18n();
+const columns = computed<DataTableColumn[]>(() =>
+  Object.entries(fields).map(([key, field]) => ({
+    key,
+    label: t(isMobile.value && field.mobileLabel ? field.mobileLabel : field.label),
+    class: field.customClass,
+    hidden: !isVisible(key),
+  })),
+);
+
 const counter = useInterval(10000);
 const filteredContainers = computed(() =>
   containers.filter((c) => selectedHost.value === null || c.host === selectedHost.value),
@@ -223,46 +224,7 @@ const paginated = computed(() => {
   return sortedContainers.value.slice(start, end);
 });
 
-function sort(field: keys) {
-  if (sortField.value === field) {
-    direction.value *= -1;
-  } else {
-    sortField.value = field;
-    direction.value = 1;
-  }
-}
 function isVisible(field: keys) {
   return fields[field].mobileVisible || !isMobile.value;
 }
 </script>
-
-<style scoped>
-@reference "@/main.css";
-
-[data-icon] {
-  display: none;
-  transition: transform 0.2s ease-in-out;
-  [data-direction="desc"] & {
-    transform: rotate(180deg);
-  }
-}
-
-th {
-  @apply border-base-200 border-b-2;
-  &.selected-sort {
-    font-weight: bold;
-    @apply border-primary;
-    [data-icon] {
-      display: inline-block;
-    }
-  }
-}
-
-tbody td {
-  white-space: nowrap;
-}
-
-a {
-  @apply hover:text-primary;
-}
-</style>

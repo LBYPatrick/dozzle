@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Скопировать логи
   copy-filtered-logs: Скопировать отфильтрованные логи
   copying-logs: Копирование логов...
+  stat-display: Отображение статистики
+  stat-summary: Макс. и среднее
+  stat-chart: График динамики
+  stat-current: Текущая скорость
+  stat-cycle: Нажмите, чтобы сменить вид
+  stat-columns-resource: "Текущее / Макс. / Доступно"
+  stat-columns-io-2: "Текущее / Макс."
+  trend-shape: "Вид графика"
+  shape-bars: "Столбцы"
+  shape-line: "Линия"
+  shape-area: "Область"
 action:
   copy-log: Копировать лог
   copy-link: Копировать постоянную ссылку
   see-in-context: Посмотреть в контексте
   show-details: Показать детали
   create-alert: Создать оповещение
+  more-actions: Другие действия
 label:
   containers: Контейнеры
   container: Нет контейнеров | 1 контейнер | {count} контейнеров
@@ -70,6 +82,22 @@ label:
   collapse-all: Свернуть все
   collapse-group: Свернуть группу
   expand-all: Развернуть все
+  max: Макс.
+  avg: Сред.
+  started: Запущен
+  finished: Завершён
+  live-logs: В эфире
+  cpu-memory: ЦП и память
+  network-disk: Сеть и диск
+  collapse-host: Свернуть хост
+  expand-host: Развернуть хост
+  net: СЕТЬ
+  disk: ДИСК
+  not-available: "Н/Д"
+  now: "Сейчас"
+  avail: "Дост."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Поиск контейнеров (⌘ + k, ⌃k)
   pin-column: Закрепить столбец
@@ -83,7 +111,7 @@ tooltip:
   volume-full: "{destination} заполнено на {pct}"
 error:
   page-not-found: Эта страница не доступна.
-  host-group-not-found: 'Хосты в группе «{name}» не найдены'
+  host-group-not-found: "Хосты в группе «{name}» не найдены"
   invalid-auth: Имя пользователя или пароль неверны.
   copy-not-supported: Копирование в буфер обмена не поддерживается вашим браузером
   copy-not-supported-hint: Буфер обмена недоступен. Скопируйте ссылку ниже
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "Скрыть боковую панель"
   collapse-top-bar: Свернуть верхнюю панель
   expand-top-bar: Развернуть верхнюю панель
+  clear-input: Очистить
 placeholder:
   search-containers: Поиск контейнеров (⌘ + k, ⌃k)
   search: Поиск
@@ -405,7 +434,7 @@ cloud:
     later: "Сделаю это позже"
 cloud-search:
   containers-section: "Контейнеры"
-  search-logs-for: "Поиск логов по \"{query}\""
+  search-logs-for: 'Поиск логов по "{query}"'
   across-containers: "проиндексированных по всем вашим контейнерам"
   connect-to-enable: "Подключите Dozzle Cloud, чтобы искать в логах"
   enable-streaming-to-search: "Включите стриминг логов в Cloud"

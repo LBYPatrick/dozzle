@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Copy logs
   copy-filtered-logs: Copy Filtered Logs
   copying-logs: Copying logs...
+  stat-display: Stat display
+  stat-summary: "Max & average"
+  stat-chart: Trend chart
+  stat-current: Live rate
+  stat-cycle: Click to change form
+  stat-columns-resource: "Current / Max / Available"
+  stat-columns-io-2: "Current / Max"
+  trend-shape: "Trend shape"
+  shape-bars: "Bars"
+  shape-line: "Line"
+  shape-area: "Area"
 action:
   copy-log: Copy log
   copy-link: Copy permalink
   see-in-context: See in context
   show-details: Show details
   create-alert: Create alert
+  more-actions: More actions
 label:
   containers: Containers
   container: No containers | 1 container | {count} containers
@@ -70,6 +82,22 @@ label:
   collapse-all: Collapse all
   collapse-group: Collapse group
   expand-all: Expand all
+  max: Max
+  avg: Avg
+  started: Started
+  finished: Finished
+  live-logs: Live
+  cpu-memory: "CPU & memory"
+  network-disk: "Network & disk"
+  collapse-host: Collapse host
+  expand-host: Expand host
+  net: NET
+  disk: DISK
+  not-available: "N/A"
+  now: "Now"
+  avail: "Avail"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Search containers (⌘ + k, ⌃k)
   pin-column: Pin as column
@@ -135,6 +163,7 @@ button:
   hide-sidebar: Hide sidebar
   collapse-top-bar: Collapse top bar
   expand-top-bar: Expand top bar
+  clear-input: Clear
 placeholder:
   search-containers: Search containers (⌘ + k, ⌃k)
   search: Search

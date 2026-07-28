@@ -48,7 +48,7 @@
   </div>
   <!-- Dim only, no screen-wide blur: glass is reserved for the container card
        (FuzzySearchModal) itself. -->
-  <dialog ref="modal" class="modal bg-base-300/60! items-start transition-none!" @close="closeSearch">
+  <dialog ref="modal" class="modal bg-base-300/35! items-start transition-none!" @close="closeSearch">
     <div class="modal-box max-w-2xl overflow-visible! bg-transparent pt-20 shadow-none">
       <FuzzySearchModal @close="closeSearch" v-if="open" />
     </div>
@@ -56,7 +56,9 @@
       <button>close</button>
     </form>
   </dialog>
-  <dialog ref="settingsDialog" class="modal bg-base-300/60! items-start" @close="closeSettings">
+  <!-- Dim, never a screen-wide blur — but light enough that the panel's own
+       glass has some of the page left to refract. -->
+  <dialog ref="settingsDialog" class="modal bg-base-300/35! items-start" @close="closeSettings">
     <div class="modal-box max-h-[95vh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5vh] shadow-none">
       <SettingsModal v-if="settingsOpen" />
     </div>
@@ -155,9 +157,83 @@ onMounted(async () => {
 <style scoped>
 @reference "@/main.css";
 
+/* Resize handles, for both the sidebar and the pinned log columns.
+ *
+ * iPad-style: a hairline divider carrying a capsule grabber. The grabber is
+ * present at rest — a control you cannot see is a control nobody finds — and
+ * thickens and darkens on approach rather than the whole column changing
+ * colour. The splitter is wider than anything it paints so the target stays
+ * comfortable. */
 :deep(.splitpanes--vertical > .splitpanes__splitter) {
-  @apply bg-base-100 hover:bg-secondary min-w-[5px];
+  position: relative;
+  width: 12px;
+  flex-shrink: 0;
+  background-color: transparent;
   transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* The divider line. */
+:deep(.splitpanes--vertical > .splitpanes__splitter)::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  transition: background-color 200ms ease;
+}
+
+/* The grabber. Always visible; grows and gains contrast on approach. */
+:deep(.splitpanes--vertical > .splitpanes__splitter)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 44px;
+  border-radius: 999px;
+  /* Mixed into the surface rather than toward transparent: a translucent
+     grabber lets the divider line show straight through it. */
+  background-color: color-mix(in oklab, var(--color-base-content) 26%, var(--color-base-100));
+  box-shadow: 0 1px 2px rgb(var(--shadow-ink) / 0.18);
+  transform: translate(-50%, -50%);
+  transition:
+    transform 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+:deep(.splitpanes--vertical > .splitpanes__splitter:hover)::before,
+:deep(.splitpanes--vertical > .splitpanes__splitter:focus-visible)::before {
+  background-color: color-mix(in oklab, var(--color-base-content) 22%, transparent);
+}
+
+:deep(.splitpanes--vertical > .splitpanes__splitter:hover)::after,
+:deep(.splitpanes--vertical > .splitpanes__splitter:focus-visible)::after {
+  background-color: color-mix(in oklab, var(--color-base-content) 48%, var(--color-base-100));
+  transform: translate(-50%, -50%) scale(1.25, 1.12);
+  box-shadow: 0 2px 5px rgb(var(--shadow-ink) / 0.26);
+}
+
+/* Pressed: the grabber takes the accent so the drag reads as engaged. */
+:deep(.splitpanes--vertical > .splitpanes__splitter:active)::after {
+  background-color: var(--color-primary);
+  transform: translate(-50%, -50%) scale(1.25, 1.12);
+}
+
+:deep(.splitpanes--vertical > .splitpanes__splitter:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :deep(.splitpanes--vertical > .splitpanes__splitter)::after {
+    transition: background-color 120ms ease;
+  }
+  :deep(.splitpanes--vertical > .splitpanes__splitter:hover)::after,
+  :deep(.splitpanes--vertical > .splitpanes__splitter:active)::after {
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* Hide (and disable) the resize handle while the sidebar is collapsed. */

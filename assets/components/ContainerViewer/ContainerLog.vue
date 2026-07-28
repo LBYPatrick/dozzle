@@ -2,11 +2,10 @@
   <ScrollableView :scrollable="scrollable" v-if="container">
     <template #header v-if="showTitle">
       <ContainerTitle :container="container" />
-      <MultiContainerStat
-        class="ml-auto lg:hidden lg:@3xl:flex"
-        :containers="[container]"
-        v-if="container.state === 'running'"
-      />
+      <!-- Rendered for stopped containers too: the cards report N/A rather
+           than vanishing, so the bar keeps its shape and the reason for the
+           missing numbers is stated. -->
+      <MultiContainerStat class="ml-auto lg:hidden lg:@3xl:flex" :containers="[container]" />
     </template>
     <template #actions v-if="showTitle">
       <ContainerActionsToolbar @clear="viewer?.clear()" :container="container" />

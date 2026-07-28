@@ -3,27 +3,29 @@
     <!-- Name -->
     <fieldset class="fieldset">
       <legend class="fieldset-legend text-lg">{{ $t("notifications.destination-form.name") }}</legend>
-      <input
+      <TextField
         ref="nameInput"
         v-model="name"
-        type="text"
-        class="input focus:input-primary w-full text-base"
+        class="text-base"
         required
-        :class="{ 'input-primary': name.trim().length > 0 }"
         :placeholder="$t('notifications.destination-form.name-placeholder')"
-      />
+      >
+        <template #leading><mdi:tag-outline class="size-4" /></template>
+      </TextField>
     </fieldset>
 
     <!-- Webhook URL -->
     <fieldset class="fieldset">
       <legend class="fieldset-legend text-lg">{{ $t("notifications.destination-form.webhook-url") }}</legend>
-      <input
+      <TextField
         v-model="webhookUrl"
         type="url"
-        class="input focus:input-primary w-full text-base"
-        :class="{ 'input-primary': isValidUrl, 'input-error': webhookUrl.trim() && !isValidUrl }"
+        class="text-base"
+        :invalid="!!webhookUrl.trim() && !isValidUrl"
         :placeholder="$t('notifications.destination-form.webhook-url-placeholder')"
-      />
+      >
+        <template #leading><mdi:link-variant class="size-4" /></template>
+      </TextField>
     </fieldset>
 
     <!-- Payload Format (create mode only) -->
@@ -67,16 +69,14 @@
       </legend>
       <div class="space-y-2">
         <div v-for="(header, index) in headers" :key="header.key" class="flex items-center gap-2">
-          <input
+          <TextField
             v-model="header.name"
-            type="text"
-            class="input focus:input-primary flex-1 text-base"
+            class="flex-1 text-base"
             :placeholder="$t('notifications.destination-form.header-name')"
           />
-          <input
+          <TextField
             v-model="header.value"
-            type="text"
-            class="input focus:input-primary flex-1 text-base"
+            class="flex-1 text-base"
             :placeholder="$t('notifications.destination-form.header-value')"
           />
           <button type="button" class="btn btn-ghost btn-sm btn-square" @click="headers.splice(index, 1)">
@@ -140,10 +140,10 @@ const { close, onCreated, destination, isEditing } = defineProps<{
   isEditing: boolean;
 }>();
 
-const nameInput = ref<HTMLInputElement>();
+const nameInput = useTemplateRef<{ focus: () => void }>("nameInput");
 const templateEditorRef = ref<HTMLElement>();
 const name = ref(destination?.name ?? "");
-useFocus(nameInput, { initialValue: true });
+onMounted(() => nameInput.value?.focus());
 const webhookUrl = ref(destination?.url ?? "");
 const payloadFormat = ref<PayloadFormat>(isEditing ? "custom" : "slack");
 const template = ref(isEditing ? (destination?.template ?? "") : PAYLOAD_TEMPLATES[payloadFormat.value]);

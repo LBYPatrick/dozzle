@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Logs kopiëren
   copy-filtered-logs: Gefilterde logs kopiëren
   copying-logs: Logs kopiëren...
+  stat-display: Statistiekweergave
+  stat-summary: "Max & gemiddelde"
+  stat-chart: Trendgrafiek
+  stat-current: Huidige snelheid
+  stat-cycle: Klik om de weergave te wisselen
+  stat-columns-resource: "Huidig / Max / Beschikbaar"
+  stat-columns-io-2: "Huidig / Max"
+  trend-shape: "Grafiekvorm"
+  shape-bars: "Balken"
+  shape-line: "Lijn"
+  shape-area: "Vlak"
 action:
   copy-log: Log kopiëren
   copy-link: Permalink kopiëren
   see-in-context: Bekijk in context
   show-details: Toon details
   create-alert: Waarschuwing aanmaken
+  more-actions: Meer acties
 label:
   containers: Containers
   container: Geen containers | 1 container | {count} containers
@@ -70,6 +82,22 @@ label:
   collapse-all: Alles inklappen
   collapse-group: Groep inklappen
   expand-all: Alles uitklappen
+  max: Max
+  avg: Gem.
+  started: Gestart
+  finished: Beëindigd
+  live-logs: Live
+  cpu-memory: "CPU & geheugen"
+  network-disk: "Netwerk & schijf"
+  collapse-host: Host inklappen
+  expand-host: Host uitklappen
+  net: NET
+  disk: SCHIJF
+  not-available: "N.v.t."
+  now: "Nu"
+  avail: "Besch."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Zoek containers (⌘ + k, ⌃k)
   pin-column: Vastzetten als kolom
@@ -132,6 +160,7 @@ button:
   hide-sidebar: "Zijbalk verbergen"
   collapse-top-bar: Bovenbalk inklappen
   expand-top-bar: Bovenbalk uitklappen
+  clear-input: Wissen
 placeholder:
   search-containers: Zoek containers (⌘ + k, ⌃k)
   search: Zoeken
@@ -406,7 +435,7 @@ cloud:
     later: "Dat doe ik later"
 cloud-search:
   containers-section: "Containers"
-  search-logs-for: "Logs zoeken op \"{query}\""
+  search-logs-for: 'Logs zoeken op "{query}"'
   across-containers: "geïndexeerd over al je containers"
   connect-to-enable: "Dozzle Cloud verbinden om logs te zoeken"
   enable-streaming-to-search: "Schakel logstreaming naar Cloud in"

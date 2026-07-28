@@ -1,16 +1,20 @@
 <template>
-  <!-- The log view is a fixed-height internal scroller so the floating top bar
-       and search row can overlay it without ever changing the scroll area's
-       height or position. Only forced for views that render a header (the log
-       views); anything else keeps the default flow. -->
   <section
-    class="relative flex min-h-0 flex-col"
+    class="relative flex min-h-0 min-w-0 flex-col"
     :class="hasHeader ? 'h-[calc(100dvh-var(--mobile-nav-height))] md:h-dvh' : ''"
   >
+    <!-- Keep this section the single root element. A comment above it would
+         make the root a fragment, and then this component's element resolves to
+         a text node instead of the section — which is how the find shortcut
+         lost track of which pane the pointer was in.
+
+         The log view is a fixed-height internal scroller so the floating top
+         bar and search row can overlay it without ever changing the scroll
+         area's height or position. Only forced for views that render a header
+         (the log views); anything else keeps the default flow. -->
     <main
       :data-scrolling="scrollable ? true : undefined"
-      class="relative min-h-[300px] flex-1 overflow-auto transition-[padding-top] duration-200 ease-out"
-      :class="{ '[scrollbar-gutter:stable]': hasHeader }"
+      class="relative min-h-[300px] min-w-0 flex-1 [scrollbar-gutter:stable] overflow-auto transition-[padding-top] duration-200 ease-out"
       :style="hasHeader ? { paddingTop: `${topInset}px`, '--log-top-inset': `${topInset}px` } : undefined"
     >
       <div ref="scrollTopObserver" class="h-px"></div>
@@ -25,14 +29,22 @@
          reflows the logs. Glass (backdrop blur) is allowed here: it is a
          container background layered over its own content. -->
     <header v-if="hasHeader && !collapsed" class="absolute inset-x-0 top-0 z-20">
-      <div
-        ref="barRow"
-        class="border-base-content/10 bg-base-200/72 relative border-b shadow-sm backdrop-blur-xl backdrop-saturate-150"
-      >
+      <div ref="barRow" class="border-base-content/10 relative border-b shadow-sm">
+        <!-- The bar's glass sits on its own layer rather than on the bar
+             itself. backdrop-filter turns an element into a backdrop root, and
+             a backdrop root leaves anything floating *inside* it — the actions
+             menu — with nothing behind it left to blur. -->
+        <div
+          class="bg-base-200/72 pointer-events-none absolute inset-0 -z-10 backdrop-blur-xl backdrop-saturate-150"
+        ></div>
         <!-- Row 1: identity (tag + name) and stats (network / cpu / memory).
              @container so the stats' container-query visibility (they hide when
              the bar is too narrow to fit them) has a context to measure. -->
-        <div class="@container flex min-w-0 items-center gap-2 px-3 py-1.5 md:px-4">
+        <!-- min-height, not content height: the stat widgets are taller in
+             their chart form than in their compact one, and without this the
+             container name and the whole log view below it jump every time the
+             form changes. -->
+        <div class="@container flex min-h-[3.9rem] min-w-0 items-center gap-2 px-3 py-1.5 md:px-4">
           <slot name="header"></slot>
         </div>
 
@@ -50,7 +62,7 @@
               ></span>
             </transition>
             <!-- Search status ("N matches · searched back to …"), on demand. -->
-            <SearchStatus :status="activeSearchStatus" class="min-w-0" />
+            <SearchStatus :status="searchStatus" class="min-w-0" />
             <transition name="progress-status">
               <div v-if="scrollContext.paused" class="flex min-w-0 items-center gap-2">
                 <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
@@ -135,9 +147,14 @@
   </section>
 </template>
 
+<script lang="ts">
+// Every log view on screen, in mount order, so the find shortcut can pick one.
+// Module scope on purpose: the panes have to see each other.
+const searchPanes: { el: { value: HTMLElement | Element | null } }[] = [];
+</script>
+
 <script lang="ts" setup>
 import { useScrollControlsProvider } from "@/composable/scrollControls";
-import { activeSearchStatus } from "@/composable/eventStreams";
 import { search, topBarCollapsed } from "@/stores/settings";
 
 const { scrollable = false } = defineProps<{ scrollable?: boolean }>();
@@ -145,7 +162,7 @@ const { scrollable = false } = defineProps<{ scrollable?: boolean }>();
 const slots = useSlots();
 const hasHeader = computed(() => !!slots.header);
 
-const { showSearch, searchLoading } = useSearchFilter();
+const { showSearch, searchLoading, searchStatus, focusSearch } = useSearchFilter();
 
 const hasMore = ref(false);
 const atTop = ref(true);
@@ -186,13 +203,36 @@ const progressPercent = computed(() => Math.round(Math.min(1, Math.max(0, scroll
 // ⌘/⌃F opens the integrated search row. Lives here (not in Search.vue) because
 // the row is unmounted while the bar is collapsed — opening search must first
 // expand the bar back so the row can appear.
+//
+// Every mounted view registers this handler, so with side-by-side columns they
+// would all fire and all open. Exactly one view answers: the one under the
+// pointer, or the first mounted (the main pane) when the pointer is elsewhere.
+// useCurrentElement, not a template ref: this component's root *is* the section,
+// and resolving it from the instance cannot get out of step with the template.
+const root = useCurrentElement<HTMLElement>();
+const self = { el: root };
+searchPanes.push(self);
+onScopeDispose(() => {
+  const index = searchPanes.indexOf(self);
+  if (index !== -1) searchPanes.splice(index, 1);
+});
+
 onKeyStroke("f", (e) => {
   if (!showSearchControls.value) return;
-  if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
-    showSearch.value = true;
-    if (collapsed.value) topBarCollapsed.value = false;
-    e.preventDefault();
-  }
+  if (!(e.ctrlKey || e.metaKey) || e.shiftKey) return;
+  // Ask the browser which pane the pointer is actually in, rather than tracking
+  // enter/leave ourselves — it already knows, and it stays right when panes are
+  // added, removed, or resized under a stationary cursor.
+  const target =
+    searchPanes.find((pane) => pane.el.value instanceof Element && pane.el.value.matches(":hover")) ?? searchPanes[0];
+  if (target !== self) return;
+
+  showSearch.value = true;
+  if (collapsed.value) topBarCollapsed.value = false;
+  // Also when it was already open: the field may have lost the caret to the
+  // log view, and find should always put it back.
+  nextTick(() => focusSearch());
+  e.preventDefault();
 });
 
 // Switching to a different container (or container set) re-expands the bar, so a

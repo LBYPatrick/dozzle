@@ -25,12 +25,24 @@ toolbar:
   copy-logs: 复制日志
   copy-filtered-logs: 复制筛选日志
   copying-logs: 正在复制日志...
+  stat-display: 统计显示
+  stat-summary: 最大值和平均值
+  stat-chart: 趋势图
+  stat-current: 实时速率
+  stat-cycle: 点击切换形式
+  stat-columns-resource: "当前 / 最大 / 可用"
+  stat-columns-io-2: "当前 / 最大"
+  trend-shape: "图表形式"
+  shape-bars: "柱状"
+  shape-line: "折线"
+  shape-area: "面积"
 action:
   copy-log: 复制日志
   copy-link: 复制永久链接
   see-in-context: 在上下文中查看
   show-details: 显示详细信息
   create-alert: 创建告警
+  more-actions: 更多操作
 label:
   containers: 容器
   container: 无容器 | 1 容器 | {count} 容器
@@ -70,6 +82,22 @@ label:
   swarm-menu: 服务和堆栈
   k8s-menu: Kubernetes
   group-menu: 自定义组
+  max: 最大
+  avg: 平均
+  started: 启动于
+  finished: 结束于
+  live-logs: 实时
+  cpu-memory: CPU 和内存
+  network-disk: 网络和磁盘
+  collapse-host: 折叠主机
+  expand-host: 展开主机
+  net: 网络
+  disk: 磁盘
+  not-available: "不可用"
+  now: "当前"
+  avail: "可用"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: 搜索 (⌘ + k, ⌃k)
   pin-column: 固定为列
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "隐藏侧边栏"
   collapse-top-bar: 折叠顶栏
   expand-top-bar: 展开顶栏
+  clear-input: 清除
 placeholder:
   search-containers: 搜索容器 (⌘ + k, ⌃k)
   search: 搜索
@@ -405,7 +434,7 @@ cloud:
     later: "稍后再说"
 cloud-search:
   containers-section: "容器"
-  search-logs-for: "搜索日志 \"{query}\""
+  search-logs-for: '搜索日志 "{query}"'
   across-containers: "已在所有容器中建立索引"
   connect-to-enable: "连接 Dozzle Cloud 以搜索日志"
   enable-streaming-to-search: "启用日志流式传输到 Cloud"

@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 46
-- **Files changed:** 225
-- **Lines:** +9717 / -1164 (net +8553)
+- **Commits ahead:** 47
+- **Files changed:** 275
+- **Lines:** +14280 / -2349 (net +11931)
 
 Roughly split: frontend Vue/TS UI (~95 files) plus a full Storybook suite (106
 component stories + `.storybook/` config), locales (16 files, i18n parity), Go
@@ -56,6 +56,22 @@ floating, collapsible, two-row glass bar following Apple HIG.
   components (`Container/Host/Group/Service/Stack/K8s/MultiContainer`) updated to
   fill the new `#header` / `#actions` slots.
 
+- **Stat widgets rebuilt** (`LogViewer/StatSummaryCard.vue`, replacing `StatCard.vue`):
+  one component in two forms for each metric pair (CPU+memory, network+disk).
+  Compact is one line per metric — name, a meter reading the value against its
+  ceiling with a tick at the window peak, then `NOW` / `AVAIL`. Expanded puts the
+  metrics side by side so each trend gets the card's full height, headed
+  `NOW` / `MAX` / `AVAIL`. Headings and values share one grid, so alignment is
+  structural rather than tuned.
+- Clicking a widget cycles its form; throughput also keeps its per-direction live
+  rate. Each widget sits in a slot that animates its own width across the change
+  (`composable/animatedWidth.ts` — CSS cannot transition `width: auto`).
+- Trends render as bars, a line, or a filled area (`trendShape` setting), all from
+  one downsampled series in `BarChart.vue`. No charting dependency.
+- Stopped containers report `N/A` through the same layout rather than a column of
+  zeros; the ceiling still reports, being a property of the host.
+- Bar row 1 is pinned to a constant height so switching form never shifts the page.
+
 ## Search (in-log, Cmd/Ctrl+F)
 
 - The floating draggable search box is replaced by an integrated search that
@@ -68,6 +84,16 @@ floating, collapsible, two-row glass bar following Apple HIG.
   one side-by-side column doesn't wipe another column's active search.
 - Key files: `assets/components/Search.vue`, `composable/search.ts`,
   `composable/inlineSearch.ts`, `LogViewer/SearchStatus.vue`.
+
+- **Search state is now per log view**, keyed off the logging context each view
+  already provides. Side-by-side columns search independently — previously one
+  module-level singleton filtered every pane at once. Status line and loading
+  indicator are per view too.
+- `Cmd/Ctrl+F` resolves to the pane under the pointer (via the browser's own
+  `:hover`), falling back to the main pane. It also re-focuses and selects an
+  already-open field, which previously did nothing.
+- Debounce raised from VueUse's 200ms default to an explicit 400ms: each distinct
+  value reconnects the stream and rebuilds the visible window.
 
 ## Command palette (Cmd/Ctrl+K)
 
@@ -153,6 +179,23 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - Key files: `assets/components/SidePanel.vue`, `SideMenu.vue`,
   `assets/layouts/default.vue`.
 
+- **Reworked into a single folder-style outline:** host group -> host -> container
+  group -> container. The separate hosts pane is gone; hosts are collapsible
+  branches. Every level uses the same type size, with depth carried by
+  indentation and a hairline guide rather than shrinking labels.
+- New pieces: `common/MenuSection.vue` (one collapsible node), `HostNode.vue`,
+  `ContainerMenuItem.vue`, `composable/containerGroups.ts`, and
+  `composable/collapsedSections.ts` (all collapse state in one prefix-namespaced
+  persisted set, replacing four ad-hoc keys).
+- Swarm, Kubernetes and custom-group menus adopt the same outline.
+- The merge action sits on the group rows rather than the host row.
+- **Overflow fix:** daisyUI sizes `.menu` to fit-content, so rows grew past the
+  sidebar and put their trailing controls (merge, pin-as-column) on top of the
+  main pane, unclickable. Every level is width-pinned; nested lists use
+  `width: auto` so the indent margin does not compound.
+- Search moved to the head of the pane; the dashboard's own search bar and the
+  `hasInlineSearch` mechanism are gone.
+
 ## Log viewer misc
 
 - **Combined scroll buttons:** "go to top" and "go to bottom" merged into one
@@ -170,6 +213,19 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   `composable/logLoader.ts`, `LogViewer/MultiContainerStat.vue`,
   `HostCard.vue`, `ContainerStatCell.vue`.
 
+- **Log row alignment:** a shared `--log-line` box height anchors the level dot,
+  std/host/container tags and timestamp to the row's first text line.
+  `ComplexLogItem` switched from `space-x-*` to `gap` so wrapped rows stop
+  indenting by one gap.
+- **Performance:** the SSE buffer no longer copies itself per incoming line
+  (quadratic over a reconnect's backfill); `useLoggingContext` memoizes its
+  `toRefs`; each row's action menu is built on first hover instead of eagerly.
+  `useVisibleFilter` caches derived entries per visible-keys ref and walks values
+  for the search highlight instead of `JSON.stringify`-ing every field — together
+  these are what made a stdout/stderr toggle or a search on a long log lock up.
+- `ZigZag.vue` removed; the skipped-entries marker is now a faded rule broken by
+  the button that fills the gap back in.
+
 ## Shared UI components (Apple HIG)
 
 - **Toasts:** redesigned as elevated colored glass cards that animate in/out with
@@ -185,6 +241,21 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - Key files: `common/ToastItem.vue` (new), `common/ToastModal.vue`,
   `common/DropdownMenu.vue`, `common/SegmentedControl.vue` (new),
   `common/CircuitRing.vue` (new), `assets/main.css`.
+
+- **`common/DataTable.vue`** — one table shell (sticky recessed header, sort
+  interaction) shared by the container table and cloud search results.
+- **`common/TextField.vue`** — the app's text field: leading affordance that takes
+  the accent on focus, inline clear button, transitioned hover/focus states.
+- **`.glass-surface`** in `main.css` — one definition of the app's glass, used by
+  the action menus and the settings popup. Note: `backdrop-filter` only samples
+  outside the nearest ancestor that has one, so the log bar's own glass moved to
+  a dedicated layer to stop it blanking the menus inside it.
+- **Segmented control** — raised full-contrast capsule on a recessed track.
+- **Resize dividers** (sidebar and pinned columns) — iPad-style: a hairline
+  carrying an opaque capsule grabber, visible at rest, thickening on approach and
+  taking the accent while dragging.
+- **Buttons** converge on one glass treatment and `--control-radius`; outline
+  variants render tonal.
 
 ## Cloud / dev tooling
 
@@ -236,6 +307,15 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   foot search could linger past the zero-width collapsed pane; gated on
   `!collapseNav` and allowed to shrink.
 
+- **Ghost button text contrast:** daisyUI dims the label as well as the surface,
+  measuring 2.68:1 against a light panel (AA needs 4.5). Ghost buttons are now
+  quiet by surface only — measured 8.68:1. Buttons carrying an explicit `text-*`
+  colour keep it.
+- **Shadows** use a dark ink token instead of a `base-content` tint, which
+  rendered as a glow on the dark theme.
+- `formatBytes` returned `undefined` for fractional and non-finite input, and its
+  short form rendered a megabyte as `1.6M`; both fixed.
+
 ## Storybook
 
 - **Full Storybook 10 suite** (`.storybook/` + `make storybook` /
@@ -256,6 +336,10 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   scrollbar gutter.
 - Frontend spec updates: `FuzzySearchModal.spec.ts` (command palette),
   `LogViewer/SearchStatus.spec.ts`, `LogViewer/EventSource.spec.ts` (+ snapshot).
+
+- `assets/composable/visible.spec.ts` — covers the search-highlight filter and
+  the derived-entry caching that keeps the log list from rebuilding every flush.
+- `MultiContainerStat.spec.ts` extended for the compact/expanded stat forms.
 
 ## Build / Makefile
 

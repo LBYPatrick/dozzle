@@ -2,15 +2,21 @@ export function formatBytes(
   bytes: number,
   { decimals = 2, short = false }: { decimals?: number; short?: boolean } = { decimals: 2, short: false },
 ) {
-  if (bytes === 0) return short ? "0B" : "0 Bytes";
+  if (!Number.isFinite(bytes) || bytes === 0) return short ? "0B" : "0 Bytes";
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  // The short form keeps the real abbreviation. Taking just the first letter
+  // rendered a megabyte as "1.6M", which reads as a count rather than a size.
+  const shortSizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  // Averaged rates are fractional, so the exponent can go negative (0.5 bytes)
+  // and, for absurd inputs, past the last unit. Clamp instead of indexing off
+  // the end of the table.
+  const i = Math.min(sizes.length - 1, Math.max(0, Math.floor(Math.log(bytes) / Math.log(k))));
 
   const value = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
   if (short) {
-    return value + sizes[i].charAt(0);
+    return value + shortSizes[i];
   } else {
     return value + " " + sizes[i];
   }

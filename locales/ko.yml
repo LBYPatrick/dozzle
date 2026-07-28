@@ -25,12 +25,24 @@ toolbar:
   copy-logs: 로그 복사
   copy-filtered-logs: 필터된 로그 복사
   copying-logs: 로그 복사 중...
+  stat-display: 통계 표시
+  stat-summary: 최대 및 평균
+  stat-chart: 추세 차트
+  stat-current: 현재 속도
+  stat-cycle: 클릭하여 형식 변경
+  stat-columns-resource: "현재 / 최대 / 사용 가능"
+  stat-columns-io-2: "현재 / 최대"
+  trend-shape: "그래프 모양"
+  shape-bars: "막대"
+  shape-line: "선"
+  shape-area: "영역"
 action:
   copy-log: 로그 복사
   copy-link: 영구 링크 복사
   see-in-context: 컨텍스트에서 보기
   show-details: 세부 정보 표시
   create-alert: 알림 생성
+  more-actions: 추가 작업
 label:
   containers: 컨테이너
   container: 컨테이너가 없습니다 | 컨테이너 1개 | 컨테이너 {count}개
@@ -70,6 +82,22 @@ label:
   collapse-all: 전체 접기
   collapse-group: 그룹 접기
   expand-all: 전체 펼치기
+  max: 최대
+  avg: 평균
+  started: 시작됨
+  finished: 종료됨
+  live-logs: 실시간
+  cpu-memory: CPU 및 메모리
+  network-disk: 네트워크 및 디스크
+  collapse-host: 호스트 접기
+  expand-host: 호스트 펼치기
+  net: 네트워크
+  disk: 디스크
+  not-available: "해당 없음"
+  now: "현재"
+  avail: "가용"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: 컨테이너 검색 (⌘ + k, ⌃k)
   pin-column: 열로 고정
@@ -133,6 +161,7 @@ button:
   hide-sidebar: "사이드바 숨기기"
   collapse-top-bar: 상단 바 접기
   expand-top-bar: 상단 바 펼치기
+  clear-input: 지우기
 placeholder:
   search-containers: 컨테이너 검색 (⌘ + k, ⌃k)
   search: 검색
@@ -409,7 +438,7 @@ cloud:
     later: "나중에 할게요"
 cloud-search:
   containers-section: "컨테이너"
-  search-logs-for: "\"{query}\" 로그 검색"
+  search-logs-for: '"{query}" 로그 검색'
   across-containers: "모든 컨테이너에서 색인됨"
   connect-to-enable: "로그를 검색하려면 Dozzle Cloud에 연결하세요"
   enable-streaming-to-search: "Cloud로 로그 스트리밍 활성화"

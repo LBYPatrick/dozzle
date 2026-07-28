@@ -1,112 +1,97 @@
 <template>
-  <div class="flex items-center">
-    <div class="breadcrumbs flex-1">
-      <ul>
+  <div class="mb-1 flex items-center gap-1">
+    <span class="text-base-content/45 flex-1 truncate text-[0.72rem] font-semibold tracking-[0.06em] uppercase">
+      {{ $t("label.namespaces") }}
+    </span>
+    <div class="dropdown dropdown-end dropdown-hover flex-none">
+      <label
+        tabindex="0"
+        class="btn btn-square btn-ghost btn-sm"
+        :title="$t('action.more-actions')"
+        :aria-label="$t('action.more-actions')"
+      >
+        <ph:dots-three-vertical-bold class="size-5" />
+      </label>
+      <ul
+        tabindex="0"
+        class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 shadow-sm"
+      >
         <li>
-          <a @click.prevent="setNamespace(null)" class="link-primary">{{ $t("label.namespaces") }}</a>
-        </li>
-        <li v-if="selectedNamespace === 'all'">
-          {{ $t("label.all-namespaces") }}
-        </li>
-        <li v-else-if="selectedNamespace" class="cursor-default">
-          <router-link
-            :to="{
-              name: '/namespace/[name]',
-              params: { name: selectedNamespace },
-            }"
-            class="btn btn-outline btn-primary btn-xs"
-            active-class="btn-active"
-          >
-            <ph:arrows-merge />
-            {{ selectedNamespace }}
-          </router-link>
+          <a class="text-sm capitalize" @click="collapseAll()">
+            <material-symbols-light:expand-all class="w-4" v-if="allCollapsed" />
+            <material-symbols-light:collapse-all class="w-4" v-else />
+            {{ allCollapsed ? $t("label.expand-all") : $t("label.collapse-all") }}
+          </a>
         </li>
       </ul>
-    </div>
-    <div class="flex-none">
-      <div class="dropdown dropdown-end dropdown-hover">
-        <label tabindex="0" class="btn btn-square btn-ghost btn-sm">
-          <ph:dots-three-vertical-bold />
-        </label>
-        <ul
-          tabindex="0"
-          class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 shadow-sm"
-        >
-          <li>
-            <a class="text-sm capitalize" @click="collapseAll()">
-              <material-symbols-light:collapse-all class="w-4" />
-              {{ $t("label.collapse-all") }}
-            </a>
-          </li>
-        </ul>
-      </div>
     </div>
   </div>
 
-  <SlideTransition :slide-right="selectedNamespace !== null">
-    <template #left>
-      <ul class="menu p-0">
-        <li>
-          <a @click.prevent="setNamespace('all')">
-            <ph:circles-four />
-            {{ $t("label.all-namespaces") }}
-          </a>
-        </li>
-        <li v-for="ns in namespaces" :key="ns.name">
-          <a @click.prevent="setNamespace(ns.name)">
-            <ph:circles-four />
-            {{ ns.name }}
-          </a>
-        </li>
-      </ul>
-    </template>
-    <template #right>
-      <ul class="menu w-full p-0 text-[0.95rem]" ref="menu">
-        <li v-for="{ name, owners } in filteredNamespaces" :key="name">
-          <details open>
-            <summary class="text-base-content/80 font-light">
-              <ph:stack />
-              {{ name }} ({{ owners.length }})
+  <!-- namespace -> owner. The namespace list is no longer a separate screen you
+       drill into; expanding a namespace shows what it holds. -->
+  <ul class="menu sidebar-menu">
+    <MenuSection
+      v-for="{ name, owners: nsOwners } in namespaces"
+      :key="name"
+      variant="host"
+      :title="name"
+      :count="nsOwners.length"
+      :open="isOpen(namespaceKey(name))"
+      @update:open="setOpen(namespaceKey(name), $event)"
+    >
+      <template #icon>
+        <ph:stack class="size-4 shrink-0 opacity-70" />
+      </template>
+      <template #actions>
+        <router-link
+          :to="{ name: '/namespace/[name]', params: { name } }"
+          class="btn btn-square btn-ghost btn-xs text-primary"
+          active-class="menu-active"
+          :title="$t('tooltip.merge-all')"
+          @click.stop
+        >
+          <ph:arrows-merge />
+        </router-link>
+      </template>
 
-              <router-link
-                :to="{ name: '/namespace/[name]', params: { name } }"
-                class="btn btn-square btn-outline btn-primary btn-xs"
-                active-class="btn-active"
-                :title="$t('tooltip.merge-all')"
-              >
-                <ph:arrows-merge />
-              </router-link>
-            </summary>
-            <ul>
-              <li v-for="owner in owners" :key="owner.key">
-                <router-link :to="{ name: '/owner/[name]', params: { name: owner.key } }" active-class="menu-active">
-                  <ph:stack-simple />
-                  <div class="truncate">{{ owner.kind }}/{{ owner.name }}</div>
-                </router-link>
-              </li>
-            </ul>
-          </details>
-        </li>
+      <li v-for="owner in nsOwners" :key="owner.key">
+        <router-link
+          :to="{ name: '/owner/[name]', params: { name: owner.key } }"
+          active-class="menu-active"
+          class="py-1"
+          :title="`${owner.kind}/${owner.name}`"
+        >
+          <ph:stack-simple class="size-4 shrink-0 opacity-70" />
+          <div class="truncate">{{ owner.kind }}/{{ owner.name }}</div>
+        </router-link>
+      </li>
+    </MenuSection>
 
-        <li v-if="ownersWithoutNamespace.length > 0">
-          <details open>
-            <summary class="text-base-content/80 font-light">
-              <ph:circles-four />
-              {{ $t("label.owners") }} ({{ ownersWithoutNamespace.length }})
-            </summary>
-            <ul>
-              <li v-for="owner in ownersWithoutNamespace" :key="owner.key">
-                <router-link :to="{ name: '/owner/[name]', params: { name: owner.key } }" active-class="menu-active">
-                  <ph:stack-simple />
-                  <div class="truncate">{{ owner.kind }}/{{ owner.name }}</div>
-                </router-link>
-              </li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-    </template>
-  </SlideTransition>
+    <MenuSection
+      v-if="ownersWithoutNamespace.length > 0"
+      variant="host"
+      :title="$t('label.owners')"
+      :count="ownersWithoutNamespace.length"
+      :open="isOpen(UNNAMESPACED_KEY)"
+      @update:open="setOpen(UNNAMESPACED_KEY, $event)"
+    >
+      <template #icon>
+        <ph:circles-four class="size-4 shrink-0 opacity-70" />
+      </template>
+
+      <li v-for="owner in ownersWithoutNamespace" :key="owner.key">
+        <router-link
+          :to="{ name: '/owner/[name]', params: { name: owner.key } }"
+          active-class="menu-active"
+          class="py-1"
+          :title="`${owner.kind}/${owner.name}`"
+        >
+          <ph:stack-simple class="size-4 shrink-0 opacity-70" />
+          <div class="truncate">{{ owner.kind }}/{{ owner.name }}</div>
+        </router-link>
+      </li>
+    </MenuSection>
+  </ul>
 </template>
 
 <script lang="ts" setup>
@@ -114,29 +99,20 @@ const store = useK8sStore();
 
 const { namespaces, owners } = storeToRefs(store);
 
-const selectedNamespace = ref<string | null>("all");
+// The "owners with no namespace" section. namespaceKey() namespaces the real
+// ones, so this literal can never collide with one.
+const UNNAMESPACED_KEY = "ns:__unnamespaced__";
 
-const setNamespace = (namespace: string | null) => (selectedNamespace.value = namespace);
+const ownersWithoutNamespace = computed(() => owners.value.filter((owner) => !owner.namespace));
 
-const filteredNamespaces = computed(() => {
-  if (selectedNamespace.value === null || selectedNamespace.value === "all") {
-    return namespaces.value;
-  }
-  return namespaces.value.filter((ns) => ns.name === selectedNamespace.value);
+const { isOpen, setOpen, allCollapsed: allOf, toggleAll } = useCollapsedSections();
+
+const sectionKeys = computed(() => {
+  const keys = namespaces.value.map(({ name }) => namespaceKey(name));
+  if (ownersWithoutNamespace.value.length > 0) keys.push(UNNAMESPACED_KEY);
+  return keys;
 });
 
-const ownersWithoutNamespace = computed(() => {
-  const filtered = owners.value.filter((owner) => !owner.namespace);
-  if (selectedNamespace.value === null || selectedNamespace.value === "all") {
-    return filtered;
-  }
-  return [];
-});
-
-const menu = useTemplateRef("menu");
-
-const collapseAll = () => {
-  const details = menu.value?.querySelectorAll("details");
-  details?.forEach((detail) => (detail.open = false));
-};
+const allCollapsed = computed(() => allOf(sectionKeys.value));
+const collapseAll = () => toggleAll(sectionKeys.value);
 </script>

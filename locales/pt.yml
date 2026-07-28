@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Copiar logs
   copy-filtered-logs: Copiar logs filtrados
   copying-logs: Copiando logs...
+  stat-display: Exibição de estatísticas
+  stat-summary: Máx. e média
+  stat-chart: Gráfico de tendência
+  stat-current: Taxa atual
+  stat-cycle: Clique para mudar o formato
+  stat-columns-resource: "Atual / Máx. / Disponível"
+  stat-columns-io-2: "Atual / Máx."
+  trend-shape: "Forma do gráfico"
+  shape-bars: "Barras"
+  shape-line: "Linha"
+  shape-area: "Área"
 action:
   copy-log: Copiar log
   copy-link: Copiar permalink
   see-in-context: Ver no contexto
   show-details: Mostrar detalhes
   create-alert: Criar alerta
+  more-actions: Mais ações
 label:
   containers: Contêineres
   container: Nenhum container | 1 container | {count} containers
@@ -70,6 +82,22 @@ label:
   collapse-all: Recolher tudo
   collapse-group: Recolher grupo
   expand-all: Expandir tudo
+  max: Máx.
+  avg: Méd.
+  started: Iniciado
+  finished: Finalizado
+  live-logs: Ao vivo
+  cpu-memory: CPU e memória
+  network-disk: Rede e disco
+  collapse-host: Recolher host
+  expand-host: Expandir host
+  net: REDE
+  disk: DISCO
+  not-available: "N/D"
+  now: "Agora"
+  avail: "Disp."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Pesquisar containers (⌘ + k, ⌃k)
   pin-column: Fixar como coluna
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "Ocultar barra lateral"
   collapse-top-bar: Recolher barra superior
   expand-top-bar: Expandir barra superior
+  clear-input: Limpar
 placeholder:
   search-containers: Pesquisar containers (⌘ + k, ⌃k)
   search: Pesquisar
@@ -405,7 +434,7 @@ cloud:
     later: "Farei isso depois"
 cloud-search:
   containers-section: "Containers"
-  search-logs-for: "Buscar logs por \"{query}\""
+  search-logs-for: 'Buscar logs por "{query}"'
   across-containers: "indexados em todos os seus containers"
   connect-to-enable: "Conectar Dozzle Cloud para buscar logs"
   enable-streaming-to-search: "Ativar streaming de logs para a Cloud"

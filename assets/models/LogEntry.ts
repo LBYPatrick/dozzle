@@ -14,16 +14,7 @@ export type LogType = "single" | "group" | "complex";
 export type Position = "start" | "end" | "middle" | undefined;
 export type LogMessage = string | string[] | JSONObject;
 export type Level =
-  | "error"
-  | "warn"
-  | "warning"
-  | "info"
-  | "debug"
-  | "trace"
-  | "severe"
-  | "critical"
-  | "fatal"
-  | "unknown";
+  "error" | "warn" | "warning" | "info" | "debug" | "trace" | "severe" | "critical" | "fatal" | "unknown";
 
 export interface LogFragment {
   readonly m: string;
@@ -148,8 +139,28 @@ export class ComplexLogEntry extends LogEntry<JSONObject> {
     return this._message;
   }
 
+  /**
+   * Derived entries are cached per visible-keys ref.
+   *
+   * This runs for every entry in the visible window on every buffer flush (four
+   * times a second while a container is chatty). Building a fresh entry each
+   * time meant allocating a fresh Vue computed each time — hundreds of reactive
+   * effects created and collected per second — and handing every row a new prop
+   * identity, so the whole list re-rendered even when nothing about it changed.
+   *
+   * The cache is keyed by the ref rather than a single slot because the same
+   * entry can be rendered by two views at once (a pinned side-by-side column
+   * has its own visible-keys ref), and a one-slot cache would thrash between
+   * them. The derived entry stays correct as keys are toggled: its computed
+   * tracks `visibleKeys.value`.
+   */
+  private readonly derived = new WeakMap<Ref<Map<string[], boolean>>, ComplexLogEntry>();
+
   static fromLogEvent(event: ComplexLogEntry, visibleKeys: Ref<Map<string[], boolean>>): ComplexLogEntry {
-    return new ComplexLogEntry(
+    const cached = event.derived.get(visibleKeys);
+    if (cached) return cached;
+
+    const entry = new ComplexLogEntry(
       event._message,
       event.containerID,
       event.id,
@@ -159,6 +170,8 @@ export class ComplexLogEntry extends LogEntry<JSONObject> {
       event.rawMessage,
       visibleKeys,
     );
+    event.derived.set(visibleKeys, entry);
+    return entry;
   }
 }
 

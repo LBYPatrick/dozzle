@@ -1,5 +1,5 @@
 <template>
-  <ul class="flex animate-pulse flex-col gap-4 p-4" v-if="loading || (noLogs && waitingForMoreLog && !inSearch)">
+  <ul class="flex animate-pulse flex-col gap-4 p-4" v-if="showSkeleton">
     <div class="flex flex-row gap-2" v-for="size in sizes">
       <div class="bg-base-content/50 h-3 w-40 shrink-0 rounded-full opacity-50"></div>
       <div class="bg-base-content/50 h-3 rounded-full opacity-50" :class="size"></div>
@@ -10,11 +10,14 @@
     {{ $t("label.no-logs") }}
   </div>
   <slot :messages="messages" v-else></slot>
-  <IndeterminateBar :color v-if="!historical" />
+  <!-- Live-stream heartbeat. Suppressed while the skeleton is up: the pulsing
+       placeholder rows already say "loading", and a second blinking bar under
+       them reads as a stuck progress indicator. -->
+  <IndeterminateBar :color v-if="!historical && !showSkeleton" />
 </template>
 
 <script lang="ts" setup generic="T">
-import { LogStreamSource, activeSearchStatus } from "@/composable/eventStreams";
+import { LogStreamSource } from "@/composable/eventStreams";
 const route = useRoute();
 
 const { entity, streamSource } = $defineProps<{
@@ -30,17 +33,17 @@ const { messages, opened, loading, error, searchStatus } = streamSource(toRef(()
 // messaging, so suppress the generic "no logs" state to avoid the false signal.
 const inSearch = computed(() => searchStatus.value.active || searchStatus.value.done);
 
-// Publish this stream's search state to the shared indicators used by the
-// container bar (the row-2 status text and the search spinner). Cleared on
-// unmount so a torn-down view can't leave them stuck.
-const { searchLoading } = useSearchFilter();
+// Publish this stream's search state to its own view's bar (the row-2 status
+// text and the search spinner). Per view, so side-by-side columns report
+// independently. Cleared on unmount so a torn-down view can't leave it stuck.
+const { searchLoading, searchStatus: viewSearchStatus } = useSearchFilter();
 watchEffect(() => {
   searchLoading.value = searchStatus.value.active;
-  activeSearchStatus.value = searchStatus.value;
+  viewSearchStatus.value = searchStatus.value;
 });
 onUnmounted(() => {
   searchLoading.value = false;
-  activeSearchStatus.value = { active: false, done: false, matches: 0 };
+  viewSearchStatus.value = { active: false, done: false, matches: 0 };
 });
 
 const color = computed(() => {
@@ -53,6 +56,8 @@ const color = computed(() => {
 const noLogs = computed(() => messages.value.length === 0);
 const waitingForMoreLog = refAutoReset(false, 3000);
 watchImmediate(loading, () => (waitingForMoreLog.value = true));
+
+const showSkeleton = computed(() => loading.value || (noLogs.value && waitingForMoreLog.value && !inSearch.value));
 
 defineExpose({
   clear: () => (messages.value = []),

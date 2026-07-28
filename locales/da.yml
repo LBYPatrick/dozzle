@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Kopiér logs
   copy-filtered-logs: Kopiér filtrerede logs
   copying-logs: Kopierer logs...
+  stat-display: Statistikvisning
+  stat-summary: "Maks. & gennemsnit"
+  stat-chart: Tendensdiagram
+  stat-current: Aktuel hastighed
+  stat-cycle: Klik for at skifte visning
+  stat-columns-resource: "Aktuel / Maks. / Tilgængelig"
+  stat-columns-io-2: "Aktuel / Maks."
+  trend-shape: "Grafform"
+  shape-bars: "Søjler"
+  shape-line: "Linje"
+  shape-area: "Areal"
 action:
   copy-log: Kopier log
   copy-link: Kopier permalink
   see-in-context: Se i kontekst
   show-details: Vis detaljer
   create-alert: Opret advarsel
+  more-actions: Flere handlinger
 label:
   containers: Containere
   container: Ingen containere | 1 container | {count} containere
@@ -70,6 +82,22 @@ label:
   collapse-all: Kollaps alle
   collapse-group: Kollaps gruppe
   expand-all: Udvid alle
+  max: Maks.
+  avg: Gns.
+  started: Startet
+  finished: Afsluttet
+  live-logs: Live
+  cpu-memory: "CPU & hukommelse"
+  network-disk: "Netværk & disk"
+  collapse-host: Skjul vært
+  expand-host: Vis vært
+  net: NET
+  disk: DISK
+  not-available: "—"
+  now: "Nu"
+  avail: "Ledig"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Søg containere (⌘ + k, ⌃k)
   pin-column: Fastgør som kolonne
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "Skjul sidepanel"
   collapse-top-bar: Skjul topbjælke
   expand-top-bar: Udvid topbjælke
+  clear-input: Ryd
 placeholder:
   search-containers: Søg containere (⌘ + k, ⌃k)
   search: Søg
@@ -405,7 +434,7 @@ cloud:
     later: "Det gør jeg senere"
 cloud-search:
   containers-section: "Containere"
-  search-logs-for: "Søg logs efter \"{query}\""
+  search-logs-for: 'Søg logs efter "{query}"'
   across-containers: "indekseret på tværs af alle dine containere"
   connect-to-enable: "Tilslut Dozzle Cloud for at søge i logs"
   enable-streaming-to-search: "Aktiver log-streaming til Cloud"

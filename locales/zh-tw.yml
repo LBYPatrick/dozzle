@@ -25,12 +25,24 @@ toolbar:
   copy-logs: 複製日誌
   copy-filtered-logs: 複製篩選日誌
   copying-logs: 正在複製日誌...
+  stat-display: 統計顯示
+  stat-summary: 最大值與平均值
+  stat-chart: 趨勢圖
+  stat-current: 即時速率
+  stat-cycle: 點擊切換形式
+  stat-columns-resource: "目前 / 最大 / 可用"
+  stat-columns-io-2: "目前 / 最大"
+  trend-shape: "圖表形式"
+  shape-bars: "柱狀"
+  shape-line: "折線"
+  shape-area: "面積"
 action:
   copy-log: 複製日誌
   copy-link: 複製永久連結
   see-in-context: 在內容中查看
   show-details: 顯示詳細資訊
   create-alert: 建立警報
+  more-actions: 更多操作
 label:
   containers: 容器
   container: 無容器 | 1 個容器 | {count} 個容器
@@ -70,6 +82,22 @@ label:
   swarm-menu: 服務和堆疊
   k8s-menu: Kubernetes
   group-menu: 自訂群組
+  max: 最大
+  avg: 平均
+  started: 啟動於
+  finished: 結束於
+  live-logs: 即時
+  cpu-memory: CPU 與記憶體
+  network-disk: 網路與磁碟
+  collapse-host: 收合主機
+  expand-host: 展開主機
+  net: 網路
+  disk: 磁碟
+  not-available: "不適用"
+  now: "目前"
+  avail: "可用"
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: 搜尋容器 (⌘ + k, ⌃k)
   pin-column: 釘選為欄位
@@ -83,7 +111,7 @@ tooltip:
   volume-full: "{destination} 已使用 {pct}"
 error:
   page-not-found: 此頁面不存在
-  host-group-not-found: '在群組「{name}」中找不到主機'
+  host-group-not-found: "在群組「{name}」中找不到主機"
   invalid-auth: 使用者名稱或密碼不正確
   copy-not-supported: 您的瀏覽器不支援複製到剪貼簿
   copy-not-supported-hint: 剪貼簿不可用。請複製下方連結
@@ -133,6 +161,7 @@ button:
   hide-sidebar: "隱藏側邊欄"
   collapse-top-bar: 收合頂部列
   expand-top-bar: 展開頂部列
+  clear-input: 清除
 placeholder:
   search-containers: 搜尋容器 (⌘ + k, ⌃k)
   search: 搜尋
@@ -408,7 +437,7 @@ cloud:
     later: "稍後再說"
 cloud-search:
   containers-section: "容器"
-  search-logs-for: "搜尋日誌 \"{query}\""
+  search-logs-for: '搜尋日誌 "{query}"'
   across-containers: "已在所有容器中建立索引"
   connect-to-enable: "連接 Dozzle Cloud 以搜尋日誌"
   enable-streaming-to-search: "啟用日誌串流到 Cloud"

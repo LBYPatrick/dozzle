@@ -15,31 +15,9 @@
             <template v-if="otherContainers.length === 0"
               ><span class="block truncate">{{ container.name }}</span></template
             >
-            <div v-else>
-              <div class="dropdown">
-                <button tabindex="0" role="button" class="btn btn-xs md:btn-sm">
-                  {{ container.name }} <carbon:caret-down />
-                </button>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu rounded-box bg-base-100 border-base-content/20 border shadow-sm"
-                >
-                  <li v-for="other in otherContainers">
-                    <router-link :to="{ name: '/container/[id]', params: { id: other.id } }">
-                      <div
-                        class="status data-[state=exited]:status-error data-[state=running]:status-success data-[state=paused]:status-warning"
-                        :data-state="other.state"
-                      ></div>
-                      <div v-if="other.isSwarm">{{ other.swarmId }}</div>
-                      <div v-else>{{ other.name }}</div>
-                      <div v-if="other.state === 'running'">running</div>
-                      <div v-else-if="other.state === 'paused'">paused</div>
-                      <RelativeTime :date="other.finishedAt" class="text-base-content/70 text-xs" v-else />
-                    </router-link>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <!-- Same control as every other multi-container title, rather than a
+                 second hand-rolled copy of it. -->
+            <ContainerDropdown v-else :containers="otherContainers">{{ container.name }}</ContainerDropdown>
           </li>
         </ul>
       </div>

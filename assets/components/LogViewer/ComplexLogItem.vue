@@ -1,6 +1,9 @@
 <template>
   <DefineTemplate v-slot="{ data }">
-    <ul class="inline-flex flex-wrap space-x-4" @click="preventDefaultOnLinks">
+    <!-- gap, not space-x: `space-x-*` puts a left margin on every child except
+         the first, so once the pairs wrap the second row starts indented by one
+         gap and the columns stop lining up. -->
+    <ul class="inline-flex flex-wrap gap-x-4 gap-y-0.5" @click="preventDefaultOnLinks">
       <li v-for="(value, name) in data" :key="name" v-if="isObject(data)">
         <span class="key">{{ name }}=</span>
         <span class="value" v-if="value === null">&lt;null&gt;</span>
@@ -8,7 +11,7 @@
         <span v-else class="value" :class="typeof value" v-html="stripAnsi(String(value))"></span>
       </li>
       <li v-else-if="Array.isArray(data)">
-        <ul class="array inline-flex flex-wrap space-x-1">
+        <ul class="array inline-flex flex-wrap gap-x-1">
           <li
             v-for="(item, index) in data"
             :key="index"
@@ -24,7 +27,14 @@
   </DefineTemplate>
   <LogItem :logEntry>
     <LogLevel class="flex select-none" :level="logEntry.level" />
-    <div @click="containers.length > 0 && showDrawer(LogDetails, { entry: logEntry })" class="cursor-pointer">
+    <!-- flex, so the inline-flex list below is a flex item and not an inline box
+         sitting on a text baseline — the baseline's descender space is what
+         pushed complex entries a couple of pixels below the level dot and the
+         timestamp on the same row. -->
+    <div
+      @click="containers.length > 0 && showDrawer(LogDetails, { entry: logEntry })"
+      class="flex min-w-0 cursor-pointer"
+    >
       <ReuseTemplate :data="validValues" />
     </div>
   </LogItem>

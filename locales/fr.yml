@@ -25,12 +25,24 @@ toolbar:
   copy-logs: Copier les journaux
   copy-filtered-logs: Copier les journaux filtrés
   copying-logs: Copie des journaux...
+  stat-display: Affichage des statistiques
+  stat-summary: Max. et moyenne
+  stat-chart: Graphique de tendance
+  stat-current: Débit actuel
+  stat-cycle: "Cliquer pour changer d'affichage"
+  stat-columns-resource: "Actuel / Max. / Disponible"
+  stat-columns-io-2: "Actuel / Max."
+  trend-shape: "Type de graphique"
+  shape-bars: "Barres"
+  shape-line: "Ligne"
+  shape-area: "Aire"
 action:
   copy-log: Copier le journal
   copy-link: Copier le permalien
   see-in-context: Voir dans le contexte
   show-details: Afficher les détails
   create-alert: Créer une alerte
+  more-actions: "Plus d'actions"
 label:
   containers: Conteneurs
   container: Pas de conteneur | 1 conteneur | {count} conteneurs
@@ -70,6 +82,22 @@ label:
   collapse-all: Réduire tout
   collapse-group: Réduire le groupe
   expand-all: Développer tout
+  max: Max.
+  avg: Moy.
+  started: Démarré
+  finished: Terminé
+  live-logs: Direct
+  cpu-memory: Processeur et mémoire
+  network-disk: Réseau et disque
+  collapse-host: "Réduire l'hôte"
+  expand-host: "Développer l'hôte"
+  net: RÉSEAU
+  disk: DISQUE
+  not-available: "N/D"
+  now: "Actuel"
+  avail: "Dispo."
+  stdout-short: "OUT"
+  stderr-short: "ERR"
 tooltip:
   search: Recherche de conteneurs (⌘ + k, ⌃k)
   pin-column: Epinglé en colonne
@@ -83,7 +111,7 @@ tooltip:
   volume-full: "{destination} est plein à {pct}"
 error:
   page-not-found: Cette page n'existe pas
-  host-group-not-found: 'Aucun hôte trouvé dans le groupe « {name} »'
+  host-group-not-found: "Aucun hôte trouvé dans le groupe « {name} »"
   invalid-auth: Nom d'utilisateur ou mot de passe non valides
   copy-not-supported: La copie dans le presse-papiers n'est pas prise en charge par votre navigateur
   copy-not-supported-hint: Presse-papiers indisponible. Copiez le lien ci-dessous
@@ -131,6 +159,7 @@ button:
   hide-sidebar: "Masquer la barre latérale"
   collapse-top-bar: Réduire la barre supérieure
   expand-top-bar: Développer la barre supérieure
+  clear-input: Effacer
 placeholder:
   search-containers: Recherche de conteneurs (⌘ + k, ⌃k)
   search: Recherche
@@ -405,7 +434,7 @@ cloud:
     later: "Je ferai ça plus tard"
 cloud-search:
   containers-section: "Conteneurs"
-  search-logs-for: "Rechercher des logs pour \"{query}\""
+  search-logs-for: 'Rechercher des logs pour "{query}"'
   across-containers: "indexés sur tous vos conteneurs"
   connect-to-enable: "Connecter Dozzle Cloud pour rechercher des logs"
   enable-streaming-to-search: "Activer le streaming des logs vers le Cloud"

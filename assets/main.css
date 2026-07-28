@@ -178,10 +178,14 @@
   }
 }
 
-/* The log view scrolls internally now, so the page itself rarely scrolls. A
- * stable gutter on the document would just reserve an empty strip to the right
- * of the log view's own scrollbar. Reserve the gutter on the scroll containers
- * that actually scroll instead (the log view's <main>, below). */
+/* Two gutters, two jobs. The document one (upstream) keeps the layout width
+ * constant when a page-level scrollbar appears: without it the width jump makes
+ * the percentage-based splitpanes recompute and the panes visibly flick. The
+ * log view additionally reserves its own, because it scrolls internally and
+ * would otherwise shift its content when its scrollbar appears. */
+html {
+  scrollbar-gutter: stable;
+}
 
 body {
   padding-top: env(safe-area-inset-top);

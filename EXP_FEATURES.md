@@ -4,7 +4,7 @@ Fork feature changelog for this repo's `dev` branch, documenting what it adds on
 top of the real upstream `amir20/dozzle` `master`.
 
 - **Compared refs:** `dev` (this fork) vs `upstream/master`
-- **Merge base:** `5693bcc4`
+- **Merge base:** `03011eea` (upstream merged into `dev` on 2026-07-27)
 - **Diff basis:** three-dot (`upstream/master...dev`), i.e. only changes our branch introduces.
 
 The work is a large Apple-HIG UI overhaul of the log viewer plus supporting
@@ -14,13 +14,41 @@ verified against the actual diff.
 ## Summary
 
 - **Commits ahead:** 47
-- **Files changed:** 275
-- **Lines:** +14280 / -2349 (net +11931)
+- **Files changed:** 271
+- **Lines:** +13821 / -2545 (net +11276)
+
+The counts dropped slightly against the previous revision because upstream has
+since shipped its own command palette and `copy-image` action, so that ground is
+no longer unique to this fork even though the fork's implementations were kept.
 
 Roughly split: frontend Vue/TS UI (~95 files) plus a full Storybook suite (106
 component stories + `.storybook/` config), locales (16 files, i18n parity), Go
 backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
 `Makefile`, and regenerated e2e visual snapshots (4 PNGs).
+
+## Upstream merges
+
+`upstream/master` was merged in at `03011eea` (12 commits, including two security
+fixes for GHSA-p66q-2gfp-8v55 and a move to tsgo for type-checking). 28 files
+conflicted; how each was settled:
+
+- **Command palette** — both sides built one independently. The fork's was kept:
+  it covers every upstream command plus 14 more, and its commands are idempotent
+  (`compact-on` / `compact-off`) where upstream's are bare toggles. All 16
+  locales resolved the same way; upstream's six `toggle-*` keys are dropped as
+  unreferenced.
+- **`html { scrollbar-gutter: stable }`** — taken _from upstream_. A page-level
+  scrollbar appearing makes the percentage-based splitpanes recompute and the
+  panes flick; the fork's per-scroller gutters address a different axis, so both
+  are now in place.
+- **`ScrollableView.vue`, `default.vue`, settings/search surfaces** — the fork's,
+  which supersede the upstream versions wholesale.
+- **`Links.vue`** — the fork's structure, keeping upstream's `data-testid` so
+  their new e2e specs still bind.
+- **Generated files** (`auto-imports.d.ts`, `components.d.ts`) regenerated;
+  `pnpm-lock.yaml` taken from upstream and reinstalled.
+- **e2e visual snapshots** kept as the fork's. They are stale either way and need
+  `make int` to regenerate against this UI.
 
 ## UI / Top bar
 

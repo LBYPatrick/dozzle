@@ -3,8 +3,9 @@
     <slot name="more-items"></slot>
 
     <!-- Notifications, new-version alerts, cloud, and settings moved into the
-         settings popup (sidebar gear / Cmd+K). Only the account menu stays. -->
-    <dropdown class="dropdown-end" v-if="config.user">
+         settings popup (sidebar gear / Cmd+K). Only the account menu stays.
+         data-testid kept for upstream's e2e specs. -->
+    <dropdown class="dropdown-end" data-testid="user-menu" v-if="config.user">
       <template #trigger>
         <template v-if="config.disableAvatars || !config.user.email">
           <material-symbols:person class="size-6" />

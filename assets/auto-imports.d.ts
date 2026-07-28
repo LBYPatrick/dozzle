@@ -15,7 +15,6 @@ declare global {
   const MIN_MENU_WIDTH: typeof import('./stores/settings').MIN_MENU_WIDTH
   const PRIMARY_COLORS: typeof import('./composable/primaryColor').PRIMARY_COLORS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
-  const activeSearchStatus: typeof import('./composable/eventStreams').activeSearchStatus
   const allLevels: typeof import('./composable/logContext').allLevels
   const applyPrimaryColor: typeof import('./composable/primaryColor').applyPrimaryColor
   const applySettings: typeof import('./stores/settings').applySettings
@@ -72,7 +71,6 @@ declare global {
   const extendRef: typeof import('@vueuse/core').extendRef
   const flattenJSON: typeof import('./utils/index').flattenJSON
   const flattenJSONToMap: typeof import('./utils/index').flattenJSONToMap
-  const focusSearch: typeof import('./composable/search').focusSearch
   const formatBytes: typeof import('./utils/index').formatBytes
   const formatDuration: typeof import('./utils/index').formatDuration
   const getActivePinia: typeof import('pinia').getActivePinia
@@ -86,7 +84,6 @@ declare global {
   const groupContainersForHost: typeof import('./composable/containerGroups').groupContainersForHost
   const groupK8sOwners: typeof import('./stores/k8s').groupK8sOwners
   const h: typeof import('vue').h
-  const hasInlineSearch: typeof import('./composable/inlineSearch').hasInlineSearch
   const hashCode: typeof import('./utils/index').hashCode
   const hostGroupKey: typeof import('./composable/collapsedSections').hostGroupKey
   const hostKey: typeof import('./composable/collapsedSections').hostKey
@@ -165,7 +162,6 @@ declare global {
   const refManualReset: typeof import('@vueuse/core').refManualReset
   const refThrottled: typeof import('@vueuse/core').refThrottled
   const refWithControl: typeof import('@vueuse/core').refWithControl
-  const registerSearchInstance: typeof import('./composable/search').registerSearchInstance
   const resetMenuWidth: typeof import('./stores/settings').resetMenuWidth
   const resolveComponent: typeof import('vue').resolveComponent
   const resolvePrimaryColor: typeof import('./composable/primaryColor').resolvePrimaryColor
@@ -311,7 +307,6 @@ declare global {
   const useIdle: typeof import('@vueuse/core').useIdle
   const useImage: typeof import('@vueuse/core').useImage
   const useInfiniteScroll: typeof import('@vueuse/core').useInfiniteScroll
-  const useInlineSearchProvider: typeof import('./composable/inlineSearch').useInlineSearchProvider
   const useIntersectionObserver: typeof import('@vueuse/core').useIntersectionObserver
   const useInterval: typeof import('@vueuse/core').useInterval
   const useIntervalFn: typeof import('@vueuse/core').useIntervalFn

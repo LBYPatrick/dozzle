@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 59
+- **Commits ahead:** 60
 - **Files changed:** 275
-- **Lines:** +14172 / -2672 (net +11500)
+- **Lines:** +14187 / -2672 (net +11515)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -91,14 +91,19 @@ floating, collapsible, two-row glass bar following Apple HIG.
   Expanded puts the metrics side by side so each trend gets the card's full
   height, headed `NOW` / `MAX` / `AVAIL`. Headings and values share one grid, so
   alignment is structural rather than tuned.
-- **Compact form is a table, not a picture.** Two rows in one grid — name, the
-  live figure, the ceiling — with the value right-aligned onto a slash and the
-  ceiling left-aligned off it, so both rows share an axis whatever the digits do.
-  The meter bar and its peak tick are gone: a fill that animates its width every
-  tick is movement in a readout meant to be read at a glance, and the ceiling it
-  encoded is already written out beside it. Fixed figure tracks plus tabular
-  numerals hold the card at one size — measured at 210px across idle, loaded, and
-  unavailable states — so nothing in the top bar shifts as the numbers change.
+- **Compact form is a table, not a picture.** One line per metric — name, the
+  live figure, the ceiling — and nothing drawn. The meter bar and its peak tick
+  are gone: a fill that animates its width every tick is movement in a readout
+  meant to be read at a glance, and the ceiling it encoded is already written out
+  beside it.
+- Each line is packed tight rather than sharing a grid with the other. A shared
+  grid sizes every value column to the widest figure in the card, which leaves
+  `N/A` or `31.7%` marooned in a column cut for `912.4MB` — a hole through the
+  middle of the card. Only the name is a fixed track, because names are what read
+  as a column. Steadiness comes from a floor under the card instead (`min-width`,
+  measured against the worst realistic line), so slack falls at the trailing edge
+  where it reads as padding. Verified in Storybook: 184px whether the figures say
+  `912.4MB` or `N/A`.
 - Clicking a widget cycles its form; throughput also keeps its per-direction live
   rate. Each widget sits in a slot that animates its own width across the change
   (`composable/animatedWidth.ts` — CSS cannot transition `width: auto`).

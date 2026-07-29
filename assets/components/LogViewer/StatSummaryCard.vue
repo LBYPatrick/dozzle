@@ -15,7 +15,11 @@
   <button
     type="button"
     class="stat-card group/stat"
-    :class="[variant === 'chart' ? 'chart-card' : 'summary-card', { unavailable }]"
+    :class="[
+      variant === 'chart' ? 'chart-card' : 'summary-card',
+      hasCeiling ? 'has-ceiling-card' : 'no-ceiling-card',
+      { unavailable },
+    ]"
     :title="`${title ? `${title}\n\n` : ''}${$t('toolbar.stat-cycle')}`"
     @click="$emit('cycle')"
   >
@@ -23,30 +27,31 @@
       <div :key="variant" class="forms" :class="hasCeiling ? 'has-ceiling' : 'no-ceiling'">
         <!-- Compact -->
         <template v-if="variant !== 'chart'">
-          <template v-for="row in rows" :key="row.label">
-            <component :is="row.icon" class="size-3.5" :class="`tone-${row.tone}`" />
+          <!-- Each row is its own line, packed tight. Sharing one grid would
+               size every value column to the widest figure in the card, and
+               "N/A" or "31.7%" sitting in a column cut for "912.4MB" is a hole
+               in the middle of the card. Only the name is a fixed track, since
+               that is what has to line up.
+
+               No captions: the figures carry their own units and "5.2MB /
+               7.7GB" reads as used-of-available on its own. The words cost more
+               width than they explain, and the expanded form spells them out.
+               They stay for screen readers, which get no help from a slash. -->
+          <div v-for="row in rows" :key="row.label" class="row">
+            <component :is="row.icon" class="size-3.5 shrink-0" :class="`tone-${row.tone}`" />
             <span class="name">{{ row.label }}</span>
-            <!-- The value closes on the slash and the ceiling opens from it, so
-                 both rows meet on the same axis however many digits each holds.
-                 No captions: the figures carry their own units and "5.2MB /
-                 7.7GB" reads as used-of-available on its own. The words cost
-                 more width than they explain, and the expanded form spells them
-                 out. They stay for screen readers, which get no help from a
-                 slash. -->
             <span class="value">
               <span class="sr-only">{{ $t("label.now") }}</span
               >{{ row.currentLabel }}
             </span>
-            <template v-if="hasCeiling">
-              <span class="sep" aria-hidden="true">{{ row.totalLabel ? "/" : "" }}</span>
+            <template v-if="row.totalLabel">
+              <span class="sep" aria-hidden="true">/</span>
               <span class="total">
-                <template v-if="row.totalLabel">
-                  <span class="sr-only">{{ $t("label.avail") }}</span
-                  >{{ row.totalLabel }}
-                </template>
+                <span class="sr-only">{{ $t("label.avail") }}</span
+                >{{ row.totalLabel }}
               </span>
             </template>
-          </template>
+          </div>
         </template>
 
         <!-- Expanded -->
@@ -194,40 +199,45 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
 }
 
 .summary-card .forms {
-  display: grid;
+  display: flex;
   width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.row {
+  display: flex;
   align-items: center;
-  align-content: center;
-  column-gap: 0.4rem;
-  row-gap: 0.3rem;
+  gap: 0.4rem;
 }
 
-/* The figure tracks are fixed rather than content-sized, and that is the whole
-   point: an auto track is re-measured every tick, so "1MB" ticking over to
-   "708KB" would resize the column, the card, and the toolbar around it. The
-   value closes on the slash (right-aligned) and the ceiling opens from it
-   (left-aligned), so the pair reads as one fraction and both rows share an axis.
-
-   The widths are the longest figure each track can hold, measured rendered
-   rather than guessed — these are tabular figures, which run wider than the
-   proportional ones a canvas would report. Utilization tops out at "1800.0%"
-   (55.4px) on an 18-core host and bytes at "999.9MB" (54.5px), so a 3.5rem
-   track cleared the worst case by half a pixel. Throughput carries a "/s" and
-   needs more again: "999.9MB/s" is 65px. */
-.summary-card .forms.has-ceiling {
-  grid-template-columns: auto 2.1rem 3.6rem auto 3.6rem;
+/* The one fixed track. Names are what read as a column, so they get a width;
+   everything after them is set solid and ends where it ends. Scoped to .row —
+   the expanded form has its own .name inside a different stack. */
+.row .name {
+  width: 2.1rem;
+  flex-shrink: 0;
 }
 
-.summary-card .forms.no-ceiling {
-  grid-template-columns: auto 2.4rem 4.25rem;
+.no-ceiling .row .name {
+  width: 2.4rem;
 }
 
-.value {
-  justify-self: end;
+/* Nothing else is fixed, so the card is only as wide as its widest line — but
+   it must not breathe in and out as the figures tick. A floor sized to the
+   worst realistic line holds it steady, and any slack falls at the trailing
+   edge where it reads as padding rather than as a gap punched through the
+   middle. Measured rendered rather than guessed, since these are tabular
+   figures and run wider than proportional ones: the longest line a resource
+   card draws is "MEM 912.4MB / 999.9GB", and a throughput card "DISK
+   999.9MB/s". */
+.summary-card.has-ceiling-card {
+  min-width: 11.5rem;
 }
 
-.total {
-  justify-self: start;
+.summary-card.no-ceiling-card {
+  min-width: 8rem;
 }
 
 .sep {

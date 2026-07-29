@@ -385,6 +385,14 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   `DOCKERHUB_IMAGE` repo variable overrides the Docker Hub repo. Falls back to
   generating `shared_{key,cert}.pem` when `TTL_KEY` / `TTL_CERT` are unset, in
   which case server and agent images must come from the same build.
+- New `make dockerhub-overview` (`scripts/dockerhub_overview.py`): publishes the
+  Docker Hub listing, composed from `.github/dockerhub-overview.md` plus this
+  file, so the Hub page is generated from the repo. It runs locally rather than
+  in CI because Docker Hub's repository API refuses personal access tokens
+  outright, and a JWT minted from a PAT comes back scoped too low to edit a
+  description; only a Docker Desktop web-login session carries account scope.
+  The workflow still composes the page, uploads it as an artifact, and syncs it
+  when a `DOCKERHUB_DESCRIPTION_PASSWORD` secret exists.
 - Upstream's `dev.yml` and `deploy.yml` are left untouched so merges stay clean;
   their fork guard already makes them no-ops here.
 - Removed `.github/workflows/claude.yml` and `claude-code-review.yml`.

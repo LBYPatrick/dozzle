@@ -93,7 +93,7 @@ jobs:
             printf '\n'
             sed '1s|.*|# Feature changelog|' EXP_FEATURES.md
           } > overview.md
-          limit=24800
+          limit=24950
           footer=$'\n---\n\nTruncated. Full changelog: <https://github.com/LBYPatrick/dozzle/blob/exp/EXP_FEATURES.md>\n'
           if [ "$(wc -c < overview.md)" -gt "$limit" ]; then
             head -c "$(( limit - ${#footer} ))" overview.md | sed '$d' > overview.trimmed.md
@@ -123,7 +123,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Docker Hub overview not synced. Set the DOCKERHUB_DESCRIPTION_PASSWORD secret (account password; access tokens get 403 here), or paste the dockerhub-overview artifact into the repo page by hand."
+            echo "::warning::Docker Hub overview not synced from CI. Run 'make dockerhub-overview' locally, or set the DOCKERHUB_DESCRIPTION_PASSWORD secret to an account password (access tokens are refused by that API)."
           fi
       - name: Update Docker Hub description
         if: steps.desc.outputs.enabled == 'true'

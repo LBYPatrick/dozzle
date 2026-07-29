@@ -34,6 +34,11 @@ Run / deploy
   agent-reload    Rebuild image and redeploy the agent into an OrbStack VM.
                     arg VM_NAME  target VM (default dozzle-agent)
                     e.g. make agent-reload VM_NAME=my-vm
+  dockerhub-overview
+                  Publish the Docker Hub listing (.github/dockerhub-overview.md + EXP_FEATURES.md).
+                  Needs a Docker Desktop web login; access tokens are refused by that API.
+                    arg REPO  target repo (default lbypatrick/dozzle)
+                    e.g. make dockerhub-overview REPO=me/dozzle
 
 Housekeeping
   clean           Remove dist/, generated protobuf, and certs.
@@ -134,3 +139,7 @@ agent-reload: docker
 	orb exec -m $$VM_NAME docker rm dozzle-agent || true; \
 	orb exec -m $$VM_NAME docker run -d --name dozzle-agent -p 7007:7007 -v /var/run/docker.sock:/var/run/docker.sock -v ~/dozzle-certs:/certs -v ~/dozzle-data:/data -e DOZZLE_LEVEL=debug amir20/dozzle:local agent --cert /certs/shared_cert.pem --key /certs/shared_key.pem; \
 	echo "✅ Agent reloaded"
+
+.PHONY: dockerhub-overview
+dockerhub-overview:
+	@python3 scripts/dockerhub_overview.py $(if $(REPO),--repo $(REPO),)

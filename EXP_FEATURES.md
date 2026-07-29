@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 56
+- **Commits ahead:** 58
 - **Files changed:** 275
-- **Lines:** +14236 / -2672 (net +11564)
+- **Lines:** +14258 / -2672 (net +11586)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -288,7 +288,11 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - **Segmented control** — raised full-contrast capsule on a recessed track.
 - **Resize dividers** (sidebar and pinned columns) — iPad-style: a hairline
   carrying an opaque capsule grabber, visible at rest, thickening on approach and
-  taking the accent while dragging.
+  taking the accent while dragging. The splitter occupies only the 1px it paints;
+  the ~11px drag target overflows symmetrically into both panes rather than
+  reserving width, so the panes meet at the hairline instead of straddling an
+  empty 12px channel. It sits above the log top bar so the handle stays grabbable
+  along its full height.
 - **Buttons** converge on one glass treatment and `--control-radius`; outline
   variants render tonal.
 

@@ -162,26 +162,36 @@ onMounted(async () => {
  * iPad-style: a hairline divider carrying a capsule grabber. The grabber is
  * present at rest — a control you cannot see is a control nobody finds — and
  * thickens and darkens on approach rather than the whole column changing
- * colour. The splitter is wider than anything it paints so the target stays
- * comfortable. */
+ * colour.
+ *
+ * The splitter occupies exactly the hairline it paints. A comfortable target
+ * still needs ~11px, but reserving that in the layout pushes the panes apart
+ * and leaves an empty channel between them, which is what a separator is
+ * supposed to avoid. So the target overflows symmetrically into both panes
+ * (::before) instead of taking width of its own. */
 :deep(.splitpanes--vertical > .splitpanes__splitter) {
   position: relative;
-  width: 12px;
+  width: 1px;
   flex-shrink: 0;
-  background-color: transparent;
-  transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
+  /* Above the panes' own floating chrome (the log top bar is z-20), or that bar
+     would take the pointer along its rows and the handle would only be grabbable
+     below it. The target is narrow enough to stay inside each pane's padding, so
+     it covers no controls. */
+  z-index: 25;
+  background-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  transition:
+    background-color 200ms ease,
+    opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* The divider line. */
+/* The drag target: invisible, centred on the hairline, overflowing both panes. */
 :deep(.splitpanes--vertical > .splitpanes__splitter)::before {
   content: "";
   position: absolute;
   inset-block: 0;
   left: 50%;
-  width: 1px;
+  width: 11px;
   transform: translateX(-50%);
-  background-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
-  transition: background-color 200ms ease;
 }
 
 /* The grabber. Always visible; grows and gains contrast on approach. */
@@ -204,8 +214,8 @@ onMounted(async () => {
     box-shadow 180ms ease;
 }
 
-:deep(.splitpanes--vertical > .splitpanes__splitter:hover)::before,
-:deep(.splitpanes--vertical > .splitpanes__splitter:focus-visible)::before {
+:deep(.splitpanes--vertical > .splitpanes__splitter:hover),
+:deep(.splitpanes--vertical > .splitpanes__splitter:focus-visible) {
   background-color: color-mix(in oklab, var(--color-base-content) 22%, transparent);
 }
 

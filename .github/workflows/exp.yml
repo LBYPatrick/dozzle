@@ -100,11 +100,36 @@ jobs:
             mv overview.trimmed.md overview.md
           fi
           echo "overview is $(wc -c < overview.md) bytes, $(wc -m < overview.md) chars"
+      - name: Upload Docker Hub overview
+        # Kept as an artifact so the page can be pasted by hand when the
+        # description sync below is skipped.
+        uses: actions/upload-artifact@v7
+        with:
+          name: dockerhub-overview
+          path: overview.md
+          retention-days: 30
+      - name: Check description credentials
+        id: desc
+        # Docker Hub's description endpoint rejects access tokens with 403 — it
+        # wants an account password — while image push wants a token. So the two
+        # use separate secrets, and the sync is skipped (not failed) when the
+        # password is absent: the images are already published by this point and
+        # a missing overview should not redden the run.
+        env:
+          DESC_PASSWORD: ${{ secrets.DOCKERHUB_DESCRIPTION_PASSWORD }}
+        run: |
+          if [ -n "$DESC_PASSWORD" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Docker Hub overview not synced. Set the DOCKERHUB_DESCRIPTION_PASSWORD secret (account password; access tokens get 403 here), or paste the dockerhub-overview artifact into the repo page by hand."
+          fi
       - name: Update Docker Hub description
+        if: steps.desc.outputs.enabled == 'true'
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_DESCRIPTION_PASSWORD }}
           repository: ${{ vars.DOCKERHUB_IMAGE || 'lbypatrick/dozzle' }}
           short-description: "Experimental fork of amir20/dozzle. Not official; for testing and feedback."
           readme-filepath: ./overview.md

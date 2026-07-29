@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 62
-- **Files changed:** 275
-- **Lines:** +14252 / -2672 (net +11580)
+- **Commits ahead:** 64
+- **Files changed:** 278
+- **Lines:** +14434 / -2680 (net +11754)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -268,6 +268,21 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   helper. Stored per profile.
 - Removed the old `ScrollProgress.vue` (102 lines) in favor of the new
   bar/widget/circuit-ring approach; dropped the fake determinate progress strip.
+- **Scroll progress no longer claims 100% at the oldest line.** Two causes, both
+  reporting a confident percentage where nothing had been measured. `progress`
+  defaulted to `1` and `LogList` only computed it when exactly one container was
+  in view, so every merged/host/stack/service/group view read "100%" with a full
+  bar for as long as you were scrolled up. And the arithmetic had no guard on its
+  span: with `container.created` unset the backend sends the Unix epoch, and
+  `(line - 0) / (now - 0)` is ~0.9998 for every line including the oldest; a
+  container created in the same instant divided by zero; an invalid date gave
+  `NaN`, which no comparison rejects. `progress` is now `number | undefined`, the
+  span starts at the oldest container in view (so multi-container views are
+  measured rather than skipped), and the arithmetic lives in a pure
+  `scrollProgress()` that refuses unmeasurable spans and clamps at the source —
+  host clocks run ahead of the browser's, so a line can legitimately be stamped
+  after `now`. Unknown renders no percentage at all, and an empty bar rather than
+  a full one. Covered by `composable/scrollContext.spec.ts` (9 cases).
 - Key files: `composable/cpuDisplay.ts` (new), `composable/loadBetween.ts`,
   `composable/logLoader.ts`, `LogViewer/MultiContainerStat.vue`,
   `HostCard.vue`, `ContainerStatCell.vue`.
@@ -319,6 +334,23 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   along its full height.
 - **Buttons** converge on one glass treatment and `--control-radius`; outline
   variants render tonal.
+- **One focus ring for every control** (`--ring-width` / `--ring-offset` /
+  `--ring-focus` / `--ring-selected`, plus `.focus-ring` and `.selected-ring`).
+  Five treatments had accumulated that agreed on nothing: a 3px box-shadow at 22%
+  on fields (flush to the edge, so it read as a fat halo rather than a ring), a
+  2px ring at 60% on segmented buttons, a 2px outline at 55% on toggles, 4px of
+  _inset_ chrome on the selected colour swatch (which left the colour as a small
+  disc behind a heavy band), and daisyUI's own near-black outline on buttons —
+  invisible on the dark theme, so buttons had no usable focus indicator. Now 2px
+  at 2px offset, drawn with `outline` so it follows each control's radius and
+  cannot collide with a shadow the control already casts. Selection is the same
+  geometry in a neutral hue. Fields drop the primary border on focus: the ring
+  plus an accent hairline inside it stated the same thing twice, which was most of
+  what read as heavy. Removing `@utility input { outline-hidden! }` was required —
+  correct while focus was a box-shadow, it silently swallowed the outline. The
+  segmented control takes one ring around the whole track
+  (`:has(:focus-visible)`), as macOS does, and because the track's 3px padding is
+  narrower than the ring's offset a per-segment ring spilled over its edge.
 
 ## Cloud / dev tooling
 
@@ -401,6 +433,12 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 
 - `assets/composable/visible.spec.ts` — covers the search-highlight filter and
   the derived-entry caching that keeps the log list from rebuilding every flush.
+- `assets/composable/scrollContext.spec.ts` — the scroll-progress span maths: the
+  oldest line reads 0 rather than 1, lines outside the span clamp, and every
+  unmeasurable span (epoch start, zero-length, future start, invalid date) returns
+  undefined instead of a plausible number. Includes an assertion that the old
+  epoch arithmetic really did land above 0.99, so the regression cannot quietly
+  return.
 - `MultiContainerStat.spec.ts` extended for the compact/expanded stat forms.
 
 ## Build / Makefile / CI

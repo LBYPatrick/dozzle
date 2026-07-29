@@ -392,6 +392,38 @@ body {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 22%, transparent);
 }
 
+/* Filled fields, the way Apple draws a search box: a recessed shade of the
+ * surface instead of a line around it. A tinted well already reads as "type
+ * here", so the hairline edge is saying it twice — and on a sidebar, where the
+ * field sits directly above a dense list, the extra line is one more horizontal
+ * rule competing with the rows.
+ *
+ * Pairs with .input, so radius, transition and the focus ring stay shared with
+ * every other field. The overrides carry the same :not() chain as the rules
+ * above, since those are specific enough to win otherwise.
+ *
+ * Tinted with base-content rather than a base-N step: the well has to read as
+ * recessed against whatever surface it is dropped on, and a tint darkens on the
+ * light theme and lightens on the dark one without a second rule. */
+.input.field-filled {
+  --field-edge: transparent;
+  border-color: transparent;
+  background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+}
+
+.input.field-filled:hover:not(:disabled):not(:focus-within) {
+  border-color: transparent;
+  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+}
+
+/* Focus keeps the ring — a fill alone cannot show keyboard focus — but not the
+ * edge, so focusing reads as the well brightening rather than growing a frame. */
+.input.field-filled:focus-within,
+.input.field-filled:focus {
+  border-color: transparent;
+  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+}
+
 /* iOS-style switches. daisyUI defines .toggle inside @layer daisyui, so these
  * unlayered rules win the cascade and replace the outlined toggle with a solid
  * track + white knob that slides. Accent (on) respects the theme color. */

@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 61
+- **Commits ahead:** 62
 - **Files changed:** 275
-- **Lines:** +14204 / -2672 (net +11532)
+- **Lines:** +14252 / -2672 (net +11580)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -216,6 +216,17 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - On pages without an inline top-bar container search, the sidebar shows one at
   its foot. Resetting the width is a quick command (`/sidebar reset`) rather than
   a button, always offered and a no-op at the default.
+- **The container search field is filled, not outlined** (`.field-filled`, paired
+  with `.input` so radius, transition and focus ring stay shared). A recessed
+  shade of the surface is how Apple draws a search box, and it earns its keep
+  here: the field sits directly above a dense navigation list, where a hairline
+  box is one more horizontal rule to sort out from the rows. Tinted with
+  `base-content` rather than a `base-N` step so it reads as recessed on either
+  theme without a second rule. Focus keeps the ring but not the edge, so it reads
+  as the well brightening rather than growing a frame. The placeholder went 60% →
+  70%: against the fill, 60% measures 3.5:1 on the light theme, under AA for text
+  that size (the old `bg-base-200` was 3.52:1, so this was inherited, not new);
+  70% clears it at 4.6:1 light and 5.7:1 dark.
 - **The carousel caption is gone** (`Hosts and Containers` and friends). With one
   panel it named the only thing on screen; with several, the panel dots already
   carry each name as their tooltip and accessible name. The `hideTitle` prop that

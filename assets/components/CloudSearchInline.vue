@@ -2,9 +2,11 @@
   <!-- Not an input, but it stands in for one, so it wears the same field
        language: the shared `.input` surface, a leading glyph that picks up the
        accent on hover/focus, and a clear control once there is a live query to
-       clear. -->
+       clear. Filled rather than outlined (`.field-filled`) — it sits directly
+       above the navigation list, and a hairline box there just adds another rule
+       for the eye to sort out from the rows. -->
   <div
-    class="input group/field bg-base-200 flex h-9 w-full items-center gap-2 px-3 text-left"
+    class="input field-filled group/field flex h-9 w-full items-center gap-2 px-3 text-left"
     data-testid="search"
     role="button"
     tabindex="0"
@@ -12,16 +14,19 @@
     @keydown.enter.prevent="openSearch"
     @keydown.space.prevent="openSearch"
   >
+    <!-- 70%, not 60%: against the field's own fill, 60% measures 3.5:1 on the
+         light theme, under AA for text this size. 70% clears it in both themes
+         (4.6:1 light, 5.7:1 dark) and the glyph still reads as secondary. -->
     <mdi:magnify
       class="group-hover/field:text-primary group-focus/field:text-primary size-4 shrink-0 transition-colors"
-      :class="cloudReady ? 'text-primary' : 'text-base-content/60'"
+      :class="cloudReady ? 'text-primary' : 'text-base-content/70'"
     />
     <!-- Show the active query when we're on the cloud search page so the
          topbar reflects what the user is looking at. -->
     <span v-if="activeQuery" class="text-base-content min-w-0 flex-1 truncate font-mono text-sm">{{
       activeQuery
     }}</span>
-    <span v-else class="text-base-content/60 min-w-0 flex-1 truncate text-sm">
+    <span v-else class="text-base-content/70 min-w-0 flex-1 truncate text-sm">
       <template v-if="cloudReady">{{ $t("cloud-search.hero-title-cloud") }}</template>
       <template v-else>{{ $t("cloud-search.hero-title-plain") }}</template>
     </span>

@@ -23,6 +23,3 @@ Feedback: <https://github.com/LBYPatrick/dozzle/issues>. Please do not file fork
 bugs on the upstream tracker.
 
 ---
-
-Below is the fork's feature changelog, generated from the actual diff against
-upstream.

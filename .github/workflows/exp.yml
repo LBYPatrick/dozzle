@@ -90,6 +90,7 @@ jobs:
         run: |
           {
             cat .github/dockerhub-overview.md
+            printf '\n'
             sed '1s|.*|# Feature changelog|' EXP_FEATURES.md
           } > overview.md
           limit=24800

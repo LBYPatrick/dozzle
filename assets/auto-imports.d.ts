@@ -83,6 +83,7 @@ declare global {
   const groupContainersForHost: typeof import('./composable/containerGroups').groupContainersForHost
   const groupK8sOwners: typeof import('./stores/k8s').groupK8sOwners
   const h: typeof import('vue').h
+  const hasTimestamp: typeof import('./composable/scrollContext').hasTimestamp
   const hashCode: typeof import('./utils/index').hashCode
   const hostGroupKey: typeof import('./composable/collapsedSections').hostGroupKey
   const hostKey: typeof import('./composable/collapsedSections').hostKey
@@ -168,6 +169,7 @@ declare global {
   const scrollContextKey: typeof import('./composable/scrollContext').scrollContextKey
   const scrollLogsToBottom: typeof import('./composable/scrollControls').scrollLogsToBottom
   const scrollLogsToTop: typeof import('./composable/scrollControls').scrollLogsToTop
+  const scrollProgress: typeof import('./composable/scrollContext').scrollProgress
   const search: typeof import('./stores/settings').search
   const serializeSettings: typeof import('./stores/settings').serializeSettings
   const setActivePinia: typeof import('pinia').setActivePinia
@@ -580,6 +582,7 @@ declare module 'vue' {
     readonly groupContainersForHost: UnwrapRef<typeof import('./composable/containerGroups')['groupContainersForHost']>
     readonly groupK8sOwners: UnwrapRef<typeof import('./stores/k8s')['groupK8sOwners']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly hasTimestamp: UnwrapRef<typeof import('./composable/scrollContext')['hasTimestamp']>
     readonly hashCode: UnwrapRef<typeof import('./utils/index')['hashCode']>
     readonly hostGroupKey: UnwrapRef<typeof import('./composable/collapsedSections')['hostGroupKey']>
     readonly hostKey: UnwrapRef<typeof import('./composable/collapsedSections')['hostKey']>
@@ -665,6 +668,7 @@ declare module 'vue' {
     readonly scrollContextKey: UnwrapRef<typeof import('./composable/scrollContext')['scrollContextKey']>
     readonly scrollLogsToBottom: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToBottom']>
     readonly scrollLogsToTop: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToTop']>
+    readonly scrollProgress: UnwrapRef<typeof import('./composable/scrollContext')['scrollProgress']>
     readonly search: UnwrapRef<typeof import('./stores/settings')['search']>
     readonly serializeSettings: UnwrapRef<typeof import('./stores/settings')['serializeSettings']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>

@@ -143,8 +143,11 @@
   --noise: 1;
 }
 
+/* No `outline-hidden!` here. It was correct while a field's focus ring was a
+ * box-shadow — the outline had to be suppressed so the two did not stack — but
+ * the shared ring is an outline now, and an !important outline-style:none on
+ * every .input silently swallowed it. */
 @utility input {
-  @apply outline-hidden!;
   &.input-ghost {
     @apply focus:border-transparent;
   }
@@ -347,11 +350,54 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+ * Focus and selection rings.
+ *
+ * One geometry for every control that can be focused or chosen. It had grown
+ * five: a 3px box-shadow at 22% on fields (low alpha and flush to the edge, so
+ * it read as a fat halo welded to the border rather than a ring), a 2px ring at
+ * 60% on segmented buttons, a 2px outline at 55% on toggles, 4px of inset chrome
+ * on the selected colour swatch, and daisyUI's own near-black outline on buttons
+ * — which on the dark theme was all but invisible, so buttons effectively had no
+ * focus indicator at all.
+ *
+ * Now: 2px, offset 2px, drawn with `outline` so it follows each control's
+ * border-radius and cannot collide with a shadow the control already casts (the
+ * top-bar widget and the segmented indicator both carry one). Held in custom
+ * properties so a control with no room outside itself can tighten the offset
+ * without inventing a second ring.
+ *
+ * Selection is the same geometry in a neutral hue: choosing a thing and focusing
+ * a thing should not look like two unrelated ideas.
+ * ------------------------------------------------------------------------- */
+:root {
+  --ring-width: 2px;
+  --ring-offset: 2px;
+  --ring-focus: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --ring-selected: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+}
+
+/* Unlayered, so it beats daisyUI's own :focus-visible rules. Components opt in
+ * with .focus-ring; the framework's own controls are named here so no component
+ * has to remember to. */
+.focus-ring:focus-visible,
+.btn:focus-visible,
+.toggle:focus-visible,
+.checkbox:focus-visible,
+.radio:focus-visible {
+  outline: var(--ring-width) solid var(--ring-focus);
+  outline-offset: var(--ring-offset);
+}
+
+.selected-ring {
+  outline: var(--ring-width) solid var(--ring-selected);
+  outline-offset: var(--ring-offset);
+}
+
+/* ---------------------------------------------------------------------------
  * Text fields.
  *
  * A single resting/hover/focus language for every input in the app: hairline
- * edge at rest, a brighter edge on hover, and a soft focus ring that grows from
- * the border rather than snapping on.
+ * edge at rest, a brighter edge on hover, and the shared ring on focus.
  * ------------------------------------------------------------------------- */
 .input,
 .textarea,
@@ -377,19 +423,22 @@ body {
   background-color: color-mix(in oklab, var(--color-base-content) 3%, transparent);
 }
 
+/* The ring is the whole focus signal — the edge stays at its resting colour.
+ * Turning the border primary as well drew the same message twice, a hairline
+ * accent inside an accent ring, which is most of what made focus look heavy. */
 .input:focus-within,
 .textarea:focus-within,
 .select:focus-within,
 .input:focus,
 .textarea:focus,
 .select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 22%, transparent);
+  outline: var(--ring-width) solid var(--ring-focus);
+  outline-offset: var(--ring-offset);
 }
 
 .input.input-warning:focus-within,
 .input.input-error:focus-within {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 22%, transparent);
+  outline-color: color-mix(in oklab, var(--color-error) 60%, transparent);
 }
 
 /* Filled fields, the way Apple draws a search box: a recessed shade of the
@@ -416,11 +465,11 @@ body {
   background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
 }
 
-/* Focus keeps the ring — a fill alone cannot show keyboard focus — but not the
- * edge, so focusing reads as the well brightening rather than growing a frame. */
+/* Focus brightens the well and takes the shared ring. No border-color here: the
+ * resting rule already holds the edge transparent and nothing above reinstates
+ * it, so focus reads as the well lifting rather than growing a frame. */
 .input.field-filled:focus-within,
 .input.field-filled:focus {
-  border-color: transparent;
   background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
 }
 
@@ -467,10 +516,6 @@ body {
 .toggle:checked::before,
 .toggle[aria-checked="true"]::before {
   transform: translateX(1.125rem);
-}
-.toggle:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
-  outline-offset: 1px;
 }
 .toggle-sm {
   width: 2.4rem;

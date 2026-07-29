@@ -16,7 +16,7 @@
       type="button"
       role="radio"
       :aria-checked="model === opt.value"
-      class="focus-visible:ring-primary/60 relative z-10 rounded-[7px] px-3 py-1 text-sm whitespace-nowrap transition-[color,transform] duration-150 focus:outline-none focus-visible:ring-2 active:scale-[0.96]"
+      class="relative z-10 rounded-[7px] px-3 py-1 text-sm whitespace-nowrap transition-[color,transform] duration-150 focus-visible:outline-none active:scale-[0.96]"
       :class="
         model === opt.value
           ? 'text-base-content font-semibold'
@@ -75,6 +75,16 @@ useResizeObserver(root, () => update());
 .track {
   background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
   box-shadow: inset 0 1px 2px rgb(var(--shadow-ink) / 0.14);
+}
+
+/* One ring around the whole control, the way macOS focuses a segmented control,
+   rather than one per segment. Also the only geometry that fits: the track's 3px
+   padding is narrower than the shared ring's offset, so a per-segment ring spilled
+   out over the track's own edge. The segments suppress their own so this is the
+   single indicator. */
+.track:has(:focus-visible) {
+  outline: var(--ring-width) solid var(--ring-focus);
+  outline-offset: var(--ring-offset);
 }
 
 .indicator {

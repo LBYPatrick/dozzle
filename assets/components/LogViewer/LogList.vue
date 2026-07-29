@@ -30,12 +30,20 @@ const permalinkLogId = computed(() => (typeof route.query.logId === "string" ? r
 
 const list = ref<HTMLElement[]>([]);
 
+// The start of the span progress is measured against: the oldest container in
+// view, so a merged/host/stack view is measured rather than skipped. It used to
+// bail unless exactly one container was in view, which left `progress` at its
+// default — and that default said 100%.
+const spanStart = computed(() => {
+  const stamps = containers.value.map((c) => c.created).filter(hasTimestamp);
+  if (stamps.length === 0) return undefined;
+  return new Date(Math.min(...stamps.map((d) => d.getTime())));
+});
+
 let previousDate = new Date();
 useIntersectionObserver(
   list,
   (entries) => {
-    if (containers.value.length != 1) return;
-    const container = containers.value[0];
     for (const entry of entries) {
       if (entry.isIntersecting) {
         const time = entry.target.getAttribute("data-time");
@@ -43,9 +51,9 @@ useIntersectionObserver(
           const date = new Date(parseInt(time));
           if (+date === +previousDate) break;
           previousDate = date;
-          const diff = new Date().getTime() - container.created.getTime();
-          progress.value = (date.getTime() - container.created.getTime()) / diff;
           currentDate.value = date;
+          const start = spanStart.value;
+          progress.value = start ? scrollProgress(date, start, new Date()) : undefined;
           break;
         }
       }

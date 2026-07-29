@@ -65,7 +65,12 @@
             <SearchStatus :status="searchStatus" class="min-w-0" />
             <transition name="progress-status">
               <div v-if="scrollContext.paused" class="flex min-w-0 items-center gap-2">
-                <span class="text-primary shrink-0 font-semibold tabular-nums">{{ progressPercent }}%</span>
+                <!-- Only once it has actually been measured. The date alone is
+                     still worth showing while the span is unknown; a percentage
+                     invented to fill the gap is not. -->
+                <span v-if="progressPercent !== undefined" class="text-primary shrink-0 font-semibold tabular-nums"
+                  >{{ progressPercent }}%</span
+                >
                 <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />
               </div>
             </transition>
@@ -92,9 +97,12 @@
              z-index, so the bar's own dropdowns (in this backdrop-blur stacking
              context) stay above it. -->
         <transition name="progress-bar">
+          <!-- Empty, not full, while the span is unmeasured: a full bar claims
+               you are at the live tail, which is the opposite of true whenever
+               this bar is visible at all. -->
           <ScrollProgressBar
             v-show="scrollContext.paused"
-            :progress="scrollContext.progress"
+            :progress="scrollContext.progress ?? 0"
             class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-1/2"
           />
         </transition>
@@ -107,7 +115,7 @@
         :containers="containers"
         :loading="loadingMore || searchLoading"
         :paused="scrollContext.paused"
-        :progress="scrollContext.progress"
+        :progress="scrollContext.progress ?? 0"
         @expand="topBarCollapsed = false"
       />
     </transition>
@@ -198,7 +206,10 @@ const collapsed = computed(() => canCollapse.value && topBarCollapsed.value);
 // --log-top-inset so they sit below the bar instead of under it.
 const topInset = computed(() => (collapsed.value ? 0 : barHeight.value));
 
-const progressPercent = computed(() => Math.round(Math.min(1, Math.max(0, scrollContext.progress)) * 100));
+// Already clamped to 0..1 by scrollProgress, and undefined while unmeasured.
+const progressPercent = computed(() =>
+  scrollContext.progress === undefined ? undefined : Math.round(scrollContext.progress * 100),
+);
 
 // ⌘/⌃F opens the integrated search row. Lives here (not in Search.vue) because
 // the row is unmounted while the bar is collapsed — opening search must first

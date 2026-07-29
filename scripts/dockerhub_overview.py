@@ -54,9 +54,11 @@ def compose() -> str:
     if len(page) <= LIMIT:
         return page
     keep = page[: LIMIT - len(TRUNCATION_NOTE)]
-    section = keep.rfind("\n## ")
-    cut = section if section != -1 else keep.rfind("\n")
-    return keep[:cut] + TRUNCATION_NOTE
+    # Drop back to the start of whatever block the cut landed inside — a bullet,
+    # a heading, or a paragraph — whichever begins latest. Rewinding to the last
+    # heading instead would throw away every complete bullet in that section too.
+    cut = max(keep.rfind("\n- "), keep.rfind("\n## "), keep.rfind("\n\n"))
+    return keep[: cut if cut != -1 else keep.rfind("\n")] + TRUNCATION_NOTE
 
 
 def session_token() -> str:
@@ -98,6 +100,12 @@ def publish(repo: str, page: str, token: str) -> None:
         with urllib.request.urlopen(request, timeout=30) as response:
             print(f"published to {repo} (HTTP {response.status})")
     except urllib.error.HTTPError as err:
+        if err.code == 401:
+            sys.exit(
+                "HTTP 401: the Docker Desktop session has expired. Open Docker "
+                "Desktop and sign in again (the session refreshes on launch), "
+                "then re-run. The page already on Docker Hub is left as-is."
+            )
         sys.exit(f"HTTP {err.code}: {err.read(300).decode(errors='replace')}")
 
 

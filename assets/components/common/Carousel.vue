@@ -8,31 +8,27 @@
         <component v-for="(card, index) in providedCards" :key="index" :is="card" ref="cards" />
       </div>
     </div>
-    <div class="flex flex-col gap-2">
-      <h3 v-if="!hideTitle" class="text-center text-sm font-thin">
-        {{ cards?.[activeIndex].title }}
-      </h3>
-      <div class="flex flex-none justify-center gap-2" v-if="providedCards.length > 1">
-        <button
-          v-for="(c, index) in providedCards"
-          :key="c.props?.id"
-          @click="scrollToItem(index)"
-          :class="[
-            'size-2 cursor-pointer rounded-full transition-all duration-700',
-            activeIndex === index ? 'bg-primary scale-125' : 'bg-base-content/50 hover:bg-base-content',
-          ]"
-          :aria-label="c.props?.title"
-          :title="c.props?.title"
-        />
-      </div>
+    <!-- No caption above the dots. With one panel it labelled the only thing on
+         screen, and with several the dots already carry each panel's name as
+         their tooltip and accessible name. -->
+    <div class="flex flex-none justify-center gap-2" v-if="providedCards.length > 1">
+      <button
+        v-for="(c, index) in providedCards"
+        :key="c.props?.id"
+        @click="scrollToItem(index)"
+        :class="[
+          'size-2 cursor-pointer rounded-full transition-all duration-700',
+          activeIndex === index ? 'bg-primary scale-125' : 'bg-base-content/50 hover:bg-base-content',
+        ]"
+        :aria-label="c.props?.title"
+        :title="c.props?.title"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import CarouselItem from "./CarouselItem.vue";
-
-const { hideTitle = false } = defineProps<{ hideTitle?: boolean }>();
 
 const container = useTemplateRef<HTMLDivElement>("container");
 const activeIndex = ref(0);

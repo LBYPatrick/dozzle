@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 49
-- **Files changed:** 274
-- **Lines:** +14022 / -2657 (net +11365)
+- **Commits ahead:** 56
+- **Files changed:** 275
+- **Lines:** +14236 / -2672 (net +11564)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -201,8 +201,12 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - Menu interaction polish on every carousel menu: rows lift on hover, depress on
   click, the active route grows an accent bar, group disclosure chevrons animate.
 - On pages without an inline top-bar container search, the sidebar shows one at
-  its foot (replacing the carousel title). Reset-width button appears once the
-  sidebar has been dragged off its default.
+  its foot. Resetting the width is a quick command (`/sidebar reset`) rather than
+  a button, always offered and a no-op at the default.
+- **The carousel caption is gone** (`Hosts and Containers` and friends). With one
+  panel it named the only thing on screen; with several, the panel dots already
+  carry each name as their tooltip and accessible name. The `hideTitle` prop that
+  existed solely to suppress it went with it — nothing but stories ever set it.
 - **Width-consistency fix:** collapsing now drives the pane to zero width (keeping
   it mounted) instead of `v-if` unmounting it, so splitpanes no longer redistribute
   and grow the sidebar on each collapse/expand. Shared `DEFAULT_MENU_WIDTH` /

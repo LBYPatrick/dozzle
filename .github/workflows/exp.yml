@@ -49,6 +49,7 @@ jobs:
             ${{ vars.DOCKERHUB_IMAGE || 'lbypatrick/dozzle' }}
             ghcr.io/lbypatrick/dozzle
           tags: |
+            type=raw,value=latest
             type=raw,value=exp
             type=sha,prefix=exp-,format=short
       - name: Short SHA
@@ -80,3 +81,30 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Compose Docker Hub overview
+        # One source of truth: the preamble lives in .github, the feature list is
+        # EXP_FEATURES.md itself, so the Hub page cannot drift from the repo.
+        # Docker Hub caps the overview at 25,000 characters, so trim on a line
+        # boundary and point at GitHub for the rest rather than cutting a
+        # sentence in half.
+        run: |
+          {
+            cat .github/dockerhub-overview.md
+            sed '1s|.*|# Feature changelog|' EXP_FEATURES.md
+          } > overview.md
+          limit=24800
+          footer=$'\n---\n\nTruncated. Full changelog: <https://github.com/LBYPatrick/dozzle/blob/exp/EXP_FEATURES.md>\n'
+          if [ "$(wc -c < overview.md)" -gt "$limit" ]; then
+            head -c "$(( limit - ${#footer} ))" overview.md | sed '$d' > overview.trimmed.md
+            printf '%s' "$footer" >> overview.trimmed.md
+            mv overview.trimmed.md overview.md
+          fi
+          echo "overview is $(wc -c < overview.md) bytes, $(wc -m < overview.md) chars"
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ vars.DOCKERHUB_IMAGE || 'lbypatrick/dozzle' }}
+          short-description: "Experimental fork of amir20/dozzle. Not official; for testing and feedback."
+          readme-filepath: ./overview.md

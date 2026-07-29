@@ -17,14 +17,14 @@ verified against the actual diff.
 - **Files changed:** 274
 - **Lines:** +14022 / -2657 (net +11365)
 
-The counts dropped slightly against the previous revision because upstream has
-since shipped its own command palette and `copy-image` action, so that ground is
-no longer unique to this fork even though the fork's implementations were kept.
+Upstream has since shipped its own command palette and `copy-image` action, so
+that ground is no longer unique to this fork even though the fork's
+implementations were kept.
 
-Roughly split: frontend Vue/TS UI (~95 files) plus a full Storybook suite (106
+Roughly split: frontend Vue/TS UI (121 files) plus a full Storybook suite (111
 component stories + `.storybook/` config), locales (16 files, i18n parity), Go
 backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
-`Makefile`, and regenerated e2e visual snapshots (4 PNGs).
+`Makefile`/CI, and regenerated e2e visual snapshots (2 PNGs).
 
 ## Upstream merges
 
@@ -113,7 +113,7 @@ floating, collapsible, two-row glass bar following Apple HIG.
 - Multi-view correctness: per-view search bars are reference-counted so closing
   one side-by-side column doesn't wipe another column's active search.
 - Key files: `assets/components/Search.vue`, `composable/search.ts`,
-  `composable/inlineSearch.ts`, `LogViewer/SearchStatus.vue`.
+  `LogViewer/SearchStatus.vue`.
 
 - **Search state is now per log view**, keyed off the logging context each view
   already provides. Side-by-side columns search independently — previously one
@@ -176,7 +176,8 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - Key files: `assets/components/Settings/SettingsModal.vue` (new),
   `Settings/SettingsPanels.vue` (new, ~324 lines), `common/JsonEditor.vue` (new),
   `composable/settingsModal.ts`, `composable/jsonEditor.ts`,
-  `stores/settings.ts` (import/validation logic), `pages/settings.vue`.
+  `stores/settings.ts` (import/validation logic). The old `pages/settings.vue`
+  route (325 lines) is deleted — settings live in the modal now.
 
 ## Theming
 
@@ -354,16 +355,15 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   svg-loader all apply unchanged. The preview installs Pinia, vue-i18n and a
   stubbed vue-router, seeds the app `config` via `preview-head.html`, imports
   `main.css`, and adds a light/dark theme toggle (addon-themes, `data-theme`).
-- **A co-located `.stories.ts` for all 106 components** (common, LogViewer,
+- **A co-located `.stories.ts` for all 111 components** (common, LogViewer,
   Notification, Settings, ContainerViewer, per-mode viewers, top-level widgets),
   CSF3 + `satisfies Meta`, with real model instances where practical. Verified:
   `pnpm typecheck` clean and `storybook build` green (823 modules).
 
 ## Tests & snapshots
 
-- Regenerated Playwright visual snapshots (4 PNGs under
-  `e2e/visual.spec.ts-snapshots/`) for the sidebar handle and the reserved
-  scrollbar gutter.
+- Regenerated Playwright visual snapshots (2 PNGs under
+  `e2e/visual.spec.ts-snapshots/`) for the light and dark homepage.
 - Frontend spec updates: `FuzzySearchModal.spec.ts` (command palette),
   `LogViewer/SearchStatus.spec.ts`, `LogViewer/EventSource.spec.ts` (+ snapshot).
 

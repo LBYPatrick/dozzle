@@ -5,9 +5,6 @@ import PhMemory from "~icons/ph/memory";
 import PhNetwork from "~icons/ph/network";
 import PhHardDrives from "~icons/ph/hard-drives";
 
-const GB = 1024 ** 3;
-const MB = 1024 ** 2;
-
 const meta = {
   title: "LogViewer/StatSummaryCard",
   component: StatSummaryCard,
@@ -31,9 +28,6 @@ export const Resources: Story = {
         currentLabel: "31.7%",
         peakLabel: "82.4%",
         totalLabel: "8 CPU",
-        value: 31.7,
-        peak: 82.4,
-        total: 100,
         tone: "primary",
       },
       {
@@ -42,9 +36,6 @@ export const Resources: Story = {
         currentLabel: "912.4MB",
         peakLabel: "1.6GB",
         totalLabel: "8.0GB",
-        value: 912.4 * MB,
-        peak: 1.6 * GB,
-        total: 8 * GB,
         tone: "secondary",
       },
     ],
@@ -60,9 +51,6 @@ export const Throughput: Story = {
         label: "NET",
         currentLabel: "1.1MB/s",
         peakLabel: "4.2MB/s",
-        value: 1.1 * MB,
-        peak: 4.2 * MB,
-        total: 4.2 * MB,
         tone: "primary",
       },
       {
@@ -70,9 +58,6 @@ export const Throughput: Story = {
         label: "DISK",
         currentLabel: "0.4MB/s",
         peakLabel: "12.0MB/s",
-        value: 0.4 * MB,
-        peak: 12 * MB,
-        total: 12 * MB,
         tone: "secondary",
       },
     ],
@@ -89,9 +74,6 @@ export const NearCapacity: Story = {
         currentLabel: "96.8%",
         peakLabel: "97.1%",
         totalLabel: "4 CPU",
-        value: 96.8,
-        peak: 97.1,
-        total: 100,
         tone: "primary",
       },
       {
@@ -100,9 +82,6 @@ export const NearCapacity: Story = {
         currentLabel: "7.6GB",
         peakLabel: "7.8GB",
         totalLabel: "8.0GB",
-        value: 7.6 * GB,
-        peak: 7.8 * GB,
-        total: 8 * GB,
         tone: "secondary",
       },
     ],
@@ -119,9 +98,6 @@ export const Idle: Story = {
         currentLabel: "0.0%",
         peakLabel: "0.0%",
         totalLabel: "0 CPU",
-        value: 0,
-        peak: 0,
-        total: 0,
         tone: "primary",
       },
       {
@@ -130,9 +106,6 @@ export const Idle: Story = {
         currentLabel: "0B",
         peakLabel: "0B",
         totalLabel: "0B",
-        value: 0,
-        peak: 0,
-        total: 0,
         tone: "secondary",
       },
     ],

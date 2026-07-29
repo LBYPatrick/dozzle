@@ -2,11 +2,13 @@
   <!-- One widget for a pair of related metrics (CPU + memory, network + disk),
        in two forms. The card is its own control: clicking cycles the form.
 
-       Compact — the two metrics stack, each on one line: name, a meter reading
-       the value against its ceiling (ticked where the window peaked), and the
-       two figures that matter at a glance, written as one fraction. The peak is
-       on the meter already, so it is not repeated as a number here; the expanded
-       form spells it out.
+       Compact — a small table, nothing drawn. Two rows, one per metric, sharing
+       one grid so their columns line up: name, the live figure, and what it is
+       measured against. The figure columns are fixed and the numbers tabular, so
+       the card holds one size no matter what the numbers do — a readout that
+       reflows or animates on every tick is unreadable at a glance, which is the
+       only thing this form is for. Anything that moves lives in the expanded
+       form, which is a click away.
 
        Expanded — the metrics sit side by side so each trend gets the card's
        full height, with all three figures under one set of column headings. -->
@@ -24,37 +26,26 @@
           <template v-for="row in rows" :key="row.label">
             <component :is="row.icon" class="size-3.5" :class="`tone-${row.tone}`" />
             <span class="name">{{ row.label }}</span>
-            <span class="meter">
-              <span
-                v-if="!unavailable"
-                class="fill"
-                :class="`tone-${row.tone}`"
-                :style="{ width: `${fraction(row.value, row.total)}%` }"
-              ></span>
-              <span
-                v-if="!unavailable && row.total > 0 && row.peak > row.value"
-                class="peak-tick"
-                :style="{ left: `${fraction(row.peak, row.total)}%` }"
-              ></span>
+            <!-- The value closes on the slash and the ceiling opens from it, so
+                 both rows meet on the same axis however many digits each holds.
+                 No captions: the figures carry their own units and "5.2MB /
+                 7.7GB" reads as used-of-available on its own. The words cost
+                 more width than they explain, and the expanded form spells them
+                 out. They stay for screen readers, which get no help from a
+                 slash. -->
+            <span class="value">
+              <span class="sr-only">{{ $t("label.now") }}</span
+              >{{ row.currentLabel }}
             </span>
-            <!-- No captions here: the figures carry their own units, and
-                 "5.2 MB / 7.7 GB" reads as used-of-available on its own. The
-                 words cost more width than they explain, and the expanded form
-                 spells them out. They stay for screen readers, which get no
-                 help from the slash. -->
-            <span class="figures">
-              <span class="current">
-                <span class="sr-only">{{ $t("label.now") }}</span
-                >{{ row.currentLabel }}
-              </span>
-              <template v-if="row.totalLabel">
-                <span class="sep" aria-hidden="true">/</span>
-                <span class="muted">
+            <template v-if="hasCeiling">
+              <span class="sep" aria-hidden="true">{{ row.totalLabel ? "/" : "" }}</span>
+              <span class="total">
+                <template v-if="row.totalLabel">
                   <span class="sr-only">{{ $t("label.avail") }}</span
                   >{{ row.totalLabel }}
-                </span>
-              </template>
-            </span>
+                </template>
+              </span>
+            </template>
           </template>
         </template>
 
@@ -117,10 +108,6 @@ export type StatSummaryRow = {
   peakLabel: string;
   /** What is available. Omitted for throughput, which has no ceiling. */
   totalLabel?: string;
-  /** Raw counterparts, used only to size the meter and place the peak tick. */
-  value: number;
-  peak: number;
-  total: number;
   /** Trend over the tracked window; only read by the expanded form. */
   series?: BarDataPoint[];
   tone: "primary" | "secondary";
@@ -137,7 +124,7 @@ const {
   title?: string;
   variant?: "meter" | "chart";
   /**
-   * No running container: the meter stays empty and the trend flat. The figures
+   * No running container: the name dims and the trend goes flat. The figures
    * themselves are whatever the caller passed, so there is no second layout to
    * keep in sync with this one.
    */
@@ -159,10 +146,6 @@ defineExpose({ recalculate: () => charts.forEach((chart) => chart.recalculate())
 // card keeps its shape instead of showing a hole where the chart was.
 const FLATLINE: BarDataPoint[] = Array.from({ length: 120 }, () => ({ percent: 0, value: 0 }));
 
-// An unknown or zero ceiling leaves the track empty rather than dividing by zero
-// and filling it completely.
-const fraction = (value: number, total: number) => (total > 0 ? Math.min(100, Math.max(0, (value / total) * 100)) : 0);
-
 // Throughput reports no ceiling, so its compact form is one figure narrower.
 const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefined));
 </script>
@@ -172,7 +155,6 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
 
 .stat-card {
   position: relative;
-  display: block;
   height: 100%;
   /* The outgoing form is taken out of flow but keeps its own intrinsic width —
      a grid with fixed value tracks will not squeeze into a narrower box, so it
@@ -199,30 +181,32 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
   outline-offset: 1px;
 }
 
-/* Compact: one line per metric. Fixed tracks are what keep this card aligned
-   with its neighbour rather than each sizing to its own text. */
+/* Compact: a two-row table, no drawing. Every cell is a column of the one grid,
+   so the two rows align by construction — there is no second grid whose widths
+   have to be made to agree with this one.
+
+   align-content centres the block in the card whether it is in flow or lifted
+   out of it by the form transition, which is what stops the outgoing form from
+   snapping to the top mid-fade. */
+.summary-card {
+  display: flex;
+  align-items: center;
+}
+
 .summary-card .forms {
   display: grid;
+  width: 100%;
   align-items: center;
-  column-gap: 0.7rem;
-  row-gap: 0.25rem;
+  align-content: center;
+  column-gap: 0.4rem;
+  row-gap: 0.3rem;
 }
 
-.summary-card .forms.has-ceiling,
-.summary-card .forms.no-ceiling {
-  grid-template-columns: auto 2.1rem minmax(2.5rem, 1fr) auto;
-}
-
-/* The figures are their own grid so the slash can sit tight between them —
-   0.3rem either side — while the outer gap stays wide enough to separate the
-   name and meter groups.
-
-   The tracks are fixed rather than content-sized, and that is the point: an
-   auto track is re-measured every tick, so "1MB" ticking over to "708KB" would
-   resize the column, the card, and the toolbar around it. Fixed tracks also
-   mean both rows compute identical widths, which is what lines the two slashes
-   up even though each row is a separate grid. The values are right-aligned and
-   the ceilings left-aligned, so both close on the slash.
+/* The figure tracks are fixed rather than content-sized, and that is the whole
+   point: an auto track is re-measured every tick, so "1MB" ticking over to
+   "708KB" would resize the column, the card, and the toolbar around it. The
+   value closes on the slash (right-aligned) and the ceiling opens from it
+   (left-aligned), so the pair reads as one fraction and both rows share an axis.
 
    The widths are the longest figure each track can hold, measured rendered
    rather than guessed — these are tabular figures, which run wider than the
@@ -230,23 +214,20 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
    (55.4px) on an 18-core host and bytes at "999.9MB" (54.5px), so a 3.5rem
    track cleared the worst case by half a pixel. Throughput carries a "/s" and
    needs more again: "999.9MB/s" is 65px. */
-.figures {
-  display: grid;
-  align-items: baseline;
-  column-gap: 0.3rem;
+.summary-card .forms.has-ceiling {
+  grid-template-columns: auto 2.1rem 3.6rem auto 3.6rem;
+}
+
+.summary-card .forms.no-ceiling {
+  grid-template-columns: auto 2.4rem 4.25rem;
+}
+
+.value {
   justify-self: end;
 }
 
-.has-ceiling .figures {
-  grid-template-columns: 3.75rem auto 3.75rem;
-}
-
-.no-ceiling .figures {
-  grid-template-columns: 4.25rem;
-}
-
-.figures .current {
-  justify-self: end;
+.total {
+  justify-self: start;
 }
 
 .sep {
@@ -255,6 +236,7 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
 }
 
 .chart-card {
+  display: block;
   padding-block: 0.2rem;
 }
 
@@ -321,44 +303,11 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
   grid-row: 2;
 }
 
-.meter {
-  position: relative;
-  height: 3px;
-  overflow: hidden;
-  border-radius: 999px;
-  background-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
-}
-
-.fill {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  border-radius: 999px;
-  /* The value slides toward its new position each tick instead of jumping. */
-  transition: width 600ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-/* Where the window peaked, so the headroom reads at a glance. */
-.peak-tick {
-  position: absolute;
-  inset-block: 0;
-  width: 2px;
-  border-radius: 999px;
-  background-color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
-  transition: left 600ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
 .tone-primary {
   color: var(--color-primary);
 }
 .tone-secondary {
   color: var(--color-secondary);
-}
-.fill.tone-primary {
-  background-color: var(--color-primary);
-}
-.fill.tone-secondary {
-  background-color: var(--color-secondary);
 }
 
 /* Column labels, inline in the compact form and as headings in the expanded
@@ -378,14 +327,18 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
   color: color-mix(in oklab, var(--color-base-content) 38%, transparent);
 }
 
-.current {
+/* The live figure and the quiet one it is measured against. Shared by both
+   forms — the compact row and the expanded column say the same two things. */
+.current,
+.value {
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   color: var(--color-base-content);
 }
 
-.muted {
+.muted,
+.total {
   font-size: 12px;
   white-space: nowrap;
   color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
@@ -418,8 +371,6 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fill,
-  .peak-tick,
   .stat-form-enter-active,
   .stat-form-leave-active {
     transition: none;

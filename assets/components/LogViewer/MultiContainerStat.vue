@@ -260,9 +260,7 @@ const ioTooltip = computed(
 const rate = (bytes: number) => `${formatBytes(bytes, { short: true, decimals: 1 })}/s`;
 
 // CPU is reported either as whole-CPU utilization (0-100) or Linux-style
-// per-core (100 == one core); the ceiling the meter is drawn against has to
-// follow whichever form is on screen.
-const cpuCeiling = computed(() => (cpuDisplayMode.value === "cores" ? Math.max(1, limits.value.cpu) * 100 : 100));
+// per-core (100 == one core).
 const cpuNow = computed(() => cpuDisplayValue(totalStat.value.cpu, rawCpuTotal.value));
 
 // Nothing running means no measurement — but the ceiling is a property of the
@@ -277,9 +275,6 @@ const resourceRows = computed<StatSummaryRow[]>(() => [
     currentLabel: measured(`${cpuNow.value.toFixed(1)}%`),
     peakLabel: measured(`${formatCpu(cpuSummary.value.max)}%`),
     totalLabel: `${roundCPU(limits.value.cpu)} CPU`,
-    value: cpuNow.value,
-    peak: cpuDisplayValue(cpuSummary.value.max, cpuSummary.value.max * cpuScale.value),
-    total: cpuCeiling.value,
     series: cpuData.value,
     tone: "primary",
   },
@@ -289,9 +284,6 @@ const resourceRows = computed<StatSummaryRow[]>(() => [
     currentLabel: measured(formatBytes(totalStat.value.memoryUsage, { short: true, decimals: 1 })),
     peakLabel: measured(formatBytes(memorySummary.value.max, { short: true, decimals: 1 })),
     totalLabel: formatBytes(limits.value.memory, { short: true, decimals: 1 }),
-    value: totalStat.value.memoryUsage,
-    peak: memorySummary.value.max,
-    total: limits.value.memory,
     series: memoryData.value,
     tone: "secondary",
   },
@@ -303,11 +295,6 @@ const ioRows = computed<StatSummaryRow[]>(() => [
     label: t("label.net"),
     currentLabel: measured(rate(networkRate.value.rx + networkRate.value.tx)),
     peakLabel: measured(rate(networkSummary.value.max)),
-    value: networkRate.value.rx + networkRate.value.tx,
-    peak: networkSummary.value.max,
-    // Throughput has no ceiling to report, so the meter is drawn against the
-    // window's peak and there is no third figure.
-    total: networkSummary.value.max,
     series: networkSeries.value,
     tone: "primary",
   },
@@ -316,9 +303,6 @@ const ioRows = computed<StatSummaryRow[]>(() => [
     label: t("label.disk"),
     currentLabel: measured(rate(diskRate.value.read + diskRate.value.write)),
     peakLabel: measured(rate(diskSummary.value.max)),
-    value: diskRate.value.read + diskRate.value.write,
-    peak: diskSummary.value.max,
-    total: diskSummary.value.max,
     series: diskSeries.value,
     tone: "secondary",
   },

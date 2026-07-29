@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 58
+- **Commits ahead:** 59
 - **Files changed:** 275
-- **Lines:** +14258 / -2672 (net +11586)
+- **Lines:** +14172 / -2672 (net +11500)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -88,11 +88,17 @@ floating, collapsible, two-row glass bar following Apple HIG.
 
 - **Stat widgets rebuilt** (`LogViewer/StatSummaryCard.vue`, replacing `StatCard.vue`):
   one component in two forms for each metric pair (CPU+memory, network+disk).
-  Compact is one line per metric — name, a meter reading the value against its
-  ceiling with a tick at the window peak, then `NOW` / `AVAIL`. Expanded puts the
-  metrics side by side so each trend gets the card's full height, headed
-  `NOW` / `MAX` / `AVAIL`. Headings and values share one grid, so alignment is
-  structural rather than tuned.
+  Expanded puts the metrics side by side so each trend gets the card's full
+  height, headed `NOW` / `MAX` / `AVAIL`. Headings and values share one grid, so
+  alignment is structural rather than tuned.
+- **Compact form is a table, not a picture.** Two rows in one grid — name, the
+  live figure, the ceiling — with the value right-aligned onto a slash and the
+  ceiling left-aligned off it, so both rows share an axis whatever the digits do.
+  The meter bar and its peak tick are gone: a fill that animates its width every
+  tick is movement in a readout meant to be read at a glance, and the ceiling it
+  encoded is already written out beside it. Fixed figure tracks plus tabular
+  numerals hold the card at one size — measured at 210px across idle, loaded, and
+  unavailable states — so nothing in the top bar shifts as the numbers change.
 - Clicking a widget cycles its form; throughput also keeps its per-direction live
   rate. Each widget sits in a slot that animates its own width across the change
   (`composable/animatedWidth.ts` — CSS cannot transition `width: auto`).

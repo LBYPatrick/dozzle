@@ -22,7 +22,6 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
   const automaticRedirect: typeof import('./stores/settings').automaticRedirect
-  const canResetMenuWidth: typeof import('./stores/settings').canResetMenuWidth
   const canScroll: typeof import('./composable/scrollControls').canScroll
   const collapseNav: typeof import('./stores/settings').collapseNav
   const colorize: typeof import('./utils/index').colorize
@@ -520,7 +519,6 @@ declare module 'vue' {
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly automaticRedirect: UnwrapRef<typeof import('./stores/settings')['automaticRedirect']>
-    readonly canResetMenuWidth: UnwrapRef<typeof import('./stores/settings')['canResetMenuWidth']>
     readonly canScroll: UnwrapRef<typeof import('./composable/scrollControls')['canScroll']>
     readonly collapseNav: UnwrapRef<typeof import('./stores/settings')['collapseNav']>
     readonly colorize: UnwrapRef<typeof import('./utils/index')['colorize']>

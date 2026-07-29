@@ -1,0 +1,82 @@
+on:
+  push:
+    branches:
+      - exp
+  workflow_dispatch:
+name: Push exp container
+
+# Fork-only release channel. Everything from the `exp` branch is built and
+# published under this repo owner's own namespace, so it never collides with the
+# upstream amir20/dozzle images that dev.yml and deploy.yml publish.
+#
+# Required repository secrets: DOCKER_USERNAME, DOCKER_PASSWORD (a Docker Hub
+# access token). Optional repository variable: DOCKERHUB_IMAGE, if the Docker Hub
+# repo is not lbypatrick/dozzle.
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: exp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  buildx:
+    name: Build and push exp
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4.5.1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4.5.1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: |
+            ${{ vars.DOCKERHUB_IMAGE || 'lbypatrick/dozzle' }}
+            ghcr.io/lbypatrick/dozzle
+          tags: |
+            type=raw,value=exp
+            type=sha,prefix=exp-,format=short
+      - name: Short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Writing certs to file
+        # The binary bakes in a shared cert used for agent mTLS. Reuse the repo
+        # secrets when they exist so images from different builds still talk to
+        # each other; otherwise generate a throwaway pair, in which case server
+        # and agents have to come from the same build.
+        env:
+          TTL_KEY: ${{ secrets.TTL_KEY }}
+          TTL_CERT: ${{ secrets.TTL_CERT }}
+        run: |
+          if [ -n "$TTL_KEY" ] && [ -n "$TTL_CERT" ]; then
+            printf '%s\n' "$TTL_KEY" > shared_key.pem
+            printf '%s\n' "$TTL_CERT" > shared_cert.pem
+          else
+            make shared_key.pem shared_cert.pem
+          fi
+      - name: Build and push
+        uses: docker/build-push-action@v7.3.0
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64/v8
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: TAG=exp-${{ steps.sha.outputs.short }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

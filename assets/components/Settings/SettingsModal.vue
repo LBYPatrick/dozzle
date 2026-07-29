@@ -2,7 +2,7 @@
   <!-- Inner card for the settings popup. Presented inside the shared dialog
        overlay (see default.vue). Glass is intentional: this is a container
        background, the one place blur is allowed. -->
-  <div class="glass-surface flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl">
+  <div class="glass-surface glass-surface-thick flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl">
     <!-- Header -->
     <div class="border-base-content/10 flex flex-wrap items-center gap-2 border-b px-4 py-3">
       <!-- Secondary screen: back to the main list -->

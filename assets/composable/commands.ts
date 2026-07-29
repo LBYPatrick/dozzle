@@ -15,7 +15,6 @@ import {
   smallerScrollbars,
   collapseNav,
   cpuDisplayMode,
-  canResetMenuWidth,
   resetMenuWidth,
 } from "@/stores/settings";
 
@@ -314,6 +313,15 @@ export function useCommands() {
         perform: () => (collapseNav.value = true),
       },
       {
+        id: "settings.reset-sidebar-width",
+        section: "settings",
+        icon: mdiArrowCollapseHorizontal,
+        title: t("command-palette.reset-sidebar-width"),
+        slash: "/sidebar reset",
+        keywords: "sidebar width reset default size",
+        perform: () => resetMenuWidth(),
+      },
+      {
         id: "navigation.settings",
         section: "navigation",
         icon: mdiCogOutline,
@@ -332,20 +340,6 @@ export function useCommands() {
         perform: () => openSettings("json"),
       },
     );
-
-    // Resetting the sidebar width is only meaningful once it has been dragged
-    // off the default, so gate it the same way the (now removed) button was.
-    if (canResetMenuWidth.value) {
-      list.push({
-        id: "settings.reset-sidebar-width",
-        section: "settings",
-        icon: mdiArrowCollapseHorizontal,
-        title: t("command-palette.reset-sidebar-width"),
-        slash: "/sidebar reset",
-        keywords: "sidebar width reset default size",
-        perform: () => resetMenuWidth(),
-      });
-    }
 
     return list;
   });

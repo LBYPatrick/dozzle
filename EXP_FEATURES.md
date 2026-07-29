@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 47
-- **Files changed:** 271
-- **Lines:** +13821 / -2545 (net +11276)
+- **Commits ahead:** 49
+- **Files changed:** 274
+- **Lines:** +14022 / -2657 (net +11365)
 
 The counts dropped slightly against the previous revision because upstream has
 since shipped its own command palette and `copy-image` action, so that ground is
@@ -37,10 +37,12 @@ conflicted; how each was settled:
   (`compact-on` / `compact-off`) where upstream's are bare toggles. All 16
   locales resolved the same way; upstream's six `toggle-*` keys are dropped as
   unreferenced.
-- **`html { scrollbar-gutter: stable }`** — taken _from upstream_. A page-level
-  scrollbar appearing makes the percentage-based splitpanes recompute and the
-  panes flick; the fork's per-scroller gutters address a different axis, so both
-  are now in place.
+- **`html { scrollbar-gutter: stable }`** — the fork's, i.e. the rule is dropped.
+  It was briefly taken from upstream during this merge, which reverted the fork's
+  own fix and put back a dead strip to the right of the log view's scrollbar: the
+  log view is a fixed-height internal scroller, so the document never scrolls and
+  the reserved gutter is never used. The gutter lives on `ScrollableView`'s
+  `<main>` alone.
 - **`ScrollableView.vue`, `default.vue`, settings/search surfaces** — the fork's,
   which supersede the upstream versions wholesale.
 - **`Links.vue`** — the fork's structure, keeping upstream's `data-testid` so
@@ -369,20 +371,29 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   the derived-entry caching that keeps the log list from rebuilding every flush.
 - `MultiContainerStat.spec.ts` extended for the compact/expanded stat forms.
 
-## Build / Makefile
+## Build / Makefile / CI
 
 - New default `help` goal: `make help` documents every target with args and
   examples (setup, dev, build, test, run/deploy sections).
 - New `make cloud-mock` target: runs the cloud mock proxy on `:3200` (proxies the
   `make dev` backend on `:3100`).
 - New `make storybook` / `make storybook-build` targets.
+- New `.github/workflows/exp.yml`: the fork's own release channel. Pushes to the
+  `exp` branch (and manual dispatch) build `linux/amd64` + `linux/arm64/v8` and
+  publish to this owner's Docker Hub and GHCR namespaces, tagged `exp` and
+  `exp-<sha7>`. Needs `DOCKER_USERNAME` / `DOCKER_PASSWORD` repo secrets;
+  `DOCKERHUB_IMAGE` repo variable overrides the Docker Hub repo. Falls back to
+  generating `shared_{key,cert}.pem` when `TTL_KEY` / `TTL_CERT` are unset, in
+  which case server and agent images must come from the same build.
+- Upstream's `dev.yml` and `deploy.yml` are left untouched so merges stay clean;
+  their fork guard already makes them no-ops here.
+- Removed `.github/workflows/claude.yml` and `claude-code-review.yml`.
 
 ## Misc
 
 - `.claude/agent-memory/bug-hunter/` notes (MEMORY.md, frontend-patterns.md) added
   — internal agent scratch memory, not user-facing.
 - Clipboard/accessibility/mobile polish batch (`e15ef2a0`): theme-aware ghost
-  button hover ring, white level-chip labels on light theme, reserved document
-  scrollbar gutter to stop splitpanes flicker, padded mobile top nav via
+  button hover ring, white level-chip labels on light theme, padded mobile top nav via
   `--mobile-nav-height`, legacy clipboard fallback for non-secure (http) origins,
   click-to-copy image tag.

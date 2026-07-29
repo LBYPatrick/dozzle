@@ -48,7 +48,7 @@
   </div>
   <!-- Dim only, no screen-wide blur: glass is reserved for the container card
        (FuzzySearchModal) itself. -->
-  <dialog ref="modal" class="modal bg-base-300/35! items-start transition-none!" @close="closeSearch">
+  <dialog ref="modal" class="modal modal-scrim items-start transition-none!" @close="closeSearch">
     <div class="modal-box max-w-2xl overflow-visible! bg-transparent pt-20 shadow-none">
       <FuzzySearchModal @close="closeSearch" v-if="open" />
     </div>
@@ -56,9 +56,9 @@
       <button>close</button>
     </form>
   </dialog>
-  <!-- Dim, never a screen-wide blur — but light enough that the panel's own
-       glass has some of the page left to refract. -->
-  <dialog ref="settingsDialog" class="modal bg-base-300/35! items-start" @close="closeSettings">
+  <!-- Dim, never a screen-wide blur — the panel's own glass refracts the
+       already-dimmed page behind it. -->
+  <dialog ref="settingsDialog" class="modal modal-scrim items-start" @close="closeSettings">
     <div class="modal-box max-h-[95vh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5vh] shadow-none">
       <SettingsModal v-if="settingsOpen" />
     </div>

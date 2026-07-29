@@ -1,4 +1,3 @@
-import { computed } from "vue";
 import { toRefs } from "@vueuse/core";
 
 export type Settings = {
@@ -98,16 +97,11 @@ export const {
   primaryColor,
 } = toRefs(settings.value);
 
-// Reset the sidebar to its default width, exposed in the sidebar itself. Lives
-// here because it operates purely on this store's state. canResetMenuWidth also
-// gates the control's visibility: there is nothing to reset while the sidebar is
-// collapsed or already at the default width.
-export const canResetMenuWidth = computed(
-  () => !collapseNav.value && Math.abs(menuWidth.value - DEFAULT_MENU_WIDTH) > 0.01,
-);
-
+// Reset the sidebar to its default width. Lives here because it operates purely
+// on this store's state. Unconditional: the quick command is always offered, and
+// running it on an already-default sidebar is a harmless no-op.
 export function resetMenuWidth() {
-  if (canResetMenuWidth.value) menuWidth.value = DEFAULT_MENU_WIDTH;
+  menuWidth.value = DEFAULT_MENU_WIDTH;
 }
 
 // Pretty-printed JSON of the current settings, used by the export-to-clipboard

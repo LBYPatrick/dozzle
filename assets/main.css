@@ -178,14 +178,12 @@
   }
 }
 
-/* Two gutters, two jobs. The document one (upstream) keeps the layout width
- * constant when a page-level scrollbar appears: without it the width jump makes
- * the percentage-based splitpanes recompute and the panes visibly flick. The
- * log view additionally reserves its own, because it scrolls internally and
- * would otherwise shift its content when its scrollbar appears. */
-html {
-  scrollbar-gutter: stable;
-}
+/* One gutter, on the thing that actually scrolls. Upstream reserves a stable
+ * gutter on the document, but here the log view is a fixed-height internal
+ * scroller, so the page itself rarely scrolls and that gutter is just a dead
+ * strip to the right of the log view's own scrollbar. The gutter lives on the
+ * log view's <main> instead (see ScrollableView). Do not reintroduce the html
+ * rule on the next upstream merge — it has come back twice. */
 
 body {
   padding-top: env(safe-area-inset-top);
@@ -208,6 +206,22 @@ body {
      --color-base-content, which is near-white on the dark theme and turns every
      "shadow" into a glow. */
   --shadow-ink: 0 0 0;
+  /* How hard a modal veils the page behind it. Dimming is the removal of light,
+     so the veil is always ink: a tint of base-300 is near-white on the light
+     theme and fogs the page instead of darkening it. */
+  --scrim-alpha: 0.62;
+}
+
+[data-theme="light"] {
+  /* The light theme starts from a brighter page, so the same alpha would crush
+     it; it reads as dimmed with less. */
+  --scrim-alpha: 0.45;
+}
+
+/* Dim only, never a screen-wide blur — glass is reserved for the floating card
+ * itself. Unlayered so it beats daisyUI's own `.modal[open]` background. */
+.modal-scrim {
+  background-color: rgb(var(--shadow-ink) / var(--scrim-alpha));
 }
 
 [class*="shadow-"] {
@@ -319,6 +333,16 @@ body {
  * real scroll cost for a control that is invisible until hover. Shape and tone
  * still apply — only the blur is dropped. */
 [data-logs] .btn {
+  backdrop-filter: none;
+}
+
+/* Glass on glass is a hole, not a frost. An element with a backdrop-filter is a
+ * backdrop root, and a nested backdrop-filter is not allowed to sample the root
+ * or its background — so the button blurs an empty backdrop and paints the bare
+ * page through the pane it sits on. On the settings sheet that turned every
+ * button into a white plate whose contrast tracked the page behind the modal.
+ * Buttons on glass keep their tint and shape; only the blur goes. */
+.glass-surface .btn {
   backdrop-filter: none;
 }
 
@@ -636,12 +660,21 @@ body {
  * element whose ancestors are clear, or the blur silently does nothing and you
  * are left with plain transparency. */
 .glass-surface {
-  background-color: color-mix(in oklab, var(--color-base-200) 68%, transparent);
+  --glass-opacity: 68%;
+  background-color: color-mix(in oklab, var(--color-base-200) var(--glass-opacity), transparent);
   backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, oklch(100% 0 0) 20%, transparent),
     0 10px 30px rgb(var(--shadow-ink) / 0.22);
+}
+
+/* Thick material, for panes that sit over the modal scrim rather than over the
+ * page. A menu can afford to be sheer because it floats over live content; a
+ * sheet floats over the dim, and at 68% it drinks the scrim and turns grey —
+ * dragging its own text down with it. Pair with .glass-surface. */
+.glass-surface-thick {
+  --glass-opacity: 92%;
 }
 
 /* The log view's compact stat widgets. The CPU/memory card and the

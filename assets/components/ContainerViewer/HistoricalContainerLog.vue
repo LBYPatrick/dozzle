@@ -2,6 +2,18 @@
   <ScrollableView :scrollable="scrollable" v-if="container">
     <template #header v-if="showTitle">
       <ContainerTitle :container="container" />
+      <!-- Close sits at the pane's top-right corner, alongside the identity,
+           rather than among the log controls in the row below. -->
+      <button
+        v-if="closable"
+        type="button"
+        class="btn btn-ghost btn-sm btn-square ml-auto shrink-0 transition-transform hover:-translate-y-px"
+        @click="close()"
+        :title="$t('button.close')"
+        :aria-label="$t('button.close')"
+      >
+        <mdi:close class="size-5" />
+      </button>
     </template>
     <template #actions v-if="showTitle">
       <!-- "Jump back to the live tail". A tonal capsule rather than a solid
@@ -18,9 +30,6 @@
         {{ $t("label.live-logs") }}
       </router-link>
       <ContainerActionsToolbar class="max-md:hidden" :container="container" historical />
-      <a class="btn btn-circle btn-xs" @click="close()" v-if="closable">
-        <mdi:close />
-      </a>
     </template>
     <template #default>
       <ViewerWithSource

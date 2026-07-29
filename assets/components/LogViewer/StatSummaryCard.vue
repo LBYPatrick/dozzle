@@ -4,9 +4,9 @@
 
        Compact — the two metrics stack, each on one line: name, a meter reading
        the value against its ceiling (ticked where the window peaked), and the
-       two figures that matter at a glance. The peak is on the meter already, so
-       it is not repeated as a number here; the expanded form spells it out.
-       Captions sit inline, which keeps the whole card to two lines.
+       two figures that matter at a glance, written as one fraction. The peak is
+       on the meter already, so it is not repeated as a number here; the expanded
+       form spells it out.
 
        Expanded — the metrics sit side by side so each trend gets the card's
        full height, with all three figures under one set of column headings. -->
@@ -37,13 +37,23 @@
                 :style="{ left: `${fraction(row.peak, row.total)}%` }"
               ></span>
             </span>
-            <span class="pair">
-              <span class="caption">{{ $t("label.now") }}</span>
-              <span class="current">{{ row.currentLabel }}</span>
-            </span>
-            <span class="pair" v-if="row.totalLabel">
-              <span class="caption">{{ $t("label.avail") }}</span>
-              <span class="muted">{{ row.totalLabel }}</span>
+            <!-- No captions here: the figures carry their own units, and
+                 "5.2 MB / 7.7 GB" reads as used-of-available on its own. The
+                 words cost more width than they explain, and the expanded form
+                 spells them out. They stay for screen readers, which get no
+                 help from the slash. -->
+            <span class="figures">
+              <span class="current">
+                <span class="sr-only">{{ $t("label.now") }}</span
+                >{{ row.currentLabel }}
+              </span>
+              <template v-if="row.totalLabel">
+                <span class="sep" aria-hidden="true">/</span>
+                <span class="muted">
+                  <span class="sr-only">{{ $t("label.avail") }}</span
+                  >{{ row.totalLabel }}
+                </span>
+              </template>
             </span>
           </template>
         </template>
@@ -194,27 +204,54 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
 .summary-card .forms {
   display: grid;
   align-items: center;
-  /* The gap between groups. Within a group the caption sits much closer to its
-     value — see .pair — which is what makes them read as pairs. */
   column-gap: 0.7rem;
   row-gap: 0.25rem;
 }
 
-.summary-card .forms.has-ceiling {
-  grid-template-columns: auto 2.1rem minmax(2.5rem, 1fr) auto auto;
-}
-
+.summary-card .forms.has-ceiling,
 .summary-card .forms.no-ceiling {
   grid-template-columns: auto 2.1rem minmax(2.5rem, 1fr) auto;
 }
 
-/* A caption and the number it names. The value gets a fixed track so the two
-   metric rows line their numbers up regardless of how long the label is. */
-.pair {
+/* The figures are their own grid so the slash can sit tight between them —
+   0.3rem either side — while the outer gap stays wide enough to separate the
+   name and meter groups.
+
+   The tracks are fixed rather than content-sized, and that is the point: an
+   auto track is re-measured every tick, so "1MB" ticking over to "708KB" would
+   resize the column, the card, and the toolbar around it. Fixed tracks also
+   mean both rows compute identical widths, which is what lines the two slashes
+   up even though each row is a separate grid. The values are right-aligned and
+   the ceilings left-aligned, so both close on the slash.
+
+   The widths are the longest figure each track can hold, measured rendered
+   rather than guessed — these are tabular figures, which run wider than the
+   proportional ones a canvas would report. Utilization tops out at "1800.0%"
+   (55.4px) on an 18-core host and bytes at "999.9MB" (54.5px), so a 3.5rem
+   track cleared the worst case by half a pixel. Throughput carries a "/s" and
+   needs more again: "999.9MB/s" is 65px. */
+.figures {
   display: grid;
-  grid-template-columns: max-content minmax(0, 3.5rem);
   align-items: baseline;
   column-gap: 0.3rem;
+  justify-self: end;
+}
+
+.has-ceiling .figures {
+  grid-template-columns: 3.75rem auto 3.75rem;
+}
+
+.no-ceiling .figures {
+  grid-template-columns: 4.25rem;
+}
+
+.figures .current {
+  justify-self: end;
+}
+
+.sep {
+  font-size: 12px;
+  color: color-mix(in oklab, var(--color-base-content) 30%, transparent);
 }
 
 .chart-card {

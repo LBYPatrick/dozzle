@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 60
+- **Commits ahead:** 61
 - **Files changed:** 275
-- **Lines:** +14187 / -2672 (net +11515)
+- **Lines:** +14204 / -2672 (net +11532)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -96,14 +96,16 @@ floating, collapsible, two-row glass bar following Apple HIG.
   are gone: a fill that animates its width every tick is movement in a readout
   meant to be read at a glance, and the ceiling it encoded is already written out
   beside it.
-- Each line is packed tight rather than sharing a grid with the other. A shared
-  grid sizes every value column to the widest figure in the card, which leaves
-  `N/A` or `31.7%` marooned in a column cut for `912.4MB` — a hole through the
-  middle of the card. Only the name is a fixed track, because names are what read
-  as a column. Steadiness comes from a floor under the card instead (`min-width`,
-  measured against the worst realistic line), so slack falls at the trailing edge
-  where it reads as padding. Verified in Storybook: 184px whether the figures say
-  `912.4MB` or `N/A`.
+- Every track is content-sized — the card is exactly as wide as what it says.
+  Reserving room for the widest possible figure is how the design grew dead space
+  twice over (a hole mid-card from fixed value tracks, a dead right edge from a
+  `min-width` floor), so nothing holds space for digits that are not on screen: a
+  stopped container's card collapses to the width of `N/A / 18 CPU`. Tabular
+  numerals keep the per-tick case still (verified in Storybook: same-digit ticks
+  and a shrinking CPU figure both hold the card at 185px, since the wider memory
+  figure anchors the shared column); only a figure crossing a digit boundary
+  moves it, by one glyph. Throughput values swing across magnitudes every second,
+  so their column alone keeps a small floor.
 - Clicking a widget cycles its form; throughput also keeps its per-direction live
   rate. Each widget sits in a slot that animates its own width across the change
   (`composable/animatedWidth.ts` — CSS cannot transition `width: auto`).

@@ -119,10 +119,15 @@ export const Expanded: Story = {
 
 /** Nothing running: N/A instead of a column of zeros. */
 export const Unavailable: Story = {
-  args: { ...(Resources.args as object), unavailable: true } as Story["args"],
+  args: {
+    // What production passes for a stopped container: the measurements read
+    // N/A, the ceilings still report — they are a property of the host.
+    rows: Resources.args.rows.map((row) => ({ ...row, currentLabel: "N/A", peakLabel: "N/A" })),
+    unavailable: true,
+  },
 };
 
 /** Expanded and unavailable: the trend still draws, flat at zero. */
 export const UnavailableExpanded: Story = {
-  args: { ...(Resources.args as object), variant: "chart", unavailable: true } as Story["args"],
+  args: { ...Unavailable.args, variant: "chart" },
 };

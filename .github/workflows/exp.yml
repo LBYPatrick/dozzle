@@ -82,25 +82,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Compose Docker Hub overview
-        # One source of truth: the preamble lives in .github, the feature list is
-        # EXP_FEATURES.md itself, so the Hub page cannot drift from the repo.
-        # Docker Hub caps the overview at 25,000 characters, so trim on a line
-        # boundary and point at GitHub for the rest rather than cutting a
-        # sentence in half.
-        run: |
-          {
-            cat .github/dockerhub-overview.md
-            printf '\n'
-            sed '1s|.*|# Feature changelog|' EXP_FEATURES.md
-          } > overview.md
-          limit=24950
-          footer=$'\n---\n\nTruncated. Full changelog: <https://github.com/LBYPatrick/dozzle/blob/exp/EXP_FEATURES.md>\n'
-          if [ "$(wc -c < overview.md)" -gt "$limit" ]; then
-            head -c "$(( limit - ${#footer} ))" overview.md | sed '$d' > overview.trimmed.md
-            printf '%s' "$footer" >> overview.trimmed.md
-            mv overview.trimmed.md overview.md
-          fi
-          echo "overview is $(wc -c < overview.md) bytes, $(wc -m < overview.md) chars"
+        # Same composer the local `make dockerhub-overview` uses, so CI and the
+        # published page can never disagree about what the listing says.
+        run: python3 scripts/dockerhub_overview.py --out overview.md
       - name: Upload Docker Hub overview
         # Kept as an artifact so the page can be pasted by hand when the
         # description sync below is skipped.

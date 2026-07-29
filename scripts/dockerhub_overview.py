@@ -13,7 +13,8 @@ session, which lives in the local credential helper. So: `make dockerhub-overvie
 after changing EXP_FEATURES.md.
 
 Usage:
-    python3 scripts/dockerhub_overview.py [--dry-run] [--repo NS/NAME]
+    python3 scripts/dockerhub_overview.py [--repo NS/NAME]   # compose and publish
+    python3 scripts/dockerhub_overview.py --out PAGE.md      # compose only
 """
 
 import argparse
@@ -42,13 +43,20 @@ CREDENTIAL_URL = "https://index.docker.io/v1/access-token"
 
 
 def compose() -> str:
-    """Return the overview page, trimmed on a line boundary if oversized."""
+    """Return the overview page, trimmed to fit Docker Hub's cap.
+
+    The changelog is comfortably larger than the cap allows room for, so an
+    oversized page is cut back to the last whole `##` section rather than
+    stopping mid-list, and points at GitHub for the remainder.
+    """
     changelog = CHANGELOG.read_text().split("\n", 1)[1]
     page = f"{PREAMBLE.read_text()}\n# Feature changelog\n{changelog}"
     if len(page) <= LIMIT:
         return page
     keep = page[: LIMIT - len(TRUNCATION_NOTE)]
-    return keep[: keep.rfind("\n")] + TRUNCATION_NOTE
+    section = keep.rfind("\n## ")
+    cut = section if section != -1 else keep.rfind("\n")
+    return keep[:cut] + TRUNCATION_NOTE
 
 
 def session_token() -> str:
@@ -97,13 +105,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default=DEFAULT_REPO, help="Docker Hub namespace/name")
     parser.add_argument(
-        "--dry-run", action="store_true", help="compose and report size, do not publish"
+        "--out",
+        type=pathlib.Path,
+        help="write the composed page here instead of publishing it",
     )
     args = parser.parse_args()
 
     page = compose()
     print(f"overview: {len(page)} chars (cap {LIMIT})")
-    if args.dry_run:
+    if args.out:
+        args.out.write_text(page)
+        print(f"wrote {args.out}")
         return
     publish(args.repo, page, session_token())
 

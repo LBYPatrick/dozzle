@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 66
-- **Files changed:** 278
-- **Lines:** +14533 / -2680 (net +11853)
+- **Commits ahead:** 67
+- **Files changed:** 279
+- **Lines:** +14712 / -2683 (net +12029)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -216,6 +216,21 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - On pages without an inline top-bar container search, the sidebar shows one at
   its foot. Resetting the width is a quick command (`/sidebar reset`) rather than
   a button, always offered and a no-op at the default.
+- **Pinning looks like pinning, and is animated.** The container title's toggle
+  was a star (stars mean "favourite"; the control pins), and the sidebar section it
+  feeds wore `ph:map-pin-simple`, a location pin — so neither icon matched the
+  gesture nor each other. Both are a pushpin now, filled and red when pinned,
+  outline at rest, sharing a `--color-pin` token rather than borrowing `error`,
+  since a pinned container is not a problem (darker on the light theme, or the
+  same red reads pink on white). Pinning was also silent: it does not add a row,
+  it _moves_ one out of the host tree into the Pinned section, and with both lists
+  unanimated the row vanished from one place and materialised in another. Both are
+  `TransitionGroup`s now, sharing one definition in `main.css` because it is one
+  effect across both ends of the gesture — rows fade and slide along the leading
+  edge, and the Pinned header has its own timing so creating the section does not
+  land as one block. The leaving row keeps its space while it fades rather than
+  going `position: absolute`, which would require every list in the outline to
+  become a positioning context. Covered by `composable/containerGroups.spec.ts`.
 - **The container search field is filled, not outlined** (`.field-filled`, paired
   with `.input` so radius, transition and focus ring stay shared). A recessed
   shade of the surface is how Apple draws a search box, and it earns its keep
@@ -447,6 +462,10 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 
 - `assets/composable/visible.spec.ts` — covers the search-highlight filter and
   the derived-entry caching that keeps the log list from rebuilding every flush.
+- `assets/composable/containerGroups.spec.ts` — host-branch grouping, and the
+  invariant the pin animation depends on: a pinned container is excluded from its
+  host's groups, so the row genuinely leaves the tree rather than being drawn in
+  two places while both lists animate against each other.
 - `assets/composable/scrollContext.spec.ts` — the scroll-progress span maths: the
   oldest line reads 0 rather than 1, lines outside the span clamp, and every
   unmeasurable span (epoch start, zero-length, future start, invalid date) returns

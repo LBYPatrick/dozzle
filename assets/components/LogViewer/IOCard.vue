@@ -6,7 +6,7 @@
        column positions. -->
   <button
     type="button"
-    class="stat-card io-card focus-ring group/stat min-w-0 max-md:hidden @max-5xl:hidden"
+    class="stat-card io-card focus-fill group/stat min-w-0 max-md:hidden @max-5xl:hidden"
     :class="[gridClass, { unavailable }]"
     :title="`${tooltip}\n\n${$t('toolbar.stat-cycle')}`"
     @click="$emit('cycle')"
@@ -124,7 +124,7 @@ const tooltip = computed(
   background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
 }
 
-/* Focus ring comes from the shared .focus-ring language in main.css. */
+/* Focus comes from the shared .focus-fill language in main.css. */
 .io-card:focus {
   outline: none;
 }

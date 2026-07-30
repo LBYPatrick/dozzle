@@ -1,17 +1,16 @@
 <template>
-  <!-- Swatches carry the shared ring language: the same 2px/2px geometry marks
-       the chosen colour (neutral hue) and keyboard focus (accent). The selected
-       state used to be 2px of ring plus 2px of offset drawn *inset*, which ate
-       4px into a 28px swatch and left the colour itself as a small disc in the
-       middle — the check glyph already says "chosen", so the ring only has to
-       separate the swatch from the panel. -->
+  <!-- The one control a fill shift cannot mark, because the fill *is* the value.
+       So the shared `.focus-fill` tint is joined by a lift, and selection is the
+       check glyph over a hairline inside the swatch's own edge. The selected state
+       used to be 2px of ring plus 2px of offset drawn *inset*, which ate 4px into
+       a 28px swatch and left the colour as a small disc behind a heavy band. -->
   <div class="flex flex-wrap items-center gap-2">
     <button
       v-for="color in PRIMARY_COLORS"
       :key="color.id"
       type="button"
-      class="focus-ring relative size-7 rounded-full ring-1 ring-black/10 transition-transform duration-150 ring-inset hover:scale-110"
-      :class="{ 'selected-ring': primaryColor === color.id }"
+      class="focus-fill swatch relative size-7 rounded-full ring-1 ring-black/10 transition-transform duration-150 ring-inset hover:scale-110"
+      :class="{ selected: primaryColor === color.id }"
       :style="{ backgroundColor: color.swatch }"
       :title="color.name"
       :aria-label="color.name"
@@ -27,3 +26,24 @@
 import { PRIMARY_COLORS } from "@/composable/primaryColor";
 import { primaryColor } from "@/stores/settings";
 </script>
+
+<style scoped>
+/* A hairline just inside the swatch's edge, in the panel's own colour, so the
+   chosen swatch reads as ringed without any of its colour being given up. 1.5px
+   inset, against the 4px the old treatment took. */
+.swatch.selected {
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-base-100) 90%, transparent);
+}
+
+/* Focus also lifts, since a 16% tint over a saturated swatch is a small change
+   and this is the one control whose surface cannot carry the whole signal. */
+.swatch:focus-visible {
+  transform: scale(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swatch:focus-visible {
+    transform: none;
+  }
+}
+</style>

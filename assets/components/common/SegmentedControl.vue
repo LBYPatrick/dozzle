@@ -77,14 +77,12 @@ useResizeObserver(root, () => update());
   box-shadow: inset 0 1px 2px rgb(var(--shadow-ink) / 0.14);
 }
 
-/* One ring around the whole control, the way macOS focuses a segmented control,
-   rather than one per segment. Also the only geometry that fits: the track's 3px
-   padding is narrower than the shared ring's offset, so a per-segment ring spilled
-   out over the track's own edge. The segments suppress their own so this is the
+/* The whole track tints, not the focused segment: the segment already carries the
+   raised indicator when it is the selected one, so tinting it would conflate
+   "chosen" with "focused". The segments suppress their own outline so this is the
    single indicator. */
 .track:has(:focus-visible) {
-  outline: var(--ring-width) solid var(--ring-focus);
-  outline-offset: var(--ring-offset);
+  background-image: linear-gradient(var(--focus-fill), var(--focus-fill));
 }
 
 .indicator {

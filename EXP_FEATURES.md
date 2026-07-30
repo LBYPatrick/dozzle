@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 64
+- **Commits ahead:** 66
 - **Files changed:** 278
-- **Lines:** +14434 / -2680 (net +11754)
+- **Lines:** +14533 / -2680 (net +11853)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -334,26 +334,31 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   along its full height.
 - **Buttons** converge on one glass treatment and `--control-radius`; outline
   variants render tonal.
-- **One focus ring for every control** (`--ring-width` / `--ring-offset` /
-  `--ring-focus` / `--ring-selected`, plus `.focus-ring` and `.selected-ring`).
-  Five treatments had accumulated that agreed on nothing: a 3px box-shadow at 22%
-  on fields (flush to the edge, so it read as a fat halo rather than a ring), a
-  2px ring at 60% on segmented buttons, a 2px outline at 55% on toggles, 4px of
-  _inset_ chrome on the selected colour swatch (which left the colour as a small
-  disc behind a heavy band), and daisyUI's own near-black outline on buttons —
-  invisible on the dark theme, so buttons had no usable focus indicator. Now 2px
-  at 2px offset, drawn with `outline` so it follows each control's radius and
-  cannot collide with a shadow the control already casts. Selection is the same
-  geometry in a neutral hue. Fields drop the primary border on focus: the ring
-  plus an accent hairline inside it stated the same thing twice, which was most of
-  what read as heavy. Removing `@utility input { outline-hidden! }` was required —
-  correct while focus was a box-shadow, it silently swallowed the outline. The
-  segmented control takes one ring around the whole track
-  (`:has(:focus-visible)`), as macOS does, and because the track's 3px padding is
-  narrower than the ring's offset a per-segment ring spilled over its edge.
-
-## Cloud / dev tooling
-
+- **Focus is a fill shift, not a ring.** Five treatments had accumulated that
+  agreed on nothing: a 3px box-shadow at 22% on fields (flush to the edge, so it
+  read as a fat halo rather than a ring), a 2px ring at 60% on segmented buttons,
+  a 2px outline at 55% on toggles, 4px of _inset_ chrome on the selected colour
+  swatch (which left the colour as a small disc behind a heavy band), and
+  daisyUI's own near-black outline on buttons — invisible on the dark theme, so
+  buttons had no usable focus indicator. All of them are gone rather than
+  reconciled: focus now tints the control's own surface (`--focus-fill`) and
+  brightens its edge where it has one (`--focus-edge`), with no outline anywhere.
+  Accent-tinted rather than a brighter neutral, since hover is already a neutral
+  lift on every control here. Applied as a `background-image` over the control's
+  own `background-color`, so one rule covers daisyUI's button variants and a
+  swatch's own hue without this file knowing them, and `box-shadow` is left alone.
+  Removing `@utility input { outline-hidden! }` was required earlier and
+  reinstating `outline: none` on field focus is now load-bearing — with no ring of
+  our own, the browser's default would otherwise sit on top of the tint. The
+  segmented control tints its whole track (`:has(:focus-visible)`) rather than the
+  focused segment, which would conflate "chosen" with "focused". Colour swatches
+  are the one control a fill shift cannot mark, because the fill _is_ the value:
+  they add a lift on focus, and selection is the check glyph over a 1.5px hairline
+  inside the swatch's own edge.
+  **Tradeoff, measured:** the focused-vs-unfocused state change is 1.14:1 on the
+  dark theme, well under the 3:1 WCAG 1.4.11 asks of a focus indicator. This is a
+  deliberate choice of quiet over conformance. Text contrast inside the tinted
+  field is unaffected (5.17:1 dark, 4.64:1 light, both AA).
 - **`scripts/cloudmock/main.go`** (new): a tiny Go reverse proxy that fakes the
   `/api/cloud/*` endpoints (config/status, linked + pro + streaming state, and
   canned paginated log search at `/api/cloud/search/logs`) and proxies everything
@@ -390,6 +395,15 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   parity across every locale so nothing falls back to English.
 
 ## Accessibility & polish fixes
+
+- **Escape in settings goes back one level, not all the way out.** The settings
+  popup has iOS-style drill-in screens (What's New, Notifications) with a back
+  button in the header, but Escape closed the whole dialog — and `closeSettings`
+  resets `subview`, so it also forgot where you were. Handled on `cancel` rather
+  than `close`, so Escape pops the subview when one is open and only dismisses
+  settings from the top level. Note settings has no "Escape commits something"
+  problem: the visual controls write straight to the store as you change them, and
+  the JSON editor requires an explicit Apply, so cancelling correctly discards.
 
 - **Accent contrast (WCAG):** the accent (primary) colors are all mid-to-light
   (L ~69-80%), so near-white `--color-primary-content` failed WCAG AA on primary

@@ -350,47 +350,43 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
- * Focus and selection rings.
+ * Focus.
  *
- * One geometry for every control that can be focused or chosen. It had grown
- * five: a 3px box-shadow at 22% on fields (low alpha and flush to the edge, so
- * it read as a fat halo welded to the border rather than a ring), a 2px ring at
- * 60% on segmented buttons, a 2px outline at 55% on toggles, 4px of inset chrome
- * on the selected colour swatch, and daisyUI's own near-black outline on buttons
- * — which on the dark theme was all but invisible, so buttons effectively had no
- * focus indicator at all.
+ * No ring. Focus is a shift in the control's own surface — the fill takes an
+ * accent tint, and the edge brightens where the control has one. It had grown
+ * five separate rings that agreed on nothing (3px at 22% on fields, 2px at 60%
+ * on segmented buttons, 2px at 55% on toggles, 4px of inset chrome on the
+ * selected swatch, and daisyUI's near-black outline on buttons, invisible on the
+ * dark theme); all of them are gone rather than reconciled.
  *
- * Now: 2px, offset 2px, drawn with `outline` so it follows each control's
- * border-radius and cannot collide with a shadow the control already casts (the
- * top-bar widget and the segmented indicator both carry one). Held in custom
- * properties so a control with no room outside itself can tighten the offset
- * without inventing a second ring.
+ * Accent-tinted rather than a brighter neutral, because hover is already a
+ * neutral lift on every control here — a neutral focus state would be
+ * indistinguishable from the pointer merely resting on the control.
  *
- * Selection is the same geometry in a neutral hue: choosing a thing and focusing
- * a thing should not look like two unrelated ideas.
+ * Applied as a background-image over the control's own background-color: it
+ * composites over whatever colour a control brings (daisyUI's button variants,
+ * a swatch's own hue) without this file needing to know it, and it leaves
+ * box-shadow untouched, so nothing a control already casts is disturbed.
+ *
+ * Tradeoff, stated plainly: a tint carries less contrast than a ring, so this is
+ * a weaker keyboard-focus signal than the outline it replaces. Measured below in
+ * the commit that introduced it.
  * ------------------------------------------------------------------------- */
 :root {
-  --ring-width: 2px;
-  --ring-offset: 2px;
-  --ring-focus: color-mix(in oklab, var(--color-primary) 60%, transparent);
-  --ring-selected: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+  --focus-fill: color-mix(in oklab, var(--color-primary) 16%, transparent);
+  --focus-edge: color-mix(in oklab, var(--color-primary) 70%, transparent);
 }
 
 /* Unlayered, so it beats daisyUI's own :focus-visible rules. Components opt in
- * with .focus-ring; the framework's own controls are named here so no component
+ * with .focus-fill; the framework's own controls are named here so no component
  * has to remember to. */
-.focus-ring:focus-visible,
+.focus-fill:focus-visible,
 .btn:focus-visible,
 .toggle:focus-visible,
 .checkbox:focus-visible,
 .radio:focus-visible {
-  outline: var(--ring-width) solid var(--ring-focus);
-  outline-offset: var(--ring-offset);
-}
-
-.selected-ring {
-  outline: var(--ring-width) solid var(--ring-selected);
-  outline-offset: var(--ring-offset);
+  outline: none;
+  background-image: linear-gradient(var(--focus-fill), var(--focus-fill));
 }
 
 /* ---------------------------------------------------------------------------
@@ -423,22 +419,24 @@ body {
   background-color: color-mix(in oklab, var(--color-base-content) 3%, transparent);
 }
 
-/* The ring is the whole focus signal — the edge stays at its resting colour.
- * Turning the border primary as well drew the same message twice, a hairline
- * accent inside an accent ring, which is most of what made focus look heavy. */
+/* Focus tints the well and brightens the edge. `outline: none` is load-bearing:
+ * with no ring of our own, the browser's default focus ring would otherwise
+ * appear on top of the tint. */
 .input:focus-within,
 .textarea:focus-within,
 .select:focus-within,
 .input:focus,
 .textarea:focus,
 .select:focus {
-  outline: var(--ring-width) solid var(--ring-focus);
-  outline-offset: var(--ring-offset);
+  outline: none;
+  border-color: var(--focus-edge);
+  background-color: var(--focus-fill);
 }
 
 .input.input-warning:focus-within,
 .input.input-error:focus-within {
-  outline-color: color-mix(in oklab, var(--color-error) 60%, transparent);
+  border-color: color-mix(in oklab, var(--color-error) 70%, transparent);
+  background-color: color-mix(in oklab, var(--color-error) 16%, transparent);
 }
 
 /* Filled fields, the way Apple draws a search box: a recessed shade of the
@@ -465,12 +463,14 @@ body {
   background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
 }
 
-/* Focus brightens the well and takes the shared ring. No border-color here: the
- * resting rule already holds the edge transparent and nothing above reinstates
- * it, so focus reads as the well lifting rather than growing a frame. */
+/* A filled field has no edge to brighten, so the tint is the whole signal. It has
+ * to be restated rather than inherited from `.input:focus-within`: that rule and
+ * `.input.field-filled` both weigh (0,2,0), and the resting fill is declared
+ * later, so it won and focus changed nothing at all. */
 .input.field-filled:focus-within,
 .input.field-filled:focus {
-  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+  border-color: transparent;
+  background-color: var(--focus-fill);
 }
 
 /* iOS-style switches. daisyUI defines .toggle inside @layer daisyui, so these

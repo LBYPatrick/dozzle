@@ -16,7 +16,7 @@
        full height, with all three figures under one set of column headings. -->
   <button
     type="button"
-    class="stat-card focus-ring group/stat"
+    class="stat-card focus-fill group/stat"
     :class="[variant === 'chart' ? 'chart-card' : 'summary-card', { unavailable }]"
     :title="`${title ? `${title}\n\n` : ''}${$t('toolbar.stat-cycle')}`"
     @click="$emit('cycle')"
@@ -178,7 +178,7 @@ const hasCeiling = computed(() => rows.some((row) => row.totalLabel !== undefine
   background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
 }
 
-/* Focus ring comes from the shared .focus-ring language in main.css. */
+/* Focus comes from the shared .focus-fill language in main.css. */
 .stat-card:focus {
   outline: none;
 }

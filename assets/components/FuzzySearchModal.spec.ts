@@ -121,6 +121,22 @@ describe("<FuzzySearchModal />", () => {
     expect(useRouter().push).toHaveBeenCalledWith({ name: "/container/[id]", params: { id: "567" } });
   });
 
+  // Escape must dismiss and nothing more. There is no Escape handler in the
+  // component — the native <dialog> closes on cancel — and this pins that: if a
+  // handler is ever added that acts on the highlighted row, this fails.
+  test("escape neither navigates nor runs the highlighted command", async () => {
+    const wrapper = createFuzzySearchModal();
+    await wrapper.find("input").setValue("baz");
+    // A container row is highlighted; Enter here would navigate.
+    expect(wrapper.findAll("li").length).toBeGreaterThan(0);
+
+    await wrapper.find("input").trigger("keydown.esc");
+    await wrapper.find("input").trigger("keydown", { key: "Escape" });
+
+    expect(useRouter().push).not.toHaveBeenCalled();
+    expect(wrapper.emitted("close")).toBeUndefined();
+  });
+
   test("matches commands by keyword", async () => {
     const wrapper = createFuzzySearchModal();
     await wrapper.find("input").setValue("theme");

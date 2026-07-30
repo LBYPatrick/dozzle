@@ -5,7 +5,7 @@
   <div class="fixed top-[calc(var(--mobile-nav-height)+0.6rem)] right-4 z-30">
     <button
       type="button"
-      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-ring relative flex items-center gap-3 rounded-[var(--control-radius)] py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[background-color,box-shadow] duration-200 hover:shadow-xl"
+      class="bg-base-200/85 text-base-content hover:bg-base-200 focus-fill relative flex items-center gap-3 rounded-[var(--control-radius)] py-2 pr-2.5 pl-3.5 shadow-lg backdrop-blur-md transition-[background-color,box-shadow] duration-200 hover:shadow-xl"
       :title="$t('button.expand-top-bar')"
       :aria-label="$t('button.expand-top-bar')"
       @click="$emit('expand')"

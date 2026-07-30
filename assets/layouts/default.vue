@@ -58,7 +58,11 @@
   </dialog>
   <!-- Dim, never a screen-wide blur — the panel's own glass refracts the
        already-dimmed page behind it. -->
-  <dialog ref="settingsDialog" class="modal modal-scrim items-start" @close="closeSettings">
+  <!-- @cancel, not @close: Escape inside a drill-in screen should pop one level
+       rather than drop out of settings entirely. The header carries a back button
+       modelling exactly that hierarchy, and closeSettings resets `subview`, so
+       without this Escape skipped the level *and* forgot where you were. -->
+  <dialog ref="settingsDialog" class="modal modal-scrim items-start" @close="closeSettings" @cancel="onSettingsCancel">
     <div class="modal-box max-h-[95vh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5vh] shadow-none">
       <SettingsModal v-if="settingsOpen" />
     </div>
@@ -96,7 +100,16 @@ const forceMenuHidden = ref(searchParams.has("hideMenu"));
 
 import { useSettingsModal } from "@/composable/settingsModal";
 const settingsDialog = ref<HTMLDialogElement>();
-const { open: settingsOpen, closeSettings } = useSettingsModal();
+const { open: settingsOpen, closeSettings, subview: settingsSubview, closeSubview } = useSettingsModal();
+
+// Escape is the drill-in screen's back button when one is open, and only closes
+// settings from the top level.
+function onSettingsCancel(event: Event) {
+  if (settingsSubview.value) {
+    event.preventDefault();
+    closeSubview();
+  }
+}
 
 watch(open, () => {
   if (open.value) {

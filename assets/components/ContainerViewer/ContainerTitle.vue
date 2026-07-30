@@ -101,11 +101,23 @@ const otherContainers = computed(() =>
  * angle and the toggle had no directionality at all — it spun mid-transition and
  * landed where it started. Hence plain `.swap` for the crossfade and the rotation
  * driven here. */
+/* Opacity belongs in this list. `transition` is a shorthand, so naming only
+   `rotate` reset transition-property and dropped the crossfade daisyUI puts on
+   `.swap > *` (transform, rotate, opacity) — the fill swapped instantly under a
+   rotating pin. */
 .pin-swap :where(.swap-on, .swap-off) {
-  transition: rotate 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition:
+    rotate 280ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease;
 }
 
-.pin-swap input:checked ~ .swap-on {
+/* Both layers, not just the incoming one. Rotating only `.swap-on` meant pinning
+   animated and unpinning did not: on the way back the outline pin faded in
+   sitting still at its resting angle while the filled one rotated away already
+   invisible. Held at the same angle in each state, the two layers read as one pin
+   rotating — down as it is driven in, back up to its loose diagonal as it is
+   pulled out — and the motion is the same in both directions. */
+.pin-swap input:checked ~ :where(.swap-on, .swap-off) {
   rotate: -45deg;
 }
 

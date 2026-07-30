@@ -101,6 +101,8 @@ label:
 tooltip:
   search: Search containers (⌘ + k, ⌃k)
   pin-column: Pin as column
+  pin-container: Pin to sidebar
+  unpin-container: Unpin from sidebar
   merge-all: Merge all into one stream
   network-io: "Network: ↑ {tx}/s · ↓ {rx}/s"
   disk-io: "Disk: ↑ {write}/s · ↓ {read}/s"

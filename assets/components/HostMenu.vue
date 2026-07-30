@@ -38,18 +38,27 @@
        container. There is no separate hosts screen to drill into and back out
        of any more; everything a host holds is reachable by expanding it. -->
   <ul class="menu sidebar-menu">
-    <MenuSection
-      v-if="pinnedItems.length > 0"
-      :title="$t('label.pinned')"
-      :count="pinnedItems.length"
-      :open="isOpen(PINNED_KEY)"
-      @update:open="setOpen(PINNED_KEY, $event)"
-    >
-      <template #icon>
-        <ph:map-pin-simple class="size-4 shrink-0 opacity-70" />
-      </template>
-      <ContainerMenuItem v-for="item in pinnedItems" :key="item.id" :container="item" />
-    </MenuSection>
+    <!-- The section exists only while something is pinned, so pinning the first
+         container brings the header with it. -->
+    <Transition name="pin-section">
+      <MenuSection
+        v-if="pinnedItems.length > 0"
+        :title="$t('label.pinned')"
+        :count="pinnedItems.length"
+        :open="isOpen(PINNED_KEY)"
+        @update:open="setOpen(PINNED_KEY, $event)"
+      >
+        <!-- The same pushpin the container title toggles, in the same red, so the
+             two ends of the gesture are visibly one feature. `map-pin-simple` was
+             a location pin — a different object entirely. -->
+        <template #icon>
+          <ph:push-pin-fill class="text-pin size-4 shrink-0" />
+        </template>
+        <TransitionGroup name="pin-row">
+          <ContainerMenuItem v-for="item in pinnedItems" :key="item.id" :container="item" />
+        </TransitionGroup>
+      </MenuSection>
+    </Transition>
 
     <template v-for="[groupName, groupHosts] in groupedHostEntries" :key="groupName || UNGROUPED_KEY">
       <MenuSection

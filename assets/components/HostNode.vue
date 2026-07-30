@@ -41,7 +41,12 @@
         </router-link>
       </template>
 
-      <ContainerMenuItem v-for="item in group.containers" :key="item.id" :container="item" />
+      <!-- The other half of the pin gesture: pinning removes the row from here at
+           the same moment it appears above, so this list animates too or the row
+           looks like it teleported. -->
+      <TransitionGroup name="pin-row">
+        <ContainerMenuItem v-for="item in group.containers" :key="item.id" :container="item" />
+      </TransitionGroup>
     </MenuSection>
   </MenuSection>
 </template>

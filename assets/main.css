@@ -213,12 +213,23 @@ body {
      so the veil is always ink: a tint of base-300 is near-white on the light
      theme and fogs the page instead of darkening it. */
   --scrim-alpha: 0.62;
+  /* The pin's red. Its own token rather than borrowing `error`: a pinned
+     container is not a problem, and the two should be free to diverge. Defined
+     once because the gesture has two ends — the title's toggle and the sidebar
+     section it feeds — and they must not drift apart. */
+  --color-pin: oklch(68% 0.19 22);
 }
 
 [data-theme="light"] {
   /* The light theme starts from a brighter page, so the same alpha would crush
      it; it reads as dimmed with less. */
   --scrim-alpha: 0.45;
+  /* Darker on white, or the same red reads pink and loses contrast against it. */
+  --color-pin: oklch(56% 0.2 25);
+}
+
+@utility text-pin {
+  color: var(--color-pin);
 }
 
 /* Dim only, never a screen-wide blur — glass is reserved for the floating card
@@ -676,6 +687,71 @@ body {
 
 .sidebar-menu details[open] > summary .disclosure {
   transform: rotate(90deg);
+}
+
+/* ---------------------------------------------------------------------------
+ * Pinning, animated.
+ *
+ * Pinning does not add a row, it *moves* one: the container leaves its host
+ * branch and reappears in the Pinned section above. Both lists were unanimated,
+ * so the row vanished from one place and materialised in another with nothing
+ * connecting the two — the one gesture in the sidebar that most needs to be
+ * followed by eye was the one that could not be.
+ *
+ * Shared here rather than scoped to either component, because it is one effect
+ * playing across both ends of the gesture and the two halves have to match.
+ *
+ * The leaving row keeps its space while it fades, and the rows below it close up
+ * afterwards via `-move`. That is deliberate: taking it out of flow (position:
+ * absolute) would need every list in the outline to become a positioning
+ * context, and a mispositioned absolute row flies across the sidebar.
+ * ------------------------------------------------------------------------- */
+.pin-row-move,
+.pin-row-enter-active,
+.pin-row-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* In and out along the leading edge, the axis the outline is organised on, so
+ * the row reads as sliding out of its branch rather than dropping in place. */
+.pin-row-enter-from,
+.pin-row-leave-to {
+  opacity: 0;
+  transform: translateX(-0.6rem);
+}
+
+/* The section itself only exists while something is pinned, so pinning the first
+ * container creates a header too. Fading it in on its own timing stops the
+ * header and its first row arriving as one hard block. */
+.pin-section-enter-active,
+.pin-section-leave-active {
+  transition:
+    opacity 220ms ease,
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.pin-section-enter-from,
+.pin-section-leave-to {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-row-move,
+  .pin-row-enter-active,
+  .pin-row-leave-active,
+  .pin-section-enter-active,
+  .pin-section-leave-active {
+    transition: opacity 120ms ease;
+  }
+  .pin-row-enter-from,
+  .pin-row-leave-to,
+  .pin-section-enter-from,
+  .pin-section-leave-to {
+    transform: none;
+  }
 }
 
 .sidebar-menu .count {

@@ -1,9 +1,17 @@
 <template>
   <div class="@container flex min-w-0 flex-1 items-center gap-1.5 md:gap-2">
-    <label class="swap swap-rotate size-4 shrink-0 place-content-center">
-      <input type="checkbox" v-model="pinned" />
-      <carbon:star-filled class="swap-on text-secondary block size-4" />
-      <carbon:star class="swap-off block size-4" />
+    <!-- A pushpin, because pinning is what this does: it lifts the container out
+         of its host branch into the sidebar's Pinned section. It was a star,
+         which reads as "favourite" and matched nothing at the other end. Filled
+         and red when pinned, outline at rest, and the same icon marks the
+         sidebar section it feeds. -->
+    <label
+      class="swap swap-rotate size-4 shrink-0 place-content-center"
+      :title="pinned ? $t('tooltip.unpin-container') : $t('tooltip.pin-container')"
+    >
+      <input type="checkbox" v-model="pinned" :aria-label="$t('tooltip.pin-container')" />
+      <ph:push-pin-fill class="swap-on text-pin block size-4" />
+      <ph:push-pin class="swap-off block size-4" />
     </label>
     <div class="inline-flex min-w-0 items-center text-sm">
       <div class="breadcrumbs min-w-0 overflow-x-visible p-0 font-mono">

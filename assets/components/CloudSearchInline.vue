@@ -6,7 +6,7 @@
        above the navigation list, and a hairline box there just adds another rule
        for the eye to sort out from the rows. -->
   <div
-    class="input field-filled group/field flex h-9 w-full items-center gap-2 px-3 text-left"
+    class="input field-filled field-search group/field flex h-9 w-full items-center gap-2 px-3 text-left"
     data-testid="search"
     role="button"
     tabindex="0"

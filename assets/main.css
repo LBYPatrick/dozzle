@@ -450,6 +450,17 @@ body {
   background-color: color-mix(in oklab, var(--color-error) 16%, transparent);
 }
 
+/* Search fields stay neutral on focus. A search box is somewhere the caret lives
+ * while you type and retype; washing it accent every time makes an ordinary act
+ * look like a state change, and the log view's search has always just been a
+ * field. Overrides only the two focus tokens, so the geometry and timing stay
+ * shared with every other field — which is what holding them in custom
+ * properties was for. */
+.input.field-search {
+  --focus-fill: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+  --focus-edge: color-mix(in oklab, var(--color-base-content) 32%, transparent);
+}
+
 /* Filled fields, the way Apple draws a search box: a recessed shade of the
  * surface instead of a line around it. A tinted well already reads as "type
  * here", so the hairline edge is saying it twice — and on a sidebar, where the

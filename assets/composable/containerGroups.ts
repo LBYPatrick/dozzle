@@ -26,20 +26,19 @@ const byRunningThenName = (a: Container, b: Container) => {
 /**
  * Splits one host's containers into the groups its sidebar branch renders.
  *
- * Pinned containers are excluded: they are shown once, above the host tree,
- * rather than repeated inside whichever host happens to hold them.
+ * Pinned containers are included. They also appear in the Pinned section above,
+ * so a pinned container is listed twice on purpose: the section is the shortcut,
+ * and the row in its host keeps the container where you already know to look for
+ * it. The in-place row carries a pin marker so the duplication reads as a state
+ * rather than a bug. (This used to exclude them, which meant pinning made a
+ * container disappear from the hierarchy it belongs to.)
  */
-export function groupContainersForHost(
-  containers: Container[],
-  hostId: string,
-  pinnedNames?: Set<string> | null,
-): ContainerGroup[] {
+export function groupContainersForHost(containers: Container[], hostId: string): ContainerGroup[] {
   const namespaced: Record<string, Container[]> = {};
   const singular: Container[] = [];
 
   for (const container of containers) {
     if (container.host !== hostId) continue;
-    if (pinnedNames?.has(container.name)) continue;
 
     if (container.namespace) {
       namespaced[container.namespace] ||= [];

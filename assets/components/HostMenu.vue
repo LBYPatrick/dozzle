@@ -55,7 +55,7 @@
           <ph:push-pin-fill class="text-pin size-4 shrink-0" />
         </template>
         <TransitionGroup name="pin-row">
-          <ContainerMenuItem v-for="item in pinnedItems" :key="item.id" :container="item" />
+          <ContainerMenuItem v-for="item in pinnedItems" :key="item.id" :container="item" in-pinned-section />
         </TransitionGroup>
       </MenuSection>
     </Transition>
@@ -151,7 +151,7 @@ const allKeys = computed(() => {
   }
   for (const host of Object.values(hosts.value)) {
     keys.push(hostKey(host.id));
-    for (const { key } of groupContainersForHost(visibleContainers.value, host.id, debouncedPinnedContainers.value)) {
+    for (const { key } of groupContainersForHost(visibleContainers.value, host.id)) {
       keys.push(key);
     }
   }

@@ -6,7 +6,7 @@
          and red when pinned, outline at rest, and the same icon marks the
          sidebar section it feeds. -->
     <label
-      class="swap swap-rotate size-4 shrink-0 place-content-center"
+      class="swap pin-swap size-4 shrink-0 place-content-center"
       :title="pinned ? $t('tooltip.unpin-container') : $t('tooltip.pin-container')"
     >
       <input type="checkbox" v-model="pinned" :aria-label="$t('tooltip.pin-container')" />
@@ -88,3 +88,30 @@ const otherContainers = computed(() =>
     .sort((a, b) => +b.created - +a.created),
 );
 </script>
+
+<style scoped>
+/* Phosphor draws its pushpin on a diagonal, needle to the lower-left. Exactly 45°
+   off vertical, not approximately: the needle segment of the path is
+   `l-42.63 42.66`, equal run and rise. So the resting state needs no rotation at
+   all — the icon already is the 45° pin lying loose, not yet pushed in — and
+   pinned is a flat -45° from there, which lands the needle vertical.
+ *
+ * daisyUI's `swap-rotate` could not express this. It only rotates whichever icon
+ * is *hidden* (45deg off, 0deg on), so both visible states sat at the icon's own
+ * angle and the toggle had no directionality at all — it spun mid-transition and
+ * landed where it started. Hence plain `.swap` for the crossfade and the rotation
+ * driven here. */
+.pin-swap :where(.swap-on, .swap-off) {
+  transition: rotate 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.pin-swap input:checked ~ .swap-on {
+  rotate: -45deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-swap :where(.swap-on, .swap-off) {
+    transition: none;
+  }
+}
+</style>

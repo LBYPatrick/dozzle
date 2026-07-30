@@ -17,6 +17,16 @@
           :data-state="container.state"
         ></div>
         <div class="truncate">{{ container.name }}</div>
+        <!-- A pinned container is listed twice on purpose — here, in the branch it
+             belongs to, and again in the Pinned section as a shortcut. This marks
+             the in-place row so the duplication reads as a state rather than a
+             glitch. Hidden inside the Pinned section itself, where every row is
+             pinned and the marker would be noise. -->
+        <ph:push-pin-fill
+          v-if="isPinnedToSidebar && !inPinnedSection"
+          class="text-pin size-3 shrink-0"
+          :title="$t('label.pinned')"
+        />
         <ContainerHealth :health="container.health" />
         <span
           class="hover:text-secondary hidden group-hover:inline-block"
@@ -37,9 +47,17 @@
 <script lang="ts" setup>
 import { Container } from "@/models/Container";
 
-const { container } = defineProps<{ container: Container }>();
+const { container, inPinnedSection = false } = defineProps<{
+  container: Container;
+  /** Set by the Pinned section, where the pin marker would be on every row. */
+  inPinnedSection?: boolean;
+}>();
 
+// Two unrelated senses of "pinned" meet on this row: pinnedStore is the
+// side-by-side log column (the cil:columns control), pinnedContainers is the
+// sidebar pin. Named apart here so the template cannot confuse them.
 const pinnedStore = usePinnedLogsStore();
+const isPinnedToSidebar = computed(() => pinnedContainers.value.has(container.name));
 </script>
 
 <style scoped>

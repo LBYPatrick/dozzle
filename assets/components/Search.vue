@@ -8,7 +8,7 @@
   <!-- The width/colour transition lives on the shared `.input` rule in main.css
        (which is unlayered, so a `transition-*` utility here would be ignored). -->
   <div
-    class="input input-sm relative flex items-center gap-2 overflow-hidden rounded-[var(--control-radius)]"
+    class="input input-sm field-search relative flex items-center gap-2 overflow-hidden rounded-[var(--control-radius)]"
     :class="fieldClass"
     :title="showSearch ? undefined : $t('toolbar.search')"
     @click="open"

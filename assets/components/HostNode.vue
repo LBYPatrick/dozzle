@@ -41,9 +41,9 @@
         </router-link>
       </template>
 
-      <!-- The other half of the pin gesture: pinning removes the row from here at
-           the same moment it appears above, so this list animates too or the row
-           looks like it teleported. -->
+      <!-- Animated for the same reason the pinned list is: containers start and
+           stop while you are looking at the sidebar, and rows appearing or
+           leaving a branch should be followable rather than instant. -->
       <TransitionGroup name="pin-row">
         <ContainerMenuItem v-for="item in group.containers" :key="item.id" :container="item" />
       </TransitionGroup>
@@ -61,9 +61,7 @@ const { visibleContainers } = storeToRefs(containerStore);
 
 const { isOpen, setOpen } = useCollapsedSections();
 
-const debouncedPinnedContainers = debouncedRef(pinnedContainers, 200);
-
-const groups = computed(() =>
-  groupContainersForHost(visibleContainers.value, host.id, debouncedPinnedContainers.value),
-);
+// Pinning no longer changes what a host branch holds — a pinned container stays
+// in place with a marker — so the branch has nothing to debounce any more.
+const groups = computed(() => groupContainersForHost(visibleContainers.value, host.id));
 </script>

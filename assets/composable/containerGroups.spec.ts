@@ -40,38 +40,33 @@ describe("groupContainersForHost", () => {
   });
 
   /**
-   * The invariant the sidebar's pin animation exists to make legible: pinning
-   * does not copy a row into the Pinned section, it moves it. If a pinned
-   * container were still listed under its host, the row would appear twice and
-   * the two lists would be animating against each other.
+   * Pinning must not remove a container from the hierarchy it belongs to. It used
+   * to: a pinned container was excluded here and shown only in the Pinned section,
+   * so pinning made the row vanish from its host. It is now listed in both places
+   * on purpose, and the in-place row carries a pin marker.
    */
-  test("excludes pinned containers, so the row leaves the host tree", () => {
+  test("keeps pinned containers in their host branch", () => {
     const containers = [container("a"), container("b"), container("c")];
-    const pinned = new Set(["b"]);
 
-    expect(names(groupContainersForHost(containers, "localhost", pinned))).toEqual(["a", "c"]);
+    // The signature no longer takes a pinned set at all, which is the point:
+    // grouping cannot depend on something it should not know about.
+    expect(names(groupContainersForHost(containers, "localhost"))).toEqual(["a", "b", "c"]);
   });
 
-  test("unpinning returns the container to the host tree", () => {
-    const containers = [container("a"), container("b")];
+  test('a namespace of one lands in the catch-all under "at-least-2"', () => {
+    const containers = [container("solo", "localhost", "proj"), container("loose")];
 
-    expect(names(groupContainersForHost(containers, "localhost", new Set(["b"])))).toEqual(["a"]);
-    expect(names(groupContainersForHost(containers, "localhost", new Set()))).toEqual(["a", "b"]);
+    const groups = groupContainersForHost(containers, "localhost");
+    expect(groups).toHaveLength(1);
+    expect(groups[0].label).toBe("label.running-containers");
+    expect(names(groups).sort()).toEqual(["loose", "solo"]);
   });
 
-  test("a null or absent pinned set excludes nothing", () => {
-    const containers = [container("a"), container("b")];
-
-    expect(names(groupContainersForHost(containers, "localhost", null))).toEqual(["a", "b"]);
-    expect(names(groupContainersForHost(containers, "localhost"))).toEqual(["a", "b"]);
-  });
-
-  test("pinning the last member drops its group entirely", () => {
-    // "at-least-2" only groups a namespace with more than one member, so a
-    // namespace of one lands in the catch-all; pinning it should leave no group
-    // for the sidebar to render a header for.
+  test('"always" groups a namespace of one into its own section', () => {
+    groupContainers.value = "always";
     const containers = [container("solo", "localhost", "proj")];
 
-    expect(groupContainersForHost(containers, "localhost", new Set(["solo"]))).toEqual([]);
+    const groups = groupContainersForHost(containers, "localhost");
+    expect(groups.map((g) => g.label)).toEqual(["proj"]);
   });
 });

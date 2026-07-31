@@ -79,6 +79,11 @@ label:
     exhausted: Alle Logs durchsucht · {count} Treffer
     empty: Keine Treffer · alle Logs durchsucht
   show-all-containers: Zeige alle Container
+  all-hosts: Alle Hosts
+  host-unavailable: Nicht erreichbar
+  hosts-online: "{count} online"
+  stat-history: Verlauf
+  stat-level: Auslastung
   collapse-all: Alle einklappen
   collapse-group: Gruppe einklappen
   expand-all: Alle ausklappen
@@ -249,6 +254,10 @@ log_actions:
   copy_log: Log kopieren
   jump_to_context: Zum Kontext springen
 toasts:
+  showing-all-containers: "Zeigt alle Container, auch gestoppte"
+  showing-running-containers: "Zeigt nur laufende Container"
+  expanded-all: "Alle Abschnitte ausgeklappt"
+  collapsed-all: "Alle Abschnitte eingeklappt"
   copied:
     title: Kopiert
     message: Log in Zwischenablage kopiert

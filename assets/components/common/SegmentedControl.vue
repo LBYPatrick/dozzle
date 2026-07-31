@@ -4,11 +4,8 @@
        capsule is a full-contrast surface with a hairline edge and a lift shadow
        (not a faint tint), so the choice reads at a glance in both themes.
        Single-select (radio semantics). -->
-  <div ref="root" class="track relative inline-flex rounded-[10px] p-[3px]" role="radiogroup">
-    <div
-      class="indicator pointer-events-none absolute top-[3px] bottom-[3px] left-0 rounded-[7px]"
-      :style="indicatorStyle"
-    ></div>
+  <div ref="root" class="track relative inline-flex" :class="{ dense }" role="radiogroup">
+    <div class="indicator pointer-events-none absolute left-0" :style="indicatorStyle"></div>
     <button
       v-for="(opt, i) in options"
       :key="String(opt.value)"
@@ -16,7 +13,9 @@
       type="button"
       role="radio"
       :aria-checked="model === opt.value"
-      class="relative z-10 rounded-[7px] px-3 py-1 text-sm whitespace-nowrap transition-[color,transform] duration-150 focus-visible:outline-none active:scale-[0.96]"
+      :aria-label="opt.title"
+      :title="opt.title"
+      class="segment relative z-10 inline-flex items-center justify-center text-sm whitespace-nowrap transition-[color,transform] duration-150 focus-visible:outline-none active:scale-[0.96]"
       :class="
         model === opt.value
           ? 'text-base-content font-semibold'
@@ -24,14 +23,29 @@
       "
       @click="select(opt.value)"
     >
-      {{ opt.label }}
+      <!-- Defaults to the label, so a plain text control needs no slot. Icon
+           segments override it and lean on `title` to stay named. -->
+      <slot name="option" :option="opt" :selected="model === opt.value">{{ opt.label }}</slot>
     </button>
   </div>
 </template>
 
 <script lang="ts" setup generic="T">
+export type SegmentedOption<T> = {
+  label: string;
+  value: T;
+  /** Tooltip and accessible name. Required for icon-only segments, whose slot
+      content carries no text of its own. */
+  title?: string;
+};
+
 const model = defineModel<T>();
-const { options } = defineProps<{ options: { label: string; value: T }[] }>();
+const { options, dense = false } = defineProps<{
+  options: SegmentedOption<T>[];
+  /** Toolbar height (exactly as tall as a `btn-sm`), for control bars where the
+      segments sit shoulder to shoulder with buttons. */
+  dense?: boolean;
+}>();
 
 const select = (value: T) => {
   model.value = value;
@@ -72,9 +86,37 @@ useResizeObserver(root, () => update());
 </script>
 
 <style scoped>
+/* One padding token drives the track's inset, the capsule's inset, and the
+   inner radius, so the two sizes stay concentric instead of each hard-coding a
+   set of pixels that has to be kept in sync by hand. */
 .track {
-  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
-  box-shadow: inset 0 1px 2px rgb(var(--shadow-ink) / 0.14);
+  --seg-pad: 3px;
+  --seg-radius: 10px;
+  padding: var(--seg-pad);
+  border-radius: var(--seg-radius);
+  /* tertiarySystemFill, the same token a grey button wears — a segmented track
+     and a button beside it on the same bar are the same material in iOS, and
+     hand-picked percentages are why they used to disagree. The inset shadow is
+     gone: iOS recesses the track by tone alone, and the inner shading was
+     reading as a second, competing edge under the thumb. */
+  background-color: var(--fill-3);
+}
+
+/* Fixed height rather than padding, so an icon segment and a text segment in
+   the same control bar come out the same size. */
+.track.dense {
+  --seg-pad: 2px;
+  --seg-radius: 9px;
+  height: 2rem; /* h-8, daisyUI's btn-sm */
+}
+
+.segment {
+  border-radius: calc(var(--seg-radius) - var(--seg-pad));
+  padding: 0.25rem 0.75rem;
+}
+
+.track.dense .segment {
+  padding: 0 0.625rem;
 }
 
 /* The whole track tints, not the focused segment: the segment already carries the
@@ -86,11 +128,15 @@ useResizeObserver(root, () => update());
 }
 
 .indicator {
-  background-color: var(--color-base-100);
-  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
-  box-shadow:
-    0 1px 1px rgb(var(--shadow-ink) / 0.12),
-    0 2px 6px rgb(var(--shadow-ink) / 0.22);
+  top: var(--seg-pad);
+  bottom: var(--seg-pad);
+  border-radius: calc(var(--seg-radius) - var(--seg-pad));
+  /* White in light, a grey *lighter than its track* in dark — Apple never puts
+     a white capsule on a dark track, it reads as a headlight. */
+  background-color: var(--control-thumb);
+  /* No border. iOS lifts the thumb with shadow alone; the hairline was doing
+     the same job twice and thickening the capsule by 2px. */
+  box-shadow: var(--elev-thumb);
   transition:
     transform 260ms cubic-bezier(0.32, 0.72, 0, 1),
     width 260ms cubic-bezier(0.32, 0.72, 0, 1),

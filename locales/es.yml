@@ -79,6 +79,11 @@ label:
     exhausted: Todos los registros buscados · {count} coincidencias
     empty: Sin coincidencias · todos los registros buscados
   show-all-containers: Mostrar todos los contenedores
+  all-hosts: Todos los hosts
+  host-unavailable: No disponible
+  hosts-online: "{count} en línea"
+  stat-history: Historial
+  stat-level: Nivel
   collapse-all: Colapsar todo
   collapse-group: Colapsar grupo
   expand-all: Expandir todo
@@ -307,6 +312,10 @@ log_actions:
   copy_log: Copiar registro
   jump_to_context: Ir al contexto
 toasts:
+  showing-all-containers: "Mostrando todos los contenedores, incluidos los detenidos"
+  showing-running-containers: "Mostrando solo contenedores en ejecución"
+  expanded-all: "Se expandieron todas las secciones"
+  collapsed-all: "Se contrajeron todas las secciones"
   copied:
     title: Copiado
     message: Registro copiado al portapapeles

@@ -79,6 +79,11 @@ label:
     exhausted: Alle logs doorzocht · {count} overeenkomsten
     empty: Geen overeenkomsten · alle logs doorzocht
   show-all-containers: Toon alle containers
+  all-hosts: Alle hosts
+  host-unavailable: Niet beschikbaar
+  hosts-online: "{count} online"
+  stat-history: Geschiedenis
+  stat-level: Niveau
   collapse-all: Alles inklappen
   collapse-group: Groep inklappen
   expand-all: Alles uitklappen
@@ -250,6 +255,10 @@ log_actions:
   copy_log: Log kopiëren
   jump_to_context: Ga naar context
 toasts:
+  showing-all-containers: "Toont alle containers, ook gestopte"
+  showing-running-containers: "Toont alleen actieve containers"
+  expanded-all: "Alle secties uitgeklapt"
+  collapsed-all: "Alle secties ingeklapt"
   copied:
     title: Gekopieerd
     message: Log gekopieerd naar klembord

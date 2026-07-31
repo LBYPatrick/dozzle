@@ -80,6 +80,11 @@ label:
     exhausted: Semua log dicari · {count} hasil
     empty: Tidak ada hasil · semua log dicari
   show-all-containers: Tampilkan semua kontainer
+  all-hosts: Semua host
+  host-unavailable: Tidak tersedia
+  hosts-online: "{count} daring"
+  stat-history: Riwayat
+  stat-level: Tingkat
   collapse-all: Tutup semua
   collapse-group: Tutup grup
   expand-all: Buka semua
@@ -260,6 +265,10 @@ log_actions:
   jump_to_context: Lompat ke konteks
 
 toasts:
+  showing-all-containers: "Menampilkan semua kontainer, termasuk yang berhenti"
+  showing-running-containers: "Menampilkan hanya kontainer yang berjalan"
+  expanded-all: "Semua bagian dibentangkan"
+  collapsed-all: "Semua bagian diciutkan"
   copied:
     title: Disalin
     message: Log disalin ke clipboard

@@ -79,6 +79,11 @@ label:
     exhausted: Przeszukano wszystkie logi · {count} dopasowań
     empty: Brak dopasowań · przeszukano wszystkie logi
   show-all-containers: Pokaż wszystkie kontenery
+  all-hosts: Wszystkie hosty
+  host-unavailable: Niedostępny
+  hosts-online: "{count} online"
+  stat-history: Historia
+  stat-level: Poziom
   collapse-all: Zwiń wszystkie
   collapse-group: Zwiń grupę
   expand-all: Rozwiń wszystkie
@@ -252,6 +257,10 @@ log_actions:
   copy_log: Skopiuj logi
   jump_to_context: Przeskocz do kontekstu
 toasts:
+  showing-all-containers: "Pokazuje wszystkie kontenery, także zatrzymane"
+  showing-running-containers: "Pokazuje tylko działające kontenery"
+  expanded-all: "Rozwinięto wszystkie sekcje"
+  collapsed-all: "Zwinięto wszystkie sekcje"
   copied:
     title: Skopiowany
     message: Log skopiowany do schowka

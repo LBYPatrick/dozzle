@@ -50,6 +50,19 @@ const removeToast = (id: Toast["id"]) => {
   toasts.value = toasts.value.filter((instance) => instance.toast.id !== id);
 };
 
+/**
+ * One-line confirmation for a switch whose own control gives no lasting
+ * acknowledgement (it goes disabled, or only swaps an icon).
+ *
+ * Always the same id, so flipping a switch twice replaces the toast instead of
+ * stacking two of them.
+ */
+export const notifySetting = (message: string) => {
+  const id = "setting-change";
+  removeToast(id);
+  showToast({ id, message, type: "info" }, { expire: 1800 });
+};
+
 export const useToast = () => {
   return {
     toasts,

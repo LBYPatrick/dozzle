@@ -3,8 +3,14 @@
        overlay (see default.vue). Glass is intentional: this is a container
        background, the one place blur is allowed. -->
   <div class="glass-surface glass-surface-thick flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl">
-    <!-- Header -->
-    <div class="border-base-content/10 flex flex-wrap items-center gap-2 border-b px-4 py-3">
+    <!-- Header. The rule under it is a scroll edge, not a decoration: it draws
+         itself only once there is content passing beneath, so a short panel is
+         one uninterrupted surface. The border is always in the box model and
+         only changes colour, so nothing shifts when it appears. -->
+    <div
+      class="flex flex-wrap items-center gap-2 border-b px-4 py-3 transition-colors duration-200"
+      :class="headerDivided ? 'border-base-content/10' : 'border-transparent'"
+    >
       <!-- Secondary screen: back to the main list -->
       <template v-if="subview">
         <button class="btn btn-ghost btn-sm -ml-1 gap-1 pl-1" @click="closeSubview">
@@ -147,6 +153,15 @@ const importText = ref("");
 const importError = ref("");
 const importing = ref(false);
 
+// Only the visual view scrolls under the header. The JSON editor and the import
+// panel are their own bounded surfaces butted right against it, and those seams
+// are real regardless of scroll position.
+const scrolled = ref(false);
+useEventListener(visualScroll, "scroll", () => (scrolled.value = (visualScroll.value?.scrollTop ?? 0) > 0), {
+  passive: true,
+});
+const headerDivided = computed(() => showImport.value || view.value !== "visual" || scrolled.value);
+
 // Live JSON validity for the editor footer.
 const jsonError = computed(() => {
   try {
@@ -242,5 +257,25 @@ function toast(message: string, type: "info" | "error", raw = false) {
 .subview-leave-to {
   transform: translateX(1.5rem);
   opacity: 0;
+}
+
+/* Reduced motion is not "no feedback": the drill-in still needs to read as a
+   screen change, so both transitions keep their cross-fade and drop only the
+   travel — the sideways push and the height sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .subview-enter-active,
+  .subview-leave-active {
+    transition: opacity 160ms ease;
+  }
+
+  .subview-enter-from,
+  .subview-leave-to {
+    transform: none;
+  }
+
+  .import-panel-enter-active,
+  .import-panel-leave-active {
+    transition: opacity 160ms ease;
+  }
 }
 </style>

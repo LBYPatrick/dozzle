@@ -3,28 +3,7 @@
     <span class="text-base-content/45 flex-1 truncate text-[0.72rem] font-semibold tracking-[0.06em] uppercase">
       {{ $t("label.service", services.length) }}
     </span>
-    <div class="dropdown dropdown-end dropdown-hover flex-none">
-      <label
-        tabindex="0"
-        class="btn btn-square btn-ghost btn-sm"
-        :title="$t('action.more-actions')"
-        :aria-label="$t('action.more-actions')"
-      >
-        <ph:dots-three-vertical-bold class="size-5" />
-      </label>
-      <ul
-        tabindex="0"
-        class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 shadow-sm"
-      >
-        <li>
-          <a class="text-sm capitalize" @click="collapseAll()">
-            <material-symbols-light:expand-all class="w-4" v-if="allCollapsed" />
-            <material-symbols-light:collapse-all class="w-4" v-else />
-            {{ allCollapsed ? $t("label.expand-all") : $t("label.collapse-all") }}
-          </a>
-        </li>
-      </ul>
-    </div>
+    <CollapseControls :keys="sectionKeys" />
   </div>
 
   <!-- stack -> service, in the same outline language as the host menu. -->
@@ -104,14 +83,11 @@ const servicesWithoutStacks = computed(() => services.value.filter((service) => 
 // so this literal can never collide with one.
 const UNSTACKED_KEY = "stack:__unstacked__";
 
-const { isOpen, setOpen, allCollapsed: allOf, toggleAll } = useCollapsedSections();
+const { isOpen, setOpen } = useCollapsedSections();
 
 const sectionKeys = computed(() => {
   const keys = stacks.value.map(({ name }) => stackKey(name));
   if (servicesWithoutStacks.value.length > 0) keys.push(UNSTACKED_KEY);
   return keys;
 });
-
-const allCollapsed = computed(() => allOf(sectionKeys.value));
-const collapseAll = () => toggleAll(sectionKeys.value);
 </script>

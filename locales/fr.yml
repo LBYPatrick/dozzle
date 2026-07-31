@@ -79,6 +79,11 @@ label:
     exhausted: Tous les logs recherchés · {count} résultats
     empty: Aucun résultat · tous les logs recherchés
   show-all-containers: Afficher tous les conteneurs
+  all-hosts: Tous les hôtes
+  host-unavailable: Indisponible
+  hosts-online: "{count} en ligne"
+  stat-history: Historique
+  stat-level: Niveau
   collapse-all: Réduire tout
   collapse-group: Réduire le groupe
   expand-all: Développer tout
@@ -249,6 +254,10 @@ log_actions:
   copy_log: Copier le journal
   jump_to_context: Aller au contexte
 toasts:
+  showing-all-containers: "Affichage de tous les conteneurs, y compris arrêtés"
+  showing-running-containers: "Affichage des conteneurs en cours uniquement"
+  expanded-all: "Toutes les sections développées"
+  collapsed-all: "Toutes les sections réduites"
   copied:
     title: Copié
     message: Journal copié dans le presse-papiers

@@ -79,6 +79,11 @@ label:
     exhausted: Все логи просмотрены · {count} совпадений
     empty: Нет совпадений · все логи просмотрены
   show-all-containers: Показать все контейнеры
+  all-hosts: Все хосты
+  host-unavailable: Недоступен
+  hosts-online: "{count} в сети"
+  stat-history: История
+  stat-level: Уровень
   collapse-all: Свернуть все
   collapse-group: Свернуть группу
   expand-all: Развернуть все
@@ -249,6 +254,10 @@ log_actions:
   copy_log: Копировать лог
   jump_to_context: Перейти к контексту
 toasts:
+  showing-all-containers: "Показаны все контейнеры, включая остановленные"
+  showing-running-containers: "Показаны только запущенные контейнеры"
+  expanded-all: "Все разделы развёрнуты"
+  collapsed-all: "Все разделы свёрнуты"
   copied:
     title: Скопировано
     message: Лог скопирован в буфер обмена

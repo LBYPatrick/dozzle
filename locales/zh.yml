@@ -61,6 +61,11 @@ label:
     exhausted: 已搜索所有日志 · {count} 条匹配
     empty: 无匹配项 · 已搜索所有日志
   show-all-containers: 显示所有容器
+  all-hosts: 所有主机
+  host-unavailable: 不可用
+  hosts-online: "{count} 台在线"
+  stat-history: 历史
+  stat-level: 当前值
   collapse-all: 折叠全部
   collapse-group: 折叠组
   expand-all: 展开全部
@@ -249,6 +254,10 @@ log_actions:
   copy_log: 复制日志
   jump_to_context: 跳转到上下文
 toasts:
+  showing-all-containers: "正在显示所有容器，包括已停止的"
+  showing-running-containers: "仅显示运行中的容器"
+  expanded-all: "已展开所有分区"
+  collapsed-all: "已折叠所有分区"
   copied:
     title: 已复制
     message: 日志已复制到剪贴板

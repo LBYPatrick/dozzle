@@ -1,37 +1,10 @@
 <template>
-  <div class="mb-1 flex items-center gap-1">
-    <span class="text-base-content/45 flex-1 truncate text-[0.72rem] font-semibold tracking-[0.06em] uppercase">
-      {{ $t("label.hosts") }}
-    </span>
-    <div class="dropdown dropdown-end dropdown-hover flex-none">
-      <label
-        tabindex="0"
-        class="btn btn-square btn-ghost btn-sm"
-        :title="$t('action.more-actions')"
-        :aria-label="$t('action.more-actions')"
-      >
-        <ph:dots-three-vertical-bold class="size-5" />
-      </label>
-      <ul
-        tabindex="0"
-        class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 shadow-sm"
-      >
-        <li>
-          <a class="text-sm capitalize" @click="toggleShowAllContainers()">
-            <mdi:check class="w-4" v-if="showAllContainers" />
-            <div v-else class="w-4"></div>
-            {{ $t("label.show-all-containers") }}
-          </a>
-        </li>
-        <li v-if="hasCollapsible">
-          <a class="text-sm capitalize" @click="collapseAll()">
-            <material-symbols-light:expand-all class="w-4" v-if="allCollapsed" />
-            <material-symbols-light:collapse-all class="w-4" v-else />
-            {{ allCollapsed ? $t("label.expand-all") : $t("label.collapse-all") }}
-          </a>
-        </li>
-      </ul>
-    </div>
+  <!-- The row that used to say "Hosts" next to an overflow menu. The word only
+       repeated what the tree below it already showed, and burying two switches
+       one click deep made them feel optional; both now live on the row itself. -->
+  <div class="mb-1 flex items-center justify-end">
+    <ShowAllContainersToggle />
+    <CollapseControls :keys="allKeys" />
   </div>
 
   <!-- One outline, top to bottom: host group -> host -> container group ->
@@ -92,7 +65,6 @@
 
 <script lang="ts" setup>
 import { Container } from "@/models/Container";
-import { showAllContainers } from "@/stores/settings";
 
 const containerStore = useContainerStore();
 const { visibleContainers } = storeToRefs(containerStore);
@@ -126,7 +98,7 @@ const groupedHostEntries = computed(() => {
   return entries;
 });
 
-const { isOpen, setOpen, allCollapsed: allOf, toggleAll } = useCollapsedSections();
+const { isOpen, setOpen } = useCollapsedSections();
 
 // Pinned containers are pinned regardless of which host they live on, so they
 // sit above the host tree rather than inside one host's branch.
@@ -141,8 +113,8 @@ const pinnedItems = computed(() =>
   visibleContainers.value.filter((c) => debouncedPinnedContainers.value?.has(c.name)).sort(sorter),
 );
 
-// Every collapsible key currently on screen, so "collapse all" and its label
-// know what they are operating on.
+// Every collapsible key currently on screen, so the collapse/expand pair knows
+// what it is operating on and when it has reached either extreme.
 const allKeys = computed(() => {
   const keys: string[] = [];
   if (pinnedItems.value.length > 0) keys.push(PINNED_KEY);
@@ -157,10 +129,6 @@ const allKeys = computed(() => {
   }
   return keys;
 });
-
-const hasCollapsible = computed(() => allKeys.value.length > 0);
-const allCollapsed = computed(() => allOf(allKeys.value));
-const collapseAll = () => toggleAll(allKeys.value);
 
 // Navigating to a container expands the host holding it, so a deep link or a
 // search result never lands on a collapsed branch.
@@ -177,6 +145,4 @@ watch(
   },
   { immediate: true },
 );
-
-const toggleShowAllContainers = () => (showAllContainers.value = !showAllContainers.value);
 </script>

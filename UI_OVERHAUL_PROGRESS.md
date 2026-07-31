@@ -150,8 +150,41 @@ Legend: [ ] todo · [~] in progress · [x] done · [-] deferred/blocked
   `virtual:intlify-i18n-*` modules on a locale edit, so the key renders as its
   own path (`label.not-available`). Production builds are unaffected.
 
+### iOS 18 shades and elevations
+
+The blanket shadow tint recorded here as "known, not changed" is fixed, along
+with the rest of the control material.
+
+- **The glow.** `[class*="shadow-"]` recoloured every Tailwind shadow utility to
+  a tint of base-content, which is near-white on the dark theme — so `shadow-md`
+  / `lg` / `xl` were a pale halo around every dropdown, toast and popover rather
+  than a shadow. It now carries ink at a per-theme strength (`--shadow-alpha`).
+- **Fill ramp.** Tints were single percentages of base-content reused across
+  both themes (7% button, 11% segmented track, 22% switch track). Apple runs the
+  dark ramp at roughly double, because a light tint over a dark surface reads far
+  weaker than the same alpha of dark over white. `--fill-1`…`--fill-4` are
+  Apple's four fill levels at their real light/dark alphas; `--fill-3`
+  (tertiary) is what a grey button and a segmented track share, which is why
+  those two never matched before.
+- **Buttons lost their elevation and their edge.** An iOS button is a flat fill:
+  neutral buttons are `--fill-3` with no border, ghost hover is `--fill-4`,
+  filled colour variants drop daisyUI's `0 1px 3px`. Shadow is now spent only on
+  things that genuinely float.
+- **Three elevations, not ad-hoc ones.** `--elev-thumb` (Apple's own
+  segmented-control shadow, verbatim in light), `--elev-popover`, `--elev-sheet`.
+- **Switch rebuilt to UISwitch proportions.** 51×31pt with a 27pt knob, held as
+  one `--switch-h` so width, knob and travel all derive from it (travel is
+  width − height) — the old `sm` and `xs` had drifted to different ratios than
+  the base. Off track is a flat specific grey (`#E9E9EA` / `#39393D`) instead of
+  `base-content/22`, which read as half-on in light. Knob stays white in both
+  themes and takes the soft `--elev-thumb` instead of a tight `black/0.35`.
+- **Segmented thumb** is `--control-thumb`: white in light, a grey _lighter than
+  its track_ in dark (a white capsule on a dark track reads as a headlight). Its
+  hairline border is gone — the shadow already lifts it, and the border was
+  thickening the capsule by 2px.
+
 ### Known, not changed
 
-- `[class*="shadow-"] { @apply shadow-base-content/8 }` in main.css tints _every_
-  Tailwind shadow utility with base-content, so they all glow on the dark theme.
-  Pre-existing, and changing it shifts shadows app-wide — say the word.
+- `UI_OVERHAUL_PROGRESS.md` mentions utility class names in prose, and Tailwind's
+  content detection scans `.md`, so a few dead selectors are emitted into the
+  bundle from this file. Harmless, ~150 bytes.

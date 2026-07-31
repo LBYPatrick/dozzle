@@ -79,6 +79,11 @@ label:
     exhausted: Tüm loglar arandı · {count} eşleşme
     empty: Eşleşme yok · tüm loglar arandı
   show-all-containers: Tüm konteynerleri göster
+  all-hosts: Tüm sunucular
+  host-unavailable: Kullanılamıyor
+  hosts-online: "{count} çevrimiçi"
+  stat-history: Geçmiş
+  stat-level: Seviye
   collapse-all: Hepsini daralt
   collapse-group: Grubu daralt
   expand-all: Hepsini genişlet
@@ -253,6 +258,10 @@ log_actions:
   copy_log: Günlüğü kopyala
   jump_to_context: Bağlama git
 toasts:
+  showing-all-containers: "Durdurulmuşlar dahil tüm konteynerler gösteriliyor"
+  showing-running-containers: "Yalnızca çalışan konteynerler gösteriliyor"
+  expanded-all: "Tüm bölümler genişletildi"
+  collapsed-all: "Tüm bölümler daraltıldı"
   copied:
     title: Kopyalandı
     message: Günlük panoya kopyalandı

@@ -30,16 +30,22 @@ export function useCollapsedSections() {
 
   const allCollapsed = (keys: string[]) => keys.length > 0 && keys.every((key) => collapsed.value.has(key));
 
+  const allExpanded = (keys: string[]) => keys.length > 0 && keys.every((key) => !collapsed.value.has(key));
+
   /**
-   * Toggles a whole menu between fully collapsed and fully expanded, and drops
-   * focus so the just-collapsed row doesn't keep its hover actions revealed.
+   * Applies one state to a whole menu and drops focus, so the row that just
+   * collapsed doesn't keep its hover actions revealed and a button that just
+   * became disabled doesn't hold the focus ring.
    */
-  const toggleAll = (keys: string[]) => {
-    setAll(keys, allCollapsed(keys));
+  const setAllAndBlur = (keys: string[], open: boolean) => {
+    setAll(keys, open);
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   };
 
-  return { collapsed, isOpen, setOpen, setAll, allCollapsed, toggleAll };
+  const collapseAll = (keys: string[]) => setAllAndBlur(keys, false);
+  const expandAll = (keys: string[]) => setAllAndBlur(keys, true);
+
+  return { collapsed, isOpen, setOpen, setAll, allCollapsed, allExpanded, collapseAll, expandAll };
 }

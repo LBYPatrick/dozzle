@@ -228,6 +228,82 @@ body {
   --color-pin: oklch(56% 0.2 25);
 }
 
+/* ---------------------------------------------------------------------------
+ * iOS 18 fills and elevation.
+ *
+ * Two things were wrong across the app, and both showed up hardest on controls.
+ *
+ * FILLS. Every tint was a single percentage of base-content used for both
+ * themes — 7% here, 11% there, 22% on a switch track. Apple does not do that. A
+ * light tint over a dark surface reads far weaker than the same alpha of dark
+ * over white, so the dark ramp runs at roughly double. These are Apple's four
+ * fill levels (systemFill down to quaternarySystemFill) at their real light and
+ * dark alphas. `--fill-3` (tertiary) is the one a grey button and a segmented
+ * track both wear, which is exactly why those two never matched before.
+ *
+ * ELEVATION. iOS almost never drops a shadow. Rows and cards in a grouped list
+ * have none at all; they separate by surface contrast. Shadow is spent only on
+ * things that genuinely float above content — a switch knob, a segmented thumb,
+ * a popover, a sheet — so those are the only elevations defined here. Buttons
+ * are deliberately absent: an iOS button is a flat fill, and giving every one
+ * of them a 1px drop was most of why the old chrome read as "web", not iOS.
+ *
+ * :root carries the dark values (the light theme overrides below), matching how
+ * --scrim-alpha and --color-pin are already handled.
+ * ------------------------------------------------------------------------- */
+:root {
+  /* Apple mixes fills from one neutral grey (#787880) in BOTH appearances, not
+     from the label colour. Mixing base-content instead is what broke the dark
+     segmented control: base-content is oklch(89%) there, so a 24% "fill" was
+     really 24% near-white and the track composited to about L40% — leaving only
+     five points of lightness between it and the selected thumb. From this grey
+     the same 24% lands near L32%, which is where iOS puts it. */
+  --fill-base: oklch(55% 0 0);
+
+  --fill-1: color-mix(in oklab, var(--fill-base) 36%, transparent);
+  --fill-2: color-mix(in oklab, var(--fill-base) 32%, transparent);
+  --fill-3: color-mix(in oklab, var(--fill-base) 24%, transparent);
+  --fill-4: color-mix(in oklab, var(--fill-base) 18%, transparent);
+  /* Separators stay on base-content: Apple draws those from the label colour
+     (#3C3C43 / #545458), not from the fill grey. */
+  --separator: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+
+  /* A switch knob stays white in dark mode; a segmented thumb does not. Apple
+     turns that one into #636366 — a grey lighter than its own track, because a
+     white capsule on a dark track reads as a headlight. With the track now at
+     ~L32% this clears it by about 16 points, which is iOS's own separation. */
+  --control-thumb: oklch(48.5% 0 0);
+  /* The switch's off track is a specific grey in both themes, not a tint of the
+     text colour — #39393D dark, #E9E9EA light. */
+  --switch-off: oklch(30% 0 0);
+
+  /* Ink has little to darken on a dark surface, so these run heavier than
+     Apple's light-mode figures to register at all. */
+  --shadow-alpha: 0.44;
+  --elev-thumb: 0 3px 8px rgb(var(--shadow-ink) / 0.3), 0 3px 1px rgb(var(--shadow-ink) / 0.12);
+  --elev-popover: 0 8px 24px rgb(var(--shadow-ink) / 0.44), 0 1px 3px rgb(var(--shadow-ink) / 0.24);
+  --elev-sheet: 0 20px 56px rgb(var(--shadow-ink) / 0.55), 0 4px 12px rgb(var(--shadow-ink) / 0.28);
+}
+
+[data-theme="light"] {
+  /* Same grey, different alphas — which is exactly how Apple ships it. */
+  --fill-1: color-mix(in oklab, var(--fill-base) 20%, transparent);
+  --fill-2: color-mix(in oklab, var(--fill-base) 16%, transparent);
+  --fill-3: color-mix(in oklab, var(--fill-base) 12%, transparent);
+  --fill-4: color-mix(in oklab, var(--fill-base) 8%, transparent);
+  --separator: color-mix(in oklab, var(--color-base-content) 29%, transparent);
+
+  --control-thumb: oklch(100% 0 0);
+  --switch-off: oklch(92.5% 0 0);
+
+  /* --elev-thumb is Apple's own segmented-control shadow, verbatim. The other
+     two are the same restraint scaled to the size of the surface. */
+  --shadow-alpha: 0.14;
+  --elev-thumb: 0 3px 8px rgb(var(--shadow-ink) / 0.12), 0 3px 1px rgb(var(--shadow-ink) / 0.04);
+  --elev-popover: 0 8px 24px rgb(var(--shadow-ink) / 0.12), 0 1px 3px rgb(var(--shadow-ink) / 0.08);
+  --elev-sheet: 0 20px 56px rgb(var(--shadow-ink) / 0.18), 0 4px 12px rgb(var(--shadow-ink) / 0.1);
+}
+
 @utility text-pin {
   color: var(--color-pin);
 }
@@ -238,8 +314,14 @@ body {
   background-color: rgb(var(--shadow-ink) / var(--scrim-alpha));
 }
 
+/* Every Tailwind shadow utility in the app was being recoloured to a tint of
+ * base-content — which is near-white on the dark theme. So `shadow-md`,
+ * `shadow-lg` and `shadow-xl` were not shadows there at all: they were a pale
+ * halo around every dropdown, toast, popover and card, which is most of why the
+ * dark theme's depth read as wrong. Shadows are cast by light, so they are ink,
+ * carried at the per-theme strength set above. */
 [class*="shadow-"] {
-  @apply shadow-base-content/8;
+  --tw-shadow-color: rgb(var(--shadow-ink) / var(--shadow-alpha));
 }
 
 /* ---------------------------------------------------------------------------
@@ -253,8 +335,11 @@ body {
  * their intent (filled / quiet) and inherit only shape and motion.
  * ------------------------------------------------------------------------- */
 .btn {
-  --btn-glass-tint: color-mix(in oklab, var(--color-base-content) 7%, transparent);
-  --btn-glass-edge: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+  /* An iOS grey button is tertiarySystemFill with no edge. The hairline it used
+     to carry was doing the separating that the fill is supposed to do, which
+     left every button looking outlined and none of them looking pressable. */
+  --btn-fill: var(--fill-3);
+  --btn-fill-hover: var(--fill-2);
   border-radius: var(--control-radius);
   backdrop-filter: blur(10px) saturate(150%);
   transition:
@@ -295,9 +380,17 @@ body {
   ):not([class*="btn-info"]):not([class*="btn-success"]):not([class*="btn-warning"]):not([class*="btn-error"]):not(
     [class*="btn-neutral"]
   ) {
-  background-color: var(--btn-glass-tint);
-  border-color: var(--btn-glass-edge);
-  box-shadow: 0 1px 2px rgb(var(--shadow-ink) / 0.16);
+  background-color: var(--btn-fill);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn:not(.btn-ghost):not(.btn-link):not(.btn-outline):not([class*="btn-primary"]):not([class*="btn-secondary"]):not(
+    [class*="btn-accent"]
+  ):not([class*="btn-info"]):not([class*="btn-success"]):not([class*="btn-warning"]):not([class*="btn-error"]):not(
+    [class*="btn-neutral"]
+  ):hover:not(:disabled) {
+  background-color: var(--btn-fill-hover);
 }
 
 /* Ghost: transparent at rest, glass on hover, so hovering a toolbar reveals the
@@ -314,9 +407,11 @@ body {
 .btn-ghost:not([class*="text-"]) {
   color: var(--color-base-content);
 }
+/* Quaternary, one step below the resting grey button: a hovered ghost should
+ * read as "there is a control here", not as a filled button that has arrived. */
 .btn-ghost:hover:not(:disabled) {
-  background-color: var(--btn-glass-tint) !important;
-  border-color: var(--btn-glass-edge) !important;
+  background-color: var(--fill-4) !important;
+  border-color: transparent !important;
 }
 
 /* Outline buttons become tonal: a wash of their own color instead of a ring.
@@ -331,7 +426,9 @@ body {
   border-color: transparent;
 }
 
-/* Colored buttons keep their fill; only the elevation is unified. */
+/* A filled iOS button is flat: the colour is the emphasis, and a drop shadow on
+ * top of it only says "this is a web button". daisyUI ships one, so it has to be
+ * turned off rather than simply left unset. */
 .btn-primary,
 .btn-secondary,
 .btn-accent,
@@ -340,7 +437,7 @@ body {
 .btn-warning,
 .btn-error,
 .btn-neutral {
-  box-shadow: 0 1px 3px rgb(var(--shadow-ink) / 0.2);
+  box-shadow: none;
 }
 
 /* Log rows render one action button per line; hundreds of blurred layers is a
@@ -457,8 +554,8 @@ body {
  * shared with every other field — which is what holding them in custom
  * properties was for. */
 .input.field-search {
-  --focus-fill: color-mix(in oklab, var(--color-base-content) 11%, transparent);
-  --focus-edge: color-mix(in oklab, var(--color-base-content) 32%, transparent);
+  --focus-fill: var(--fill-3);
+  --focus-edge: var(--separator);
 }
 
 /* Filled fields, the way Apple draws a search box: a recessed shade of the
@@ -477,12 +574,12 @@ body {
 .input.field-filled {
   --field-edge: transparent;
   border-color: transparent;
-  background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+  background-color: var(--fill-4);
 }
 
 .input.field-filled:hover:not(:disabled):not(:focus-within) {
   border-color: transparent;
-  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+  background-color: var(--fill-3);
 }
 
 /* A filled field has no edge to brighten, so the tint is the whole signal. It has
@@ -499,18 +596,27 @@ body {
  * unlayered rules win the cascade and replace the outlined toggle with a solid
  * track + white knob that slides. Accent (on) respects the theme color. */
 .toggle {
+  /* UISwitch is 51x31pt with a 27pt knob inset 2pt, and every size below is that
+     same ratio. Holding the height in a custom property means the width, the
+     knob and the travel all fall out of one number — travel is simply
+     width - height — instead of three hand-tuned figures per size that drifted
+     apart (the old sm and xs had different proportions from the base). */
+  --switch-h: 1.9375rem;
+  --switch-w: calc(var(--switch-h) * 51 / 31);
   appearance: none;
   -webkit-appearance: none;
   position: relative;
   display: inline-block;
   flex-shrink: 0;
   cursor: pointer;
-  width: 2.75rem;
-  height: 1.625rem;
+  width: var(--switch-w);
+  height: var(--switch-h);
   border: none;
   border-radius: 999px;
   box-shadow: none;
-  background-color: color-mix(in oklab, var(--color-base-content) 22%, transparent);
+  /* A flat, specific grey — not a tint of the text colour. At base-content/22
+     the light theme's off state was a mid grey that read as half-on. */
+  background-color: var(--switch-off);
   transition: background-color 0.2s ease;
 }
 .toggle::before {
@@ -518,11 +624,12 @@ body {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: calc(1.625rem - 4px);
-  height: calc(1.625rem - 4px);
+  width: calc(var(--switch-h) - 4px);
+  height: calc(var(--switch-h) - 4px);
   border-radius: 999px;
+  /* The knob is white in both themes — iOS does not darken it for dark mode. */
   background: oklch(100% 0 0);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  box-shadow: var(--elev-thumb);
   transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .toggle:checked,
@@ -535,31 +642,19 @@ body {
 .toggle-success:checked {
   background-color: var(--color-success);
 }
+/* The knob travels the track's spare width, which is exactly width - height for
+   a capsule with an equal inset at both ends. One rule covers every size. */
 .toggle:checked::before,
 .toggle[aria-checked="true"]::before {
-  transform: translateX(1.125rem);
+  transform: translateX(calc(var(--switch-w) - var(--switch-h)));
 }
+
+/* Sizes set the height and nothing else. */
 .toggle-sm {
-  width: 2.4rem;
-  height: 1.4rem;
-}
-.toggle-sm::before {
-  width: calc(1.4rem - 4px);
-  height: calc(1.4rem - 4px);
-}
-.toggle-sm:checked::before {
-  transform: translateX(1rem);
+  --switch-h: 1.5rem;
 }
 .toggle-xs {
-  width: 2rem;
-  height: 1.15rem;
-}
-.toggle-xs::before {
-  width: calc(1.15rem - 4px);
-  height: calc(1.15rem - 4px);
-}
-.toggle-xs:checked::before {
-  transform: translateX(0.85rem);
+  --switch-h: 1.25rem;
 }
 
 .splitpanes--vertical .splitpanes__pane {
@@ -828,9 +923,12 @@ body {
   background-color: color-mix(in oklab, var(--color-base-200) var(--glass-opacity), transparent);
   backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  /* The inset top highlight stays — light catching the top edge is a real trait
+     of Apple's materials. The drop below it is the shared sheet elevation, so a
+     glass pane and a popover no longer each invent their own depth. */
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, oklch(100% 0 0) 20%, transparent),
-    0 10px 30px rgb(var(--shadow-ink) / 0.22);
+    var(--elev-sheet);
 }
 
 /* Thick material, for panes that sit over the modal scrim rather than over the
@@ -839,6 +937,29 @@ body {
  * dragging its own text down with it. Pair with .glass-surface. */
 .glass-surface-thick {
   --glass-opacity: 92%;
+}
+
+/* Someone who has asked the system to reduce transparency has asked for the
+ * blur to stop, not for the panel to go away: the surface turns solid and drops
+ * the filter outright. Dropping it is not just cosmetic — a backdrop-filter
+ * under an opaque background is a compositing pass that can no longer be seen.
+ *
+ * More contrast wants the same solid surface, plus an edge strong enough to
+ * define it. Both queries land on every glass pane in the app (settings sheet,
+ * menus, the log view's floating bar) because the material is defined once. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-surface {
+    --glass-opacity: 100%;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .glass-surface {
+    --glass-opacity: 100%;
+    backdrop-filter: none;
+    border-color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+  }
 }
 
 /* The log view's compact stat widgets. The CPU/memory card and the
@@ -851,7 +972,7 @@ body {
   row-gap: 0.3rem;
   border-radius: 0.375rem;
   padding: 0.25rem 0.55rem;
-  background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+  background-color: var(--fill-4);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }

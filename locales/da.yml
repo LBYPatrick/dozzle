@@ -79,6 +79,11 @@ label:
     exhausted: Søgt i alle logs · {count} match
     empty: Ingen match · søgt i alle logs
   show-all-containers: Vis alle containere
+  all-hosts: Alle værter
+  host-unavailable: Utilgængelig
+  hosts-online: "{count} online"
+  stat-history: Historik
+  stat-level: Niveau
   collapse-all: Kollaps alle
   collapse-group: Kollaps gruppe
   expand-all: Udvid alle
@@ -249,6 +254,10 @@ log_actions:
   copy_log: Kopier log
   jump_to_context: Hop til kontekst
 toasts:
+  showing-all-containers: "Viser alle containere, inklusive stoppede"
+  showing-running-containers: "Viser kun kørende containere"
+  expanded-all: "Udvidede alle sektioner"
+  collapsed-all: "Foldede alle sektioner sammen"
   copied:
     title: Kopieret
     message: Log kopieret til clipboard

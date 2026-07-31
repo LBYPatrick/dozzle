@@ -7,9 +7,15 @@
     <component :is="type === 'cpu' ? PhCpu : PhMemory" class="size-3.5 shrink-0" />
     <span>{{ displayValue }}</span>
   </div>
-  <div v-else class="flex flex-row items-center gap-2">
-    <template v-if="mode === 'chart'">
-      <BarChart class="h-4 flex-1" :chart-data="chartData" :bar-class="barClass" />
+  <div v-else class="flex flex-row items-center gap-2" :class="{ 'opacity-45': !isRunning }">
+    <!-- A stopped container has no load to plot. A flat green line across a
+         dozen exited rows says "healthy" about something that isn't running at
+         all; the rule says nothing, which is the truth. -->
+    <div v-if="!isRunning" class="bg-base-content/15 h-px flex-1"></div>
+    <template v-else-if="mode === 'chart'">
+      <!-- Area, not bars. At the idle values most rows sit at, a bar series
+           renders as a row of specks; a filled curve stays a legible line. -->
+      <BarChart class="h-5 flex-1" shape="area" :tone-class="toneClass" :chart-data="chartData" />
     </template>
     <template v-else>
       <progress class="progress flex-1" :class="progressClass" :value="averageValue" max="100"></progress>
@@ -43,6 +49,8 @@ function totalCores(): number {
   return host.nCPU ?? 1;
 }
 
+const isRunning = computed(() => container.state === "running");
+
 const chartData = computed(() => {
   if (type === "cpu") {
     const cores = totalCores();
@@ -72,12 +80,14 @@ const displayValue = computed(() => {
   return formatBytes(container.movingAverage.memoryUsage);
 });
 
-const barClass = computed(() => {
+// The area shape paints with currentColor, so the same thresholds are expressed
+// as a text colour rather than a background.
+const toneClass = computed(() => {
   const value = averageValue.value;
-  if (value <= 50) return "bg-success";
-  if (value <= 70) return "bg-secondary";
-  if (value <= 90) return "bg-warning";
-  return "bg-error";
+  if (value <= 50) return "text-success";
+  if (value <= 70) return "text-secondary";
+  if (value <= 90) return "text-warning";
+  return "text-error";
 });
 
 const progressClass = computed(() => {

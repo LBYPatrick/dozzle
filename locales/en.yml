@@ -79,6 +79,11 @@ label:
     exhausted: Searched all logs · {count} matches
     empty: No matches · searched all logs
   show-all-containers: Show all containers
+  all-hosts: All Hosts
+  host-unavailable: Unavailable
+  hosts-online: "{count} online"
+  stat-history: History
+  stat-level: Level
   collapse-all: Collapse all
   collapse-group: Collapse group
   expand-all: Expand all
@@ -317,6 +322,10 @@ log_actions:
   copy_log: Copy log
   jump_to_context: Jump to context
 toasts:
+  showing-all-containers: "Showing all containers, including stopped ones"
+  showing-running-containers: "Showing running containers only"
+  expanded-all: "Expanded every section"
+  collapsed-all: "Collapsed every section"
   copied:
     title: Copied
     message: Copied to clipboard

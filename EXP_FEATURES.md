@@ -13,15 +13,15 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 67
-- **Files changed:** 279
-- **Lines:** +14712 / -2683 (net +12029)
+- **Commits ahead:** 71
+- **Files changed:** 293
+- **Lines:** +16362 / -3033 (net +13329)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
 implementations were kept.
 
-Roughly split: frontend Vue/TS UI (121 files) plus a full Storybook suite (111
+Roughly split: frontend Vue/TS UI (144 files) plus a full Storybook suite (113
 component stories + `.storybook/` config), locales (16 files, i18n parity), Go
 backend (`download.go` + test), a new Go dev tool (`scripts/cloudmock`),
 `Makefile`/CI, and regenerated e2e visual snapshots (2 PNGs).
@@ -393,6 +393,100 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   exists locally (offering a live-logs deep link when it does).
 - **`PageWithLinks` `fill` mode**: opt-in full-height, non-scrolling page layout
   (used by the cloud search page) where the child owns scrolling.
+
+## Dashboard (home page)
+
+Rebuilt from the ground up. Upstream's `/` opened straight into a grid of
+per-host cards roughly 480px wide, each carrying two tint-washed metric boxes
+with their own chart and an avg/peak line, above a container table — with both
+sections behind manual collapse chevrons persisted to localStorage.
+
+- **A fleet summary comes first**, because "is everything OK?" is the question
+  you arrive with and the old page never answered it: it showed per-host cards
+  and left you to add them up. Containers / CPU / memory / hosts as one
+  hairline-divided surface (`FleetSummary`, `MetricCell`), drawn with a 1px grid
+  gap over a tinted parent so the dividers need no per-cell border logic and stay
+  correct when the columns reflow.
+- **Colour moved off the furniture.** Figures stay in the text colour and the
+  accent is spent on the sparkline; the old `bg-primary/10` box washes are gone.
+  Charts bleed to the cell edge instead of sitting inset as a second object.
+- **Hosts are tonal, compact and navigable** (`HostTile`): press feedback on
+  pointer-down, a chevron that leans toward the destination, and hairline meters
+  rather than per-host charts — the question a host list answers is "which one is
+  busy", a comparison across rows that a shared scale answers and five separate
+  time series do not. The old cards were not clickable at all, so the one thing
+  you want from a host here (its logs) was not on offer.
+- **An unreachable host drops its meters** rather than drawing them at 0%, which
+  reports the machine as idle when all we know is that we cannot see it.
+- **Both collapse chevrons are gone.** They managed a height problem this layout
+  does not have: the summary is fixed, the hosts are capped at two rows with a
+  scroll-edge mask, and the table takes what is left and scrolls internally.
+- **Adapts to one host**: the hosts section and the hosts cell both disappear —
+  the three remaining figures already describe that machine.
+- **Container table** gained a title/count on its own control bar, a `fill` mode,
+  state chips, and segmented controls for the host filter and the stat rendering.
+- Removed: `HostCard.vue`, `HostList.vue`, `MetricCard.vue` (and their stories).
+  New: `components/Dashboard/{FleetSummary,MetricCell,HostTile,StateRibbon}.vue`,
+  `composable/{fleetStats,hostTotals}.ts`.
+
+## iOS 18 shades and elevations
+
+A correctness pass over the control material, after the first attempt used
+plausible-looking numbers rather than Apple's.
+
+- **Shadow utilities were a glow.** `[class*="shadow-"]` recoloured every
+  Tailwind shadow to a tint of `base-content`, which is near-white on the dark
+  theme — so `shadow-md`/`lg`/`xl` on all 19 dropdowns, toasts, popovers and
+  cards were a pale halo, not a shadow. They now carry ink at a per-theme
+  strength (`--shadow-alpha`).
+- **One fill ramp, from Apple's grey.** Tints were single percentages of
+  `base-content` reused across both themes (7% button, 11% segmented track, 22%
+  switch). Apple mixes fills from one neutral grey (`#787880`) in both
+  appearances and roughly doubles the alpha in dark, because a light tint over a
+  dark surface reads far weaker than the same alpha of dark over white.
+  `--fill-1`…`--fill-4` are Apple's four levels; `--fill-3` is what a grey button
+  and a segmented track share, which is why those two never matched before.
+- **Buttons lost their elevation and their edge.** An iOS button is a flat fill:
+  neutral is `--fill-3` with no border, ghost hover is `--fill-4`, and the filled
+  colour variants drop daisyUI's `0 1px 3px`. The hairline was doing the
+  separating the fill is supposed to do.
+- **Three elevations, not ad-hoc ones**: `--elev-thumb` (Apple's own
+  segmented-control shadow, verbatim in light), `--elev-popover`, `--elev-sheet`.
+- **Switch rebuilt to UISwitch proportions**: 51×31pt with a 27pt knob, held in a
+  single `--switch-h` so width, knob and travel all derive from it (travel is
+  width − height) — the old `sm`/`xs` had drifted to different ratios than the
+  base. Off track is a flat specific grey (`#E9E9EA` / `#39393D`) instead of
+  `base-content/22`, which read as half-on in light.
+- **Segmented thumb** is white in light and `#636366` in dark — a grey lighter
+  than its own track, since a white capsule on a dark track reads as a headlight.
+  At the previous values the dark thumb cleared its track by 4.6 points of
+  lightness (visually identical); it now clears it by 16.3, which is iOS's own
+  separation. Its hairline border is gone, as the shadow already lifts it.
+
+## Toasts
+
+- **Alignment follows content.** The row was unconditionally `items-start` with
+  hand-tuned `mt-0.5`/`pt-0.5` offsets — geometry that only works when there is a
+  second line to hang off, so single-line toasts (most of them) sat their text
+  about a pixel above the icon and close button.
+- **Confirmations describe what changed**, not which button was pressed. "All
+  Containers" echoed the control's own label and gave no hint the setting reaches
+  beyond the current view; it now reads "Showing all containers, including
+  stopped ones". Collapse/expand confirmations moved to past tense, since the
+  button labels are instructions and read as though nothing had happened yet. New
+  `toasts.*` keys in all 16 locales; the `label.*` keys they replaced stay, as
+  they are also sidebar group names and button titles.
+
+## Settings popup
+
+- **Header rule is a scroll edge**, drawn only once content is passing beneath,
+  so a short panel is one uninterrupted surface.
+- **Grouped-list rows** take Apple's shape: separators inset to the leading text
+  edge rather than run wall to wall, and the `<label>` rows — togglable along
+  their whole length, with nothing previously saying so — respond to hover and
+  press.
+- Reduced-motion paths for the drill-in and import transitions keep the
+  cross-fade and drop only the travel.
 
 ## Backend (Go)
 

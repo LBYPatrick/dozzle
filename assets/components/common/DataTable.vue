@@ -5,7 +5,10 @@
        one. Rows are supplied by the caller — this owns the chrome and the sort
        interaction, nothing about the data. -->
   <div ref="scroller" class="data-table rounded-box border-base-content/10 overflow-auto border">
-    <table class="table-md md:table-lg table-zebra table-pin-rows table w-full" :class="{ 'table-fixed': fixed }">
+    <!-- No zebra. Alternating fills are a workaround for rows you can't
+         otherwise tell apart; with a hairline under each row and a hover tint
+         the banding is just noise laid over the data. -->
+    <table class="table-md table-pin-rows table w-full" :class="{ 'table-fixed': fixed }">
       <thead>
         <tr>
           <th
@@ -126,11 +129,25 @@ th.sorted .sort-arrow {
   @apply rotate-180;
 }
 
+tbody :deep(tr) {
+  @apply border-base-content/8 border-b transition-colors duration-150;
+}
+
+/* The last row's separator would draw a second line right on the surface's own
+   bottom edge. */
+tbody :deep(tr:last-child) {
+  @apply border-b-0;
+}
+
+tbody :deep(tr:hover) {
+  @apply bg-base-content/4;
+}
+
 tbody :deep(td) {
-  @apply whitespace-nowrap;
+  @apply py-3 whitespace-nowrap;
 }
 
 tbody :deep(a) {
-  @apply hover:text-primary;
+  @apply hover:text-primary transition-colors;
 }
 </style>

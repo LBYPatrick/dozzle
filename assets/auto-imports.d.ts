@@ -70,6 +70,7 @@ declare global {
   const extendRef: typeof import('@vueuse/core').extendRef
   const flattenJSON: typeof import('./utils/index').flattenJSON
   const flattenJSONToMap: typeof import('./utils/index').flattenJSONToMap
+  const fleetTotals: typeof import('./composable/fleetStats').fleetTotals
   const formatBytes: typeof import('./utils/index').formatBytes
   const formatDuration: typeof import('./utils/index').formatDuration
   const getActivePinia: typeof import('pinia').getActivePinia
@@ -116,6 +117,7 @@ declare global {
   const mergeLoadedLogs: typeof import('./composable/loadBetween').mergeLoadedLogs
   const namespaceKey: typeof import('./composable/collapsedSections').namespaceKey
   const nextTick: typeof import('vue').nextTick
+  const notifySetting: typeof import('./composable/toast').notifySetting
   const onActivated: typeof import('vue').onActivated
   const onBeforeMount: typeof import('vue').onBeforeMount
   const onBeforeRouteLeave: typeof import('vue-router').onBeforeRouteLeave
@@ -290,6 +292,7 @@ declare global {
   const useFetch: typeof import('@vueuse/core').useFetch
   const useFileDialog: typeof import('@vueuse/core').useFileDialog
   const useFileSystemAccess: typeof import('@vueuse/core').useFileSystemAccess
+  const useFleetStats: typeof import('./composable/fleetStats').useFleetStats
   const useFocus: typeof import('@vueuse/core').useFocus
   const useFocusWithin: typeof import('@vueuse/core').useFocusWithin
   const useFps: typeof import('@vueuse/core').useFps
@@ -302,6 +305,7 @@ declare global {
   const useHistoricalContainerLog: typeof import('./composable/historicalLogs').useHistoricalContainerLog
   const useHostGroupStream: typeof import('./composable/eventStreams').useHostGroupStream
   const useHostStream: typeof import('./composable/eventStreams').useHostStream
+  const useHostTotals: typeof import('./composable/hostTotals').useHostTotals
   const useHosts: typeof import('./stores/hosts').useHosts
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
@@ -469,6 +473,12 @@ declare global {
   export type { ExprEditorOptions } from './composable/exprEditor'
   import('./composable/exprEditor')
   // @ts-ignore
+  export type { FleetTotals } from './composable/fleetStats'
+  import('./composable/fleetStats')
+  // @ts-ignore
+  export type { HostTotals } from './composable/hostTotals'
+  import('./composable/hostTotals')
+  // @ts-ignore
   export type { JsonEditorOptions } from './composable/jsonEditor'
   import('./composable/jsonEditor')
   // @ts-ignore
@@ -569,6 +579,7 @@ declare module 'vue' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/index')['flattenJSON']>
     readonly flattenJSONToMap: UnwrapRef<typeof import('./utils/index')['flattenJSONToMap']>
+    readonly fleetTotals: UnwrapRef<typeof import('./composable/fleetStats')['fleetTotals']>
     readonly formatBytes: UnwrapRef<typeof import('./utils/index')['formatBytes']>
     readonly formatDuration: UnwrapRef<typeof import('./utils/index')['formatDuration']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
@@ -615,6 +626,7 @@ declare module 'vue' {
     readonly mergeLoadedLogs: UnwrapRef<typeof import('./composable/loadBetween')['mergeLoadedLogs']>
     readonly namespaceKey: UnwrapRef<typeof import('./composable/collapsedSections')['namespaceKey']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly notifySetting: UnwrapRef<typeof import('./composable/toast')['notifySetting']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
     readonly onBeforeRouteLeave: UnwrapRef<typeof import('vue-router')['onBeforeRouteLeave']>
@@ -789,6 +801,7 @@ declare module 'vue' {
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
     readonly useFileDialog: UnwrapRef<typeof import('@vueuse/core')['useFileDialog']>
     readonly useFileSystemAccess: UnwrapRef<typeof import('@vueuse/core')['useFileSystemAccess']>
+    readonly useFleetStats: UnwrapRef<typeof import('./composable/fleetStats')['useFleetStats']>
     readonly useFocus: UnwrapRef<typeof import('@vueuse/core')['useFocus']>
     readonly useFocusWithin: UnwrapRef<typeof import('@vueuse/core')['useFocusWithin']>
     readonly useFps: UnwrapRef<typeof import('@vueuse/core')['useFps']>
@@ -801,6 +814,7 @@ declare module 'vue' {
     readonly useHistoricalContainerLog: UnwrapRef<typeof import('./composable/historicalLogs')['useHistoricalContainerLog']>
     readonly useHostGroupStream: UnwrapRef<typeof import('./composable/eventStreams')['useHostGroupStream']>
     readonly useHostStream: UnwrapRef<typeof import('./composable/eventStreams')['useHostStream']>
+    readonly useHostTotals: UnwrapRef<typeof import('./composable/hostTotals')['useHostTotals']>
     readonly useHosts: UnwrapRef<typeof import('./stores/hosts')['useHosts']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>

@@ -79,6 +79,11 @@ label:
     exhausted: 모든 로그 검색 완료 · {count}개 일치
     empty: 일치 항목 없음 · 모든 로그 검색함
   show-all-containers: 전체 컨테이너 보기
+  all-hosts: 전체 호스트
+  host-unavailable: 연결 불가
+  hosts-online: "{count}개 연결됨"
+  stat-history: 기록
+  stat-level: 수준
   collapse-all: 전체 접기
   collapse-group: 그룹 접기
   expand-all: 전체 펼치기
@@ -253,6 +258,10 @@ log_actions:
   copy_log: 로그 복사
   jump_to_context: 해당 위치로 이동
 toasts:
+  showing-all-containers: "중지된 컨테이너를 포함해 전체를 표시합니다"
+  showing-running-containers: "실행 중인 컨테이너만 표시합니다"
+  expanded-all: "모든 섹션을 펼쳤습니다"
+  collapsed-all: "모든 섹션을 접았습니다"
   copied:
     title: 복사 완료
     message: 로그가 클립보드에 복사되었습니다

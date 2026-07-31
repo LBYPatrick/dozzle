@@ -6,12 +6,12 @@
     class="flex flex-col px-4 md:px-8"
     :class="fill ? 'h-[calc(100dvh-var(--mobile-nav-height))] overflow-hidden py-4 md:h-dvh' : 'gap-5 py-4'"
   >
-    <section class="flex shrink-0 items-center gap-4" :class="{ 'mb-5': fill }">
-      <Links class="ml-auto">
-        <template #more-items>
-          <Tag class="font-mono">{{ config.version }}</Tag>
-        </template>
-      </Links>
+    <!-- Only the account menu lives up here now. The build version moved to
+         Settings > Updates, which is where you go to act on it; on a page header
+         it was a permanent label nobody reads twice. The row is dropped entirely
+         when there is no account to show, rather than reserving empty space. -->
+    <section v-if="config.user" class="flex shrink-0 items-center gap-4" :class="{ 'mb-5': fill }">
+      <Links class="ml-auto" />
     </section>
     <slot></slot>
   </div>

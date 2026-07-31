@@ -59,6 +59,12 @@ export const Default: Story = {
   args: { containers },
 };
 
+// With a title the table grows its own control bar, heading and controls on one
+// line, which is how the dashboard uses it.
+export const Titled: Story = {
+  args: { containers, title: "Containers" },
+};
+
 export const Empty: Story = {
-  args: { containers: [] },
+  args: { containers: [], title: "Containers" },
 };

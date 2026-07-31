@@ -79,6 +79,11 @@ label:
     exhausted: Cercato in tutti i log · {count} risultati
     empty: Nessun risultato · cercato in tutti i log
   show-all-containers: Mostra tutti i container
+  all-hosts: Tutti gli host
+  host-unavailable: Non disponibile
+  hosts-online: "{count} online"
+  stat-history: Cronologia
+  stat-level: Livello
   collapse-all: Comprimi tutto
   collapse-group: Comprimi gruppo
   expand-all: Espandi tutto
@@ -249,6 +254,10 @@ log_actions:
   copy_log: Copia log
   jump_to_context: Vai a
 toasts:
+  showing-all-containers: "Mostra tutti i container, inclusi quelli fermi"
+  showing-running-containers: "Mostra solo i container in esecuzione"
+  expanded-all: "Tutte le sezioni espanse"
+  collapsed-all: "Tutte le sezioni compresse"
   copied:
     title: Copiato
     message: Log copiato nella clipboard

@@ -26,12 +26,14 @@
       </div>
       <button
         type="button"
-        class="border-base-content/15 bg-base-200/40 hover:border-base-content/30 flex items-center gap-3 rounded-lg border p-4 text-left transition-colors"
+        class="drill-in border-base-content/15 bg-base-200/40 hover:border-base-content/30 flex items-center gap-3 rounded-lg border p-4 text-left"
         @click="openSubview('notifications')"
       >
         <mdi:bell-outline class="text-base-content/60 size-6 shrink-0" />
         <span class="text-base-content/80 flex-1 text-sm font-medium">{{ $t("settings.open-notifications") }}</span>
-        <mdi:chevron-right class="text-base-content/40 size-5 shrink-0" />
+        <!-- Leans toward the screen it pushes, so the row hints at the
+             direction the transition will actually travel. -->
+        <mdi:chevron-right class="chevron text-base-content/40 size-5 shrink-0" />
       </button>
     </section>
 
@@ -43,7 +45,7 @@
       </div>
 
       <div class="grid items-stretch gap-3 @3xl:grid-cols-2">
-        <div class="border-base-content/15 bg-base-200/40 divide-base-content/10 divide-y rounded-lg border">
+        <div class="settings-group border-base-content/15 bg-base-200/40 overflow-hidden rounded-lg border">
           <label class="flex min-h-13 items-center justify-between gap-4 p-4 text-sm font-medium">
             {{ $t("settings.compact") }}
             <input type="checkbox" class="toggle toggle-primary toggle-sm" v-model="compact" />
@@ -128,7 +130,7 @@
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.options-desc") }}</p>
       </div>
 
-      <div class="border-base-content/15 bg-base-200/40 divide-base-content/10 divide-y rounded-lg border">
+      <div class="settings-group border-base-content/15 bg-base-200/40 overflow-hidden rounded-lg border">
         <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
           <span>{{ $t("settings.locale") }}</span>
           <DropdownMenu
@@ -271,6 +273,90 @@ const fakeMessages = computedWithControl(
 
 <style scoped>
 @reference "@/main.css";
+
+/* Grouped list, Apple's shape. Two things distinguish it from a stack of
+   bordered divs, and `divide-y` gets both wrong.
+
+   First, the separator is inset to the leading text edge rather than run wall
+   to wall. Full-bleed rules cut the group into slices; an inset rule reads as
+   one card with rows in it, and the indent points at where each row's label
+   starts.
+
+   Second, a row you can operate has to respond to being pressed. The <label>
+   rows toggle from anywhere along their length — that was already true and
+   nothing on screen said so, so the whole row was a hit target that looked
+   like text. */
+.settings-group > * + * {
+  position: relative;
+}
+
+.settings-group > * + *::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-inline: 1rem 0;
+  height: 1px;
+  background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+}
+
+.settings-group label {
+  @apply cursor-pointer;
+  transition: background-color 150ms ease;
+}
+
+.settings-group label:hover {
+  @apply bg-base-content/4;
+}
+
+/* On the press, not on the release — the toggle's own animation covers the
+   release, and by then the confirmation is late. */
+.settings-group label:active {
+  @apply bg-base-content/8;
+}
+
+.drill-in {
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.drill-in:active {
+  @apply bg-base-content/5;
+  transform: scale(0.99);
+}
+
+.drill-in .chevron {
+  transition: transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.drill-in:hover .chevron {
+  transform: translateX(2px);
+}
+
+@media (prefers-contrast: more) {
+  .settings-group > * + *::before {
+    background-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-group label,
+  .drill-in .chevron {
+    transition: none;
+  }
+
+  .drill-in {
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .drill-in:active,
+  .drill-in:hover .chevron {
+    transform: none;
+  }
+}
 
 :deep(.text-base-content\/60 a:not(.btn)),
 :deep(.text-base-content\/70 a:not(.btn)) {

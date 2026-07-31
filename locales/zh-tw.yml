@@ -61,6 +61,11 @@ label:
     exhausted: 已搜尋所有日誌 · {count} 筆符合
     empty: 無符合項目 · 已搜尋所有日誌
   show-all-containers: 顯示所有容器
+  all-hosts: 所有主機
+  host-unavailable: 無法使用
+  hosts-online: "{count} 台在線"
+  stat-history: 歷史
+  stat-level: 目前值
   collapse-all: 摺疊全部
   collapse-group: 摺疊群組
   expand-all: 展開全部
@@ -252,6 +257,10 @@ log_actions:
   copy_log: 複製日誌
   jump_to_context: 跳至相關內容
 toasts:
+  showing-all-containers: "正在顯示所有容器，包括已停止的"
+  showing-running-containers: "僅顯示執行中的容器"
+  expanded-all: "已展開所有區段"
+  collapsed-all: "已摺疊所有區段"
   copied:
     title: 已複製
     message: 日誌已複製到剪貼簿

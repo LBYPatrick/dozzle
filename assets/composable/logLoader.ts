@@ -1,5 +1,11 @@
 import { ShallowRef, type Ref } from "vue";
-import { type LogMessage, LogEntry, LoadMoreLogEntry, SkippedLogsEntry } from "@/models/LogEntry";
+import {
+  type LogMessage,
+  LogEntry,
+  LoadMoreLogEntry,
+  SkippedLogsEntry,
+  ContainerEventLogEntry,
+} from "@/models/LogEntry";
 import { Container } from "@/models/Container";
 import { loadBetween, mergeLoadedLogs } from "@/composable/loadBetween";
 
@@ -49,7 +55,13 @@ export function useLogLoader(
           const from = new Date(to.getTime() + (delta !== 0 ? delta : -60_000));
           return loadBetween(c, params, from, to, {
             min: minPerContainer,
-            lastSeenId: earliest?.id,
+            // Only a real log line has an id the server can match. Synthetic
+            // entries (container started/stopped) carry a millisecond timestamp
+            // in `id`, which overflows the uint32 the server parses — it 400s,
+            // returns a plain-text Go error, and the JSON parse blows up. So
+            // "load more" broke outright whenever a start/stop event happened to
+            // be the boundary entry.
+            lastSeenId: earliest instanceof ContainerEventLogEntry ? undefined : earliest?.id,
           });
         }),
       );

@@ -45,7 +45,11 @@ export async function loadBetween(
     if (maxStart) {
       loadMoreParams.append("maxStart", String(maxStart));
     }
-    if (lastSeenId) {
+    // The server parses this as a uint32 and 400s on anything wider, so a bad
+    // id must never reach the wire — a rejected request here costs the whole
+    // "load more", and the error comes back as plain text that then fails to
+    // parse as JSON.
+    if (lastSeenId && Number.isInteger(lastSeenId) && lastSeenId > 0 && lastSeenId <= 0xffffffff) {
       loadMoreParams.append("lastSeenId", String(lastSeenId));
     }
     if (startId) {

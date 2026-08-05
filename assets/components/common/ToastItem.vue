@@ -36,7 +36,7 @@
       ></div>
     </div>
 
-    <div class="shrink-0" :class="{ 'mt-0.5': multiline }">
+    <div class="flex shrink-0 items-center gap-1" :class="{ 'mt-0.5': multiline }">
       <TimedButton
         v-if="timed"
         class="btn-sm border-current/30 bg-current/15 text-current hover:bg-current/25"
@@ -49,14 +49,25 @@
       >
         {{ toast.action?.label }}
       </TimedButton>
-      <button
-        v-else
-        class="flex size-6 items-center justify-center rounded-full transition-colors hover:bg-current/15"
-        :aria-label="$t('button.cancel')"
-        @click="$emit('dismiss')"
-      >
-        <mdi:close class="size-4" />
-      </button>
+      <template v-else>
+        <!-- A plain action, not a countdown: TimedButton is for something about
+             to happen unless you stop it, whereas this is for something already
+             done that you can take back. -->
+        <button
+          v-if="toast.action"
+          class="rounded-full px-2 py-1 text-xs font-semibold transition-colors hover:bg-current/15"
+          @click="runAction"
+        >
+          {{ toast.action.label }}
+        </button>
+        <button
+          class="flex size-6 items-center justify-center rounded-full transition-colors hover:bg-current/15"
+          :aria-label="$t('button.cancel')"
+          @click="$emit('dismiss')"
+        >
+          <mdi:close class="size-4" />
+        </button>
+      </template>
     </div>
 
     <!-- Dismiss progress bar: depletes over the expire window and pauses while
@@ -85,6 +96,12 @@ const {
 }>();
 
 const emit = defineEmits<{ dismiss: [] }>();
+
+// The action always closes the toast: it has been taken, so the offer is spent.
+function runAction() {
+  toast.action?.handler();
+  emit("dismiss");
+}
 
 // Two lines only when there is genuinely a second line to hang off. A toast
 // carrying just a message (the setting confirmations) is one line, same as one

@@ -44,3 +44,17 @@ export const WithTimedAction: Story = {
     timed: 5000,
   },
 };
+
+// The reset toast: the deed is done and this takes it back, so the action is a
+// plain button beside the close rather than a countdown.
+export const WithUndoAction: Story = {
+  args: {
+    toast: {
+      id: "5",
+      message: "Settings reset to defaults",
+      type: "info",
+      action: { label: "Undo", handler: () => {} },
+    },
+    expire: 8000,
+  },
+};

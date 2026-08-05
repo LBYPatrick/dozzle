@@ -94,12 +94,22 @@
           <mdi:cloud-off-outline class="text-base-content/40 mx-auto mb-3 size-10" />
           <p class="text-base-content/80 text-sm">
             {{
-              cloudConfig?.linked ? $t("cloud-search.enable-streaming-to-search") : $t("cloud-search.connect-to-enable")
+              cloudConfig?.linked
+                ? $t("cloud-search.enable-streaming-for-indexed")
+                : $t("cloud-search.connect-for-indexed")
             }}
           </p>
-          <button type="button" class="btn btn-primary btn-sm mt-4" @click="openSettings('visual', 'cloud')">
-            {{ $t("cloud-search.cta-settings") }}
-          </button>
+          <!-- Landing here without Cloud is a dead end unless the local search
+               is offered: it does not need Cloud, so the way out is to run it,
+               not only to go and buy something. -->
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+            <button type="button" class="btn btn-primary btn-sm" @click="runLocalSearch">
+              {{ $t("cloud-search.search-locally") }}
+            </button>
+            <button type="button" class="btn btn-sm" @click="openSettings('visual', 'cloud')">
+              {{ $t("cloud-search.cta-settings") }}
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -115,6 +125,13 @@ import type { DataTableColumn, DataTableSort } from "@/components/common/DataTab
 
 const route = useRoute();
 const { openSettings } = useSettingsModal();
+
+// Landing here without Cloud used to be a dead end. Log search does not need
+// Cloud any more, so the way out is to run the local scan on the same query.
+const router = useRouter();
+function runLocalSearch() {
+  router.push({ path: "/logs", query: { search: committedQuery.value } });
+}
 
 function readQ(q: unknown): string {
   return typeof q === "string" ? q : "";

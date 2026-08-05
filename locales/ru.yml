@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Включить остановленные контейнеры"
   clear: Очистить
   download: Скачать
   download-filtered: Скачать Отфильтрованные Логи
@@ -44,6 +45,9 @@ action:
   create-alert: Создать оповещение
   more-actions: Другие действия
 label:
+  hosts-selected: "хостов: {count}"
+  loading: "Загрузка"
+  all-logs: "Все логи"
   containers: Контейнеры
   container: Нет контейнеров | 1 контейнер | {count} контейнеров
   host-count: Нет Хостов | 1 Хост | {count} Хостов
@@ -152,6 +156,7 @@ title:
   settings: Настройки
   notifications: Уведомления
 button:
+  undo: "Отменить"
   logout: Выйти
   login: Войти
   settings: Настройки
@@ -170,6 +175,9 @@ placeholder:
   search: Поиск
   find-regex: Найти / RegEx
 settings:
+  reset-all: "Сбросить все настройки"
+  reset-desc: "Возвращает все параметры к значениям по умолчанию. Контейнеры и логи не затрагиваются."
+  reset-confirm: "Подтвердить сброс"
   help-support: >
     Пожалуйста, поддержите Dozzle, сделав пожертвование или спонсорство на GitHub. Ваши вклады помогают нам улучшать Dozzle для всех. Спасибо! 🙏🏼
   about-desc: Информация о вашей установке Dozzle и о том, как поддержать проект.
@@ -190,14 +198,10 @@ settings:
   view-visual: "Визуально"
   view-json: "JSON"
   export: "Экспорт"
-  import: "Импорт"
   apply: "Применить"
   json-valid: "Корректный JSON"
-  imported: "Настройки импортированы"
   exported: "Настройки скопированы в буфер обмена"
   applied: "Настройки применены"
-  import-hint: "Вставьте JSON настроек или URL, возвращающий application/json."
-  import-placeholder: "Вставьте сюда JSON настроек или https://example.com/settings.json"
   options: Опции
   show-stopped-containers: Показывать остановленные контейнеры
   group-containers: Группировать контейнеры по пространству имён
@@ -254,6 +258,7 @@ log_actions:
   copy_log: Копировать лог
   jump_to_context: Перейти к контексту
 toasts:
+  settings-reset: "Настройки сброшены"
   showing-all-containers: "Показаны все контейнеры, включая остановленные"
   showing-running-containers: "Показаны только запущенные контейнеры"
   expanded-all: "Все разделы развёрнуты"
@@ -442,11 +447,14 @@ cloud:
     create-alerts: "Включить выбранные сигналы"
     later: "Сделаю это позже"
 cloud-search:
+  local-search: "Локальный поиск"
+  enable-streaming-for-indexed: "Включите Stream Logs для индексированной истории"
+  connect-for-indexed: "Подключите Dozzle Cloud для индексированной истории по всем контейнерам"
+  search-locally: "Искать локально"
+  local-scope: "Сканирует запущенные контейнеры, начиная с новых"
   containers-section: "Контейнеры"
   search-logs-for: 'Поиск логов по "{query}"'
   across-containers: "проиндексированных по всем вашим контейнерам"
-  connect-to-enable: "Подключите Dozzle Cloud, чтобы искать в логах"
-  enable-streaming-to-search: "Включите стриминг логов в Cloud"
   open-container: "открыть контейнер"
   search-logs-shortcut: "поиск логов"
   cloud-connected: "Cloud подключён"
@@ -470,6 +478,17 @@ cloud-search:
   cta-settings: "Настройки Cloud"
   container-removed-pill: "удалён"
 command-palette:
+  language: "Язык"
+  date-format: "Формат даты"
+  font-size: "Размер шрифта"
+  table-stats: "Статистика таблицы"
+  grouping: "Группировать контейнеры"
+  redirect: "Автопереход"
+  hour-style: "Формат времени"
+  search-on: "Включить поиск"
+  search-off: "Отключить поиск"
+  topbar-show: "Показать панель статистики"
+  topbar-hide: "Свернуть панель статистики"
   section-commands: Команды
   restart-container: Перезапустить {name}
   stop-container: Остановить {name}

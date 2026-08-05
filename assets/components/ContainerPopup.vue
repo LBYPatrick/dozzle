@@ -55,15 +55,15 @@ dd {
 }
 
 dd[data-state="running"] {
-  @apply text-success;
+  color: var(--color-success-text);
 }
 
 dd[data-state="paused"] {
-  @apply text-warning;
+  color: var(--color-warning-text);
 }
 
 dd[data-state="exited"],
 dd[data-state="dead"] {
-  @apply text-error;
+  color: var(--color-error-text);
 }
 </style>

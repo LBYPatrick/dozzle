@@ -112,6 +112,46 @@
               ]"
             />
           </div>
+
+          <!-- These three were reachable only from the log view's own actions
+               menu, so Settings did not show the whole of what you can change —
+               and the JSON view listed keys with no visual counterpart. Same
+               labels as that menu, so the two surfaces cannot drift. -->
+          <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
+            <span>{{ $t("label.cpu-memory") }}</span>
+            <SegmentedControl
+              class="ml-auto"
+              v-model="resourceStatMode"
+              :options="[
+                { label: $t('toolbar.stat-summary'), value: 'summary' },
+                { label: $t('toolbar.stat-chart'), value: 'chart' },
+              ]"
+            />
+          </div>
+          <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
+            <span>{{ $t("label.network-disk") }}</span>
+            <SegmentedControl
+              class="ml-auto"
+              v-model="ioStatMode"
+              :options="[
+                { label: $t('toolbar.stat-summary'), value: 'summary' },
+                { label: $t('toolbar.stat-current'), value: 'current' },
+                { label: $t('toolbar.stat-chart'), value: 'chart' },
+              ]"
+            />
+          </div>
+          <div class="flex min-h-13 flex-wrap items-center justify-between gap-3 p-4 text-sm font-medium">
+            <span>{{ $t("toolbar.trend-shape") }}</span>
+            <SegmentedControl
+              class="ml-auto"
+              v-model="trendShape"
+              :options="[
+                { label: $t('toolbar.shape-bars'), value: 'bars' },
+                { label: $t('toolbar.shape-line'), value: 'line' },
+                { label: $t('toolbar.shape-area'), value: 'area' },
+              ]"
+            />
+          </div>
         </div>
 
         <LogList
@@ -195,6 +235,28 @@
         </label>
       </div>
     </section>
+
+    <!-- RESET -->
+    <section class="flex flex-col gap-4">
+      <div>
+        <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.reset-all") }}</h2>
+        <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.reset-desc") }}</p>
+      </div>
+
+      <div class="settings-group border-base-content/15 bg-base-200/40 overflow-hidden rounded-lg border">
+        <div class="flex min-h-13 flex-wrap items-center gap-3 p-4">
+          <!-- Two-step rather than a dialog. The undo toast the command palette
+               uses is not an option here: this panel is a <dialog>, which sits
+               in the browser's top layer, and the toast layer renders beneath it
+               however high its z-index. So the button arms itself instead, and
+               disarms on its own if you walk away. -->
+          <button class="btn btn-sm" :class="{ 'btn-error': confirmingReset }" @click="onReset">
+            <mdi:backup-restore class="size-4" />
+            {{ confirmingReset ? $t("settings.reset-confirm") : $t("settings.reset-all") }}
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -217,8 +279,12 @@ import {
   locale,
   groupContainers,
   cpuDisplayMode,
+  resourceStatMode,
+  ioStatMode,
+  trendShape,
 } from "@/stores/settings";
 
+import { resetSettings } from "@/stores/settings";
 import { availableLocales, i18n } from "@/modules/i18n";
 import { useSettingsModal } from "@/composable/settingsModal";
 
@@ -226,6 +292,24 @@ const { t } = useI18n();
 
 // Notifications and What's New open as secondary drill-in screens of the popup.
 const { openSubview } = useSettingsModal();
+
+// Arms on the first press and disarms after a few seconds, so a stray click
+// cannot wipe a customised setup and an abandoned one does not stay armed.
+const confirmingReset = ref(false);
+let resetTimer: ReturnType<typeof setTimeout> | undefined;
+
+function onReset() {
+  if (!confirmingReset.value) {
+    confirmingReset.value = true;
+    resetTimer = setTimeout(() => (confirmingReset.value = false), 4000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  confirmingReset.value = false;
+  resetSettings();
+}
+
+onBeforeUnmount(() => clearTimeout(resetTimer));
 
 const now = new Date();
 const hoursAgo = (hours: number) => {
@@ -358,9 +442,11 @@ const fakeMessages = computedWithControl(
   }
 }
 
+/* Links inside muted copy. The raw accent measured 1.6:1 here; the readable
+   form keeps the colour and the meaning. */
 :deep(.text-base-content\/60 a:not(.btn)),
 :deep(.text-base-content\/70 a:not(.btn)) {
-  @apply text-primary;
+  color: var(--color-primary-text);
 }
 :deep(.text-base-content\/60 a:not(.btn):hover),
 :deep(.text-base-content\/70 a:not(.btn):hover) {

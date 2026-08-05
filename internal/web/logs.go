@@ -309,11 +309,63 @@ func (h *handler) streamLogsWithLabels(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// streamAllLogs backs fleet-wide log search without Dozzle Cloud: the backward
+// scan already runs across whatever set it is handed, so handing it everything
+// gives search over all locally retained logs, with no index and nothing leaving
+// the host.
+//
+// Tails the running containers, searches all of them. A crashed container is
+// usually the whole reason someone is searching, so excluding the dead from the
+// scan would answer a narrower question than the one asked — while tailing them
+// would only add an EOF and a "container-stopped" row each.
+func (h *handler) streamAllLogs(w http.ResponseWriter, r *http.Request) {
+	// Optional narrowing to particular machines. Absent or empty means every
+	// host, which is the reset state the UI's filter returns to.
+	hosts := map[string]struct{}{}
+	if raw := r.URL.Query().Get("hosts"); raw != "" {
+		for id := range strings.SplitSeq(raw, ",") {
+			if id = strings.TrimSpace(id); id != "" {
+				hosts[id] = struct{}{}
+			}
+		}
+	}
+	onSelectedHost := func(c *container.Container) bool {
+		if len(hosts) == 0 {
+			return true
+		}
+		_, ok := hosts[c.Host]
+		return ok
+	}
+
+	// Tail what the viewer asked to see; search all of it either way. A crashed
+	// container is usually the whole reason someone is searching, and tailing a
+	// stopped one only produces an EOF and a "container-stopped" row.
+	runningOnly := wantsRunning(r)
+	h.streamLogsForContainersWithSearch(w, r,
+		func(c *container.Container) bool { return (!runningOnly || c.State == "running") && onSelectedHost(c) },
+		onSelectedHost,
+	)
+}
+
+// wantsRunning reports whether a multi-container view should be limited to
+// running containers. Default yes — that is what these views have always shown,
+// and on a host with a pile of exited containers it is also the cheap answer.
+//
+// Deliberately per-route rather than inside streamLogsForContainers: the
+// single-container and merged routes name their containers outright, and a
+// stopped container's logs are exactly what you open those views for. Applied
+// there it returned an empty set for a stopped container, so the stream had
+// nothing to end and hung.
+func wantsRunning(r *http.Request) bool {
+	return r.URL.Query().Get("stopped") != "1"
+}
+
 func (h *handler) streamGroupedLogs(w http.ResponseWriter, r *http.Request) {
 	group := chi.URLParam(r, "group")
+	runningOnly := wantsRunning(r)
 
 	h.streamLogsForContainers(w, r, func(container *container.Container) bool {
-		return container.State == "running" && container.Group == group
+		return (!runningOnly || container.State == "running") && container.Group == group
 	})
 }
 
@@ -331,20 +383,44 @@ func (h *handler) streamHostGroupLogs(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	runningOnly := wantsRunning(r)
 	h.streamLogsForContainers(w, r, func(c *container.Container) bool {
 		_, ok := hostIDs[c.Host]
-		return c.State == "running" && ok
+		return (!runningOnly || c.State == "running") && ok
 	})
 }
 
 func (h *handler) streamHostLogs(w http.ResponseWriter, r *http.Request) {
 	host := hostKey(r)
+	runningOnly := wantsRunning(r)
 	h.streamLogsForContainers(w, r, func(container *container.Container) bool {
-		return container.State == "running" && container.Host == host
+		return (!runningOnly || container.State == "running") && container.Host == host
 	})
 }
 
 func (h *handler) streamLogsForContainers(w http.ResponseWriter, r *http.Request, containerFilter container_support.ContainerFilter) {
+	h.streamLogsForContainersWithSearch(w, r, containerFilter, nil)
+}
+
+// streamLogsForContainersWithSearch splits the set that is tailed live from the
+// set that history is searched over.
+//
+// They are not the same question. Tailing a stopped container is pointless — its
+// stream EOFs at once, and the EOF path emits a "container-stopped" event, so
+// including dead containers in the live fan-out would fill the view with one
+// event row per corpse. Searching one is the opposite: a container that exited
+// is very often the exact thing you are looking for, and scoping a search to
+// what is currently running quietly answers a different question than the one
+// asked.
+//
+// searchFilter may be nil, meaning "search whatever is being tailed" — which is
+// what every per-view route does, since there the visible set is the subject.
+func (h *handler) streamLogsForContainersWithSearch(
+	w http.ResponseWriter,
+	r *http.Request,
+	containerFilter container_support.ContainerFilter,
+	searchFilter container_support.ContainerFilter,
+) {
 	stdTypes := parseStdTypes(r)
 	if stdTypes == 0 {
 		http.Error(w, "stdout or stderr is required", http.StatusBadRequest)
@@ -364,6 +440,17 @@ func (h *handler) streamLogsForContainers(w http.ResponseWriter, r *http.Request
 	existingContainers, errs := h.hostService.ListAllContainersFiltered(userLabels, containerFilter)
 	if len(errs) > 0 {
 		log.Warn().Err(errs[0]).Msg("error while listing containers")
+	}
+
+	// Widened only when a route asks for it; otherwise history is searched over
+	// exactly what is on screen.
+	searchContainers := existingContainers
+	if searchFilter != nil {
+		if wider, errs := h.hostService.ListAllContainersFiltered(userLabels, searchFilter); len(errs) == 0 {
+			searchContainers = wider
+		} else {
+			log.Warn().Err(errs[0]).Msg("error while listing containers to search")
+		}
 	}
 
 	absoluteTime := time.Time{}
@@ -423,7 +510,7 @@ func (h *handler) streamLogsForContainers(w http.ResponseWriter, r *http.Request
 			for minimum > 0 {
 				events := make([]*container.LogEvent, 0)
 				stillRunning := false
-				for _, container := range existingContainers {
+				for _, container := range searchContainers {
 					containerService, err := h.hostService.FindContainer(container.Host, container.ID, userLabels)
 
 					if err != nil {

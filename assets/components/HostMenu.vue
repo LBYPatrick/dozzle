@@ -122,8 +122,12 @@ const allKeys = computed(() => {
     if (groupName) keys.push(hostGroupKey(groupName));
   }
   for (const host of Object.values(hosts.value)) {
+    const groups = groupContainersForHost(visibleContainers.value, host.id);
+    // A host with nothing to show is disabled and cannot open, so counting it
+    // here would leave "expand all" permanently live with nothing left to do.
+    if (groups.length === 0) continue;
     keys.push(hostKey(host.id));
-    for (const { key } of groupContainersForHost(visibleContainers.value, host.id)) {
+    for (const { key } of groups) {
       keys.push(key);
     }
   }

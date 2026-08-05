@@ -2,7 +2,7 @@
   <div
     v-if="isMobile"
     class="flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium tabular-nums"
-    :class="type === 'cpu' ? 'bg-primary/10 text-primary' : 'bg-secondary/10 text-secondary'"
+    :class="type === 'cpu' ? 'bg-primary/10 text-primary-safe' : 'bg-secondary/10 text-secondary-safe'"
   >
     <component :is="type === 'cpu' ? PhCpu : PhMemory" class="size-3.5 shrink-0" />
     <span>{{ displayValue }}</span>

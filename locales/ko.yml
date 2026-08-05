@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "중지된 컨테이너 포함"
   clear: 지우기
   download: 다운로드
   download-filtered: 필터링된 로그 다운로드
@@ -44,6 +45,9 @@ action:
   create-alert: 알림 생성
   more-actions: 추가 작업
 label:
+  hosts-selected: "호스트 {count}개"
+  loading: "불러오는 중"
+  all-logs: "전체 로그"
   containers: 컨테이너
   container: 컨테이너가 없습니다 | 컨테이너 1개 | 컨테이너 {count}개
   host-count: 호스트가 없습니다 | 호스트 1개 | 호스트 {count}개
@@ -154,6 +158,7 @@ title:
   settings: 설정
   notifications: 알림
 button:
+  undo: "실행 취소"
   logout: 로그아웃
   login: 로그인
   settings: 설정
@@ -172,6 +177,9 @@ placeholder:
   search: 검색
   find-regex: 찾기 / 정규식
 settings:
+  reset-all: "모든 설정 초기화"
+  reset-desc: "모든 환경설정을 기본값으로 되돌립니다. 컨테이너와 로그는 그대로입니다."
+  reset-confirm: "초기화 확인"
   help-support: >
     GitHub에서 후원하거나 기부로 Dozzle을 응원해 주세요. 여러분의 도움으로
     모두를 위한 더 나은 Dozzle을 만들 수 있습니다. 감사합니다! 🙏🏼
@@ -193,14 +201,10 @@ settings:
   view-visual: "시각적"
   view-json: "JSON"
   export: "내보내기"
-  import: "가져오기"
   apply: "적용"
   json-valid: "유효한 JSON"
-  imported: "설정을 가져왔습니다"
   exported: "설정을 클립보드에 복사했습니다"
   applied: "설정이 적용되었습니다"
-  import-hint: "설정 JSON을 붙여넣거나 application/json을 반환하는 URL을 입력하세요."
-  import-placeholder: "여기에 설정 JSON을 붙여넣거나 https://example.com/settings.json"
   options: 옵션
   show-stopped-containers: 중지된 컨테이너 보기
   group-containers: 네임스페이스별로 컨테이너 그룹화
@@ -258,6 +262,7 @@ log_actions:
   copy_log: 로그 복사
   jump_to_context: 해당 위치로 이동
 toasts:
+  settings-reset: "설정을 기본값으로 되돌렸습니다"
   showing-all-containers: "중지된 컨테이너를 포함해 전체를 표시합니다"
   showing-running-containers: "실행 중인 컨테이너만 표시합니다"
   expanded-all: "모든 섹션을 펼쳤습니다"
@@ -446,11 +451,14 @@ cloud:
     create-alerts: "선택한 신호 켜기"
     later: "나중에 할게요"
 cloud-search:
+  local-search: "로컬 검색"
+  enable-streaming-for-indexed: "색인된 기록을 위해 Stream Logs 활성화"
+  connect-for-indexed: "모든 컨테이너의 색인된 기록을 위해 Dozzle Cloud 연결"
+  search-locally: "대신 로컬에서 검색"
+  local-scope: "실행 중인 컨테이너를 최신순으로 검색"
   containers-section: "컨테이너"
   search-logs-for: '"{query}" 로그 검색'
   across-containers: "모든 컨테이너에서 색인됨"
-  connect-to-enable: "로그를 검색하려면 Dozzle Cloud에 연결하세요"
-  enable-streaming-to-search: "Cloud로 로그 스트리밍 활성화"
   open-container: "컨테이너 열기"
   search-logs-shortcut: "로그 검색"
   cloud-connected: "Cloud 연결됨"
@@ -474,6 +482,17 @@ cloud-search:
   cta-settings: "Cloud 설정"
   container-removed-pill: "삭제됨"
 command-palette:
+  language: "언어"
+  date-format: "날짜 형식"
+  font-size: "글꼴 크기"
+  table-stats: "테이블 통계"
+  grouping: "컨테이너 그룹화"
+  redirect: "자동 이동"
+  hour-style: "시간 형식"
+  search-on: "검색 사용"
+  search-off: "검색 사용 안 함"
+  topbar-show: "통계 바 표시"
+  topbar-hide: "통계 바 접기"
   section-commands: 명령
   restart-container: "{name} 재시작"
   stop-container: "{name} 중지"

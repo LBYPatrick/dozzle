@@ -166,6 +166,7 @@ func createRouter(h *handler) *chi.Mux {
 				r.Get("/labels/{labels}/logs/stream", h.streamLogsWithLabels)
 				r.Get("/groups/{group}/logs/stream", h.streamGroupedLogs)
 				r.Get("/host-groups/{group}/logs/stream", h.streamHostGroupLogs)
+				r.Get("/logs/stream", h.streamAllLogs)
 				r.Get("/events/stream", h.streamEvents)
 
 				// Action

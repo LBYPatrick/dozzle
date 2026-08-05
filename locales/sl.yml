@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Vključi ustavljene vsebnike"
   clear: Počisti
   download: Prenesi
   download-filtered: Prenesi Filtrirane Dnevnike
@@ -44,6 +45,9 @@ action:
   create-alert: Ustvari opozorilo
   more-actions: Več dejanj
 label:
+  hosts-selected: "{count} gostiteljev"
+  loading: "Nalaganje"
+  all-logs: "Vsi dnevniki"
   containers: Zabojniki
   host-count: Ni Gostiteljev | 1 Gostitelj | {count} Gostiteljev
   service: Ni storitev | 1 storitev | {count} storitev
@@ -154,6 +158,7 @@ title:
   settings: Nastavitve
   notifications: Obvestila
 button:
+  undo: "Razveljavi"
   logout: Odjava
   cancel: Prekliči
   redirect: Preusmeritev
@@ -172,6 +177,9 @@ placeholder:
   search: Iskanje
   find-regex: Najdi / RegEx
 settings:
+  reset-all: "Ponastavi vse nastavitve"
+  reset-desc: "Vse nastavitve vrne na privzete vrednosti. Vsebniki in dnevniki ostanejo nedotaknjeni."
+  reset-confirm: "Potrdi ponastavitev"
   about-desc: Informacije o vaši namestitvi Dozzle in kako podpreti projekt.
   display-desc: Prilagodite videz dnevnikov in preostalega dela aplikacije. Predogled v živo prikazuje vaše spremembe.
   options-desc: Nastavitve jezika, navigacije in združevanja.
@@ -190,14 +198,10 @@ settings:
   view-visual: "Vizualno"
   view-json: "JSON"
   export: "Izvozi"
-  import: "Uvozi"
   apply: "Uporabi"
   json-valid: "Veljaven JSON"
-  imported: "Nastavitve uvožene"
   exported: "Nastavitve kopirane v odložišče"
   applied: "Nastavitve uporabljene"
-  import-hint: "Prilepite JSON nastavitev ali URL, ki vrne application/json."
-  import-placeholder: "Prilepite JSON nastavitev sem ali https://example.com/settings.json"
   options: Možnosti
   show-stopped-containers: Prikaži ustavljene zabojnike
   group-containers: Združi zabojnike po imenskem prostoru
@@ -260,6 +264,7 @@ log_actions:
   copy_log: Kopiraj dnevnik
   jump_to_context: Skoči na kontekst
 toasts:
+  settings-reset: "Nastavitve ponastavljene"
   showing-all-containers: "Prikazani so vsi vsebniki, tudi ustavljeni"
   showing-running-containers: "Prikazani so samo delujoči vsebniki"
   expanded-all: "Vsi razdelki razširjeni"
@@ -448,11 +453,14 @@ cloud:
     create-alerts: "Vklopi izbrane signale"
     later: "To bom naredil pozneje"
 cloud-search:
+  local-search: "Lokalno iskanje"
+  enable-streaming-for-indexed: "Omogoči Stream Logs za indeksirano zgodovino"
+  connect-for-indexed: "Poveži Dozzle Cloud za indeksirano zgodovino vseh vsebnikov"
+  search-locally: "Raje išči lokalno"
+  local-scope: "Preišče delujoče vsebnike, najprej najnovejše"
   containers-section: "Vsebniki"
   search-logs-for: 'Iskanje dnevnikov za "{query}"'
   across-containers: "indeksirano po vseh vaših vsebnikih"
-  connect-to-enable: "Povežite Dozzle Cloud za iskanje po dnevnikih"
-  enable-streaming-to-search: "Omogoči pretakanje dnevnikov v Cloud"
   open-container: "odpri vsebnik"
   search-logs-shortcut: "išči po dnevnikih"
   cloud-connected: "Cloud povezan"
@@ -476,6 +484,17 @@ cloud-search:
   cta-settings: "Nastavitve Cloud"
   container-removed-pill: "izbrisano"
 command-palette:
+  language: "Jezik"
+  date-format: "Oblika datuma"
+  font-size: "Velikost pisave"
+  table-stats: "Statistika tabele"
+  grouping: "Združi vsebnike"
+  redirect: "Samodejno preusmerjanje"
+  hour-style: "Oblika ure"
+  search-on: "Omogoči iskanje"
+  search-off: "Onemogoči iskanje"
+  topbar-show: "Pokaži vrstico statistike"
+  topbar-hide: "Strni vrstico statistike"
   section-commands: Ukazi
   restart-container: Znova zaženi {name}
   stop-container: Ustavi {name}

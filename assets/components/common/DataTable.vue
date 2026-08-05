@@ -148,6 +148,6 @@ tbody :deep(td) {
 }
 
 tbody :deep(a) {
-  @apply hover:text-primary transition-colors;
+  @apply hover:text-primary-safe transition-colors;
 }
 </style>

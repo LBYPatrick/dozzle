@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Gestopte containers meenemen"
   clear: Wissen
   download: Downloaden
   download-filtered: Gefilterde Logs Downloaden
@@ -44,6 +45,9 @@ action:
   create-alert: Waarschuwing aanmaken
   more-actions: Meer acties
 label:
+  hosts-selected: "{count} hosts"
+  loading: "Laden"
+  all-logs: "Alle logs"
   containers: Containers
   container: Geen containers | 1 container | {count} containers
   host-count: Geen Hosts | 1 Host | {count} Hosts
@@ -153,6 +157,7 @@ title:
   settings: Instellingen
   notifications: Meldingen
 button:
+  undo: "Ongedaan maken"
   logout: Afmelden
   login: Aanmelden
   settings: Instellingen
@@ -171,6 +176,9 @@ placeholder:
   search: Zoeken
   find-regex: Zoeken / RegEx
 settings:
+  reset-all: "Alle instellingen herstellen"
+  reset-desc: "Zet elke voorkeur terug op de standaardwaarde. Containers en logs blijven ongemoeid."
+  reset-confirm: "Herstellen bevestigen"
   help-support: >
     Steun Dozzle door te doneren of door ons te sponsoren op GitHub. Jouw bijdrage helpt ons om Dozzle verder te verbeteren voor iedereen. Hartelijk dank! 🙏🏼
   about-desc: Informatie over jouw Dozzle-installatie en hoe je het project kunt ondersteunen.
@@ -191,14 +199,10 @@ settings:
   view-visual: "Visueel"
   view-json: "JSON"
   export: "Exporteren"
-  import: "Importeren"
   apply: "Toepassen"
   json-valid: "Geldige JSON"
-  imported: "Instellingen geïmporteerd"
   exported: "Instellingen naar klembord gekopieerd"
   applied: "Instellingen toegepast"
-  import-hint: "Plak instellingen-JSON, of een URL die application/json retourneert."
-  import-placeholder: "Plak hier instellingen-JSON, of https://example.com/settings.json"
   options: Opties
   show-stopped-containers: Gestopte containers tonen
   group-containers: Groepeer containers op namespace
@@ -255,6 +259,7 @@ log_actions:
   copy_log: Log kopiëren
   jump_to_context: Ga naar context
 toasts:
+  settings-reset: "Instellingen hersteld"
   showing-all-containers: "Toont alle containers, ook gestopte"
   showing-running-containers: "Toont alleen actieve containers"
   expanded-all: "Alle secties uitgeklapt"
@@ -443,11 +448,14 @@ cloud:
     create-alerts: "Geselecteerde signalen aanzetten"
     later: "Dat doe ik later"
 cloud-search:
+  local-search: "Lokaal zoeken"
+  enable-streaming-for-indexed: "Schakel Stream Logs in voor geïndexeerde historie"
+  connect-for-indexed: "Verbind Dozzle Cloud voor geïndexeerde historie over alle containers"
+  search-locally: "Zoek in plaats daarvan lokaal"
+  local-scope: "Doorzoekt actieve containers, nieuwste eerst"
   containers-section: "Containers"
   search-logs-for: 'Logs zoeken op "{query}"'
   across-containers: "geïndexeerd over al je containers"
-  connect-to-enable: "Dozzle Cloud verbinden om logs te zoeken"
-  enable-streaming-to-search: "Schakel logstreaming naar Cloud in"
   open-container: "container openen"
   search-logs-shortcut: "logs zoeken"
   cloud-connected: "Cloud verbonden"
@@ -471,6 +479,17 @@ cloud-search:
   cta-settings: "Cloud-instellingen"
   container-removed-pill: "verwijderd"
 command-palette:
+  language: "Taal"
+  date-format: "Datumnotatie"
+  font-size: "Tekstgrootte"
+  table-stats: "Tabelstatistieken"
+  grouping: "Containers groeperen"
+  redirect: "Automatisch doorsturen"
+  hour-style: "Uurnotatie"
+  search-on: "Zoeken inschakelen"
+  search-off: "Zoeken uitschakelen"
+  topbar-show: "Statusbalk tonen"
+  topbar-hide: "Statusbalk inklappen"
   section-commands: Opdrachten
   restart-container: "{name} opnieuw starten"
   stop-container: "{name} stoppen"

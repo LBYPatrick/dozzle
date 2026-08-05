@@ -94,6 +94,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/logs': RouteRecordInfo<
+      '/logs',
+      '/logs',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/merged/[ids]': RouteRecordInfo<
       '/merged/[ids]',
       '/merged/:ids',
@@ -224,6 +231,14 @@ declare module 'vue-router/auto-routes' {
     'assets/pages/login.vue': {
       routes:
         | '/login'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'assets/pages/logs.vue': {
+      routes:
+        | '/logs'
       views:
         | never
       pathParamNames:

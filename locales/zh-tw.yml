@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "包含已停止的容器"
   clear: 清除
   download: 下載
   download-filtered: 下載篩選的日誌
@@ -44,6 +45,9 @@ action:
   create-alert: 建立警報
   more-actions: 更多操作
 label:
+  hosts-selected: "{count} 台主機"
+  loading: "載入中"
+  all-logs: "全部日誌"
   containers: 容器
   container: 無容器 | 1 個容器 | {count} 個容器
   host-count: 無主機 | 1 個主機 | {count} 個主機
@@ -154,6 +158,7 @@ title:
   settings: 設定
   notifications: 通知
 button:
+  undo: "復原"
   logout: 登出
   login: 登入
   settings: 設定
@@ -172,6 +177,9 @@ placeholder:
   search: 搜尋
   find-regex: 尋找 / RegEx
 settings:
+  reset-all: "重設所有設定"
+  reset-desc: "將每項偏好恢復為預設值。容器與日誌不受影響。"
+  reset-confirm: "確認重設"
   help-support: >
     請透過在 GitHub 上捐款或贊助我們來支持 Dozzle。您的貢獻幫助我們為所有人改進 Dozzle。謝謝！ 🙏🏼
   about-desc: 關於您的 Dozzle 安裝以及如何支持本專案的資訊。
@@ -192,14 +200,10 @@ settings:
   view-visual: "視覺化"
   view-json: "JSON"
   export: "匯出"
-  import: "匯入"
   apply: "套用"
   json-valid: "JSON 有效"
-  imported: "設定已匯入"
   exported: "已將設定複製到剪貼簿"
   applied: "設定已套用"
-  import-hint: "貼上設定 JSON，或回傳 application/json 的 URL。"
-  import-placeholder: "在此貼上設定 JSON，或 https://example.com/settings.json"
   options: 選項
   show-stopped-containers: 顯示已停止的容器
   group-containers: 依命名空間分組容器
@@ -257,6 +261,7 @@ log_actions:
   copy_log: 複製日誌
   jump_to_context: 跳至相關內容
 toasts:
+  settings-reset: "設定已重設為預設值"
   showing-all-containers: "正在顯示所有容器，包括已停止的"
   showing-running-containers: "僅顯示執行中的容器"
   expanded-all: "已展開所有區段"
@@ -445,11 +450,14 @@ cloud:
     create-alerts: "啟用所選訊號"
     later: "稍後再說"
 cloud-search:
+  local-search: "本機搜尋"
+  enable-streaming-for-indexed: "啟用 Stream Logs 以取得索引歷史"
+  connect-for-indexed: "連接 Dozzle Cloud 以索引所有容器的歷史"
+  search-locally: "改為本機搜尋"
+  local-scope: "掃描執行中的容器，從最新開始"
   containers-section: "容器"
   search-logs-for: '搜尋日誌 "{query}"'
   across-containers: "已在所有容器中建立索引"
-  connect-to-enable: "連接 Dozzle Cloud 以搜尋日誌"
-  enable-streaming-to-search: "啟用日誌串流到 Cloud"
   open-container: "打開容器"
   search-logs-shortcut: "搜尋日誌"
   cloud-connected: "Cloud 已連接"
@@ -473,6 +481,17 @@ cloud-search:
   cta-settings: "Cloud 設定"
   container-removed-pill: "已刪除"
 command-palette:
+  language: "語言"
+  date-format: "日期格式"
+  font-size: "字型大小"
+  table-stats: "表格統計"
+  grouping: "容器分組"
+  redirect: "自動跳轉"
+  hour-style: "小時制"
+  search-on: "啟用搜尋"
+  search-off: "停用搜尋"
+  topbar-show: "顯示狀態列"
+  topbar-hide: "收合狀態列"
   section-commands: 命令
   restart-container: 重新啟動 {name}
   stop-container: 停止 {name}

@@ -82,6 +82,18 @@
           {{ $t("toolbar.show-container-name") }}
         </a>
       </li>
+      <li class="line"></li>
+      <!-- Which containers this view draws from at all, as opposed to the two
+           above, which only say what each row prints. Reconnects the stream:
+           the server decides the set, so including stopped containers is a
+           different subscription rather than a client-side unhide. -->
+      <li>
+        <a @click="toggleStopped()">
+          <mdi:check class="w-4" v-if="showAllContainers" />
+          <div v-else class="w-4"></div>
+          {{ $t("toolbar.include-stopped") }}
+        </a>
+      </li>
     </ul>
   </div>
 </template>
@@ -93,6 +105,15 @@ const clear = defineEmit();
 const { name } = defineProps<{ name?: string }>();
 
 const { streamConfig, showHostname, showContainerName, containers, levels } = useLoggingContext();
+
+const { t } = useI18n();
+
+// The same setting the sidebar's eye drives, so "running vs all" means one
+// thing across the app rather than one thing per surface.
+const toggleStopped = () => {
+  showAllContainers.value = !showAllContainers.value;
+  notifySetting(t(showAllContainers.value ? "toasts.showing-all-containers" : "toasts.showing-running-containers"));
+};
 
 const { downloadUrl, isFiltered } = useDownloadUrl(containers, streamConfig, levels, name);
 

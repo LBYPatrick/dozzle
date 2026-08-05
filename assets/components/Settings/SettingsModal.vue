@@ -42,13 +42,6 @@
           <button class="btn btn-ghost btn-sm gap-1" @click="exportToClipboard">
             <mdi:content-copy class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.export") }}</span>
           </button>
-          <button
-            class="btn btn-ghost btn-sm gap-1"
-            :class="{ 'text-primary': showImport }"
-            @click="showImport = !showImport"
-          >
-            <mdi:import class="size-4" /> <span class="max-sm:hidden">{{ $t("settings.import") }}</span>
-          </button>
           <form method="dialog">
             <button class="btn btn-ghost btn-sm btn-square" :aria-label="$t('button.cancel')">
               <mdi:close class="size-5" />
@@ -57,25 +50,6 @@
         </div>
       </template>
     </div>
-
-    <!-- Import panel (main list only) -->
-    <transition name="import-panel">
-      <div v-if="showImport && !subview" class="border-base-content/10 bg-base-300/40 border-b p-3">
-        <label class="text-base-content/60 text-xs">{{ $t("settings.import-hint") }}</label>
-        <textarea
-          v-model="importText"
-          class="textarea textarea-sm bg-base-100/70 mt-1.5 h-24 w-full resize-none font-mono text-xs"
-          :placeholder="$t('settings.import-placeholder')"
-        ></textarea>
-        <div class="mt-2 flex items-center gap-2">
-          <button class="btn btn-primary btn-sm" :disabled="!importText.trim() || importing" @click="doImport">
-            <span v-if="importing" class="loading loading-spinner loading-xs"></span>
-            {{ $t("settings.import") }}
-          </button>
-          <span v-if="importError" class="text-error text-xs">{{ importError }}</span>
-        </div>
-      </div>
-    </transition>
 
     <!-- Body -->
     <div class="relative min-h-0 flex-1 overflow-hidden">
@@ -148,19 +122,15 @@ onMounted(async () => {
 });
 
 const jsonText = ref(serializeSettings());
-const showImport = ref(false);
-const importText = ref("");
-const importError = ref("");
-const importing = ref(false);
 
-// Only the visual view scrolls under the header. The JSON editor and the import
-// panel are their own bounded surfaces butted right against it, and those seams
-// are real regardless of scroll position.
+// Only the visual view scrolls under the header. The JSON editor is its own
+// bounded surface butted right against it, and that seam is real regardless of
+// scroll position.
 const scrolled = ref(false);
 useEventListener(visualScroll, "scroll", () => (scrolled.value = (visualScroll.value?.scrollTop ?? 0) > 0), {
   passive: true,
 });
-const headerDivided = computed(() => showImport.value || view.value !== "visual" || scrolled.value);
+const headerDivided = computed(() => view.value !== "visual" || scrolled.value);
 
 // Live JSON validity for the editor footer.
 const jsonError = computed(() => {
@@ -197,33 +167,6 @@ async function exportToClipboard() {
   toast("settings.exported", "info");
 }
 
-async function doImport() {
-  importError.value = "";
-  const raw = importText.value.trim();
-  importing.value = true;
-  try {
-    let json = raw;
-    if (/^https?:\/\//i.test(raw)) {
-      const response = await fetch(raw, { headers: { Accept: "application/json" } });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      json = await response.text();
-    }
-    const result = importSettingsJson(json);
-    if (!result.ok) {
-      importError.value = result.error;
-      return;
-    }
-    jsonText.value = serializeSettings();
-    showImport.value = false;
-    importText.value = "";
-    toast("settings.imported", "info");
-  } catch (e) {
-    importError.value = (e as Error).message;
-  } finally {
-    importing.value = false;
-  }
-}
-
 // Small helper so the toast calls stay terse. `raw` skips translation for
 // dynamic error/JSON strings.
 function toast(message: string, type: "info" | "error", raw = false) {
@@ -232,20 +175,6 @@ function toast(message: string, type: "info" | "error", raw = false) {
 </script>
 
 <style scoped>
-.import-panel-enter-active,
-.import-panel-leave-active {
-  transition:
-    max-height 200ms cubic-bezier(0.32, 0.72, 0, 1),
-    opacity 160ms ease;
-  overflow: hidden;
-  max-height: 12rem;
-}
-.import-panel-enter-from,
-.import-panel-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
-
 /* iOS-style push: the secondary screen slides in from the right. */
 .subview-enter-active,
 .subview-leave-active {
@@ -271,11 +200,6 @@ function toast(message: string, type: "info" | "error", raw = false) {
   .subview-enter-from,
   .subview-leave-to {
     transform: none;
-  }
-
-  .import-panel-enter-active,
-  .import-panel-leave-active {
-    transition: opacity 160ms ease;
   }
 }
 </style>

@@ -16,7 +16,7 @@
         <li v-for="item in options" :key="String(item.value)">
           <a
             class="flex items-center gap-2 rounded-lg"
-            :class="modelValue == item.value ? 'bg-primary/12 text-primary font-medium' : ''"
+            :class="modelValue == item.value ? 'bg-primary/12 text-primary-safe font-medium' : ''"
             @click="update(item.value as T)"
           >
             <mdi:check class="size-4 shrink-0" v-if="modelValue == item.value" />

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<ContainerEventSource /> > render html correctly > should render dates with 12 hour style 1`] = `
-"<ul data-v-cf9ff940="" class="group pt-4 medium" data-logs="" show-container-name="false">
+"<ul data-v-cf9ff940="" class="group pt-4 medium" style="--log-source-chars: 12;" data-logs="" show-container-name="false">
   <li data-v-cf9ff940="" id="1560336942709" data-time="1560336942709" class="group/entry">
     <div data-v-cf9ff940="" class="flex min-h-[1px] flex-1 content-center justify-center"><span class="loading loading-bars loading-md text-primary m-2" style="display: none;"></span></div>
   </li>
@@ -22,8 +22,11 @@ exports[`<ContainerEventSource /> > render html correctly > should render dates 
         <!--v-if-->
       </div>
       <!--v-if-->
-      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 has-[>_*:nth-of-type(2)]:flex-col-reverse md:flex-row!">
-        <!--v-if-->
+      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 md:flex-row!">
+        <!-- No width class: the cell sizes itself from --log-source-chars, which
+           LogList derives from the longest name on screen. Uniform down the
+           column, so the timestamps stay flush, without reserving room for
+           names nobody has. -->
         <!--v-if-->
         <!-- One log line tall with its content centred, so the timestamp sits on the
        same line as the message rather than a fraction of a line below it. -->
@@ -45,7 +48,7 @@ exports[`<ContainerEventSource /> > render html correctly > should render dates 
 `;
 
 exports[`<ContainerEventSource /> > render html correctly > should render dates with 24 hour style 1`] = `
-"<ul data-v-cf9ff940="" class="group pt-4 medium" data-logs="" show-container-name="false">
+"<ul data-v-cf9ff940="" class="group pt-4 medium" style="--log-source-chars: 12;" data-logs="" show-container-name="false">
   <li data-v-cf9ff940="" id="1560336942709" data-time="1560336942709" class="group/entry">
     <div data-v-cf9ff940="" class="flex min-h-[1px] flex-1 content-center justify-center"><span class="loading loading-bars loading-md text-primary m-2" style="display: none;"></span></div>
   </li>
@@ -66,8 +69,11 @@ exports[`<ContainerEventSource /> > render html correctly > should render dates 
         <!--v-if-->
       </div>
       <!--v-if-->
-      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 has-[>_*:nth-of-type(2)]:flex-col-reverse md:flex-row!">
-        <!--v-if-->
+      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 md:flex-row!">
+        <!-- No width class: the cell sizes itself from --log-source-chars, which
+           LogList derives from the longest name on screen. Uniform down the
+           column, so the timestamps stay flush, without reserving room for
+           names nobody has. -->
         <!--v-if-->
         <!-- One log line tall with its content centred, so the timestamp sits on the
        same line as the message rather than a fraction of a line below it. -->
@@ -89,7 +95,7 @@ exports[`<ContainerEventSource /> > render html correctly > should render dates 
 `;
 
 exports[`<ContainerEventSource /> > render html correctly > should render messages 1`] = `
-"<ul data-v-cf9ff940="" class="group pt-4 medium" data-logs="" show-container-name="false">
+"<ul data-v-cf9ff940="" class="group pt-4 medium" style="--log-source-chars: 12;" data-logs="" show-container-name="false">
   <li data-v-cf9ff940="" id="1560336942709" data-time="1560336942709" class="group/entry">
     <div data-v-cf9ff940="" class="flex min-h-[1px] flex-1 content-center justify-center"><span class="loading loading-bars loading-md text-primary m-2" style="display: none;"></span></div>
   </li>
@@ -110,8 +116,11 @@ exports[`<ContainerEventSource /> > render html correctly > should render messag
         <!--v-if-->
       </div>
       <!--v-if-->
-      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 has-[>_*:nth-of-type(2)]:flex-col-reverse md:flex-row!">
-        <!--v-if-->
+      <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 md:flex-row!">
+        <!-- No width class: the cell sizes itself from --log-source-chars, which
+           LogList derives from the longest name on screen. Uniform down the
+           column, so the timestamps stay flush, without reserving room for
+           names nobody has. -->
         <!--v-if-->
         <!-- One log line tall with its content centred, so the timestamp sits on the
        same line as the message rather than a fraction of a line below it. -->

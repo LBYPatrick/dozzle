@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "包含已停止的容器"
   clear: 清除
   download: 下载
   download-filtered: 下载筛选的日志
@@ -44,6 +45,9 @@ action:
   create-alert: 创建告警
   more-actions: 更多操作
 label:
+  hosts-selected: "{count} 台主机"
+  loading: "加载中"
+  all-logs: "全部日志"
   containers: 容器
   container: 无容器 | 1 容器 | {count} 容器
   host-count: 无主机 | 1 个主机 | {count} 个主机
@@ -152,6 +156,7 @@ title:
   settings: 设置
   notifications: 通知
 button:
+  undo: "撤销"
   logout: 退出
   login: 登录
   settings: 设置
@@ -170,6 +175,9 @@ placeholder:
   search: 搜索
   find-regex: 查找 / 正则
 settings:
+  reset-all: "重置所有设置"
+  reset-desc: "将每项偏好恢复为默认值。容器和日志不受影响。"
+  reset-confirm: "确认重置"
   help-support: >
     请通过在 GitHub 上捐赠或赞助我们来支持 Dozzle。您的贡献帮助我们为所有人改进 Dozzle。谢谢！ 🙏🏼
   about-desc: 关于您的 Dozzle 安装及如何支持本项目的信息。
@@ -190,14 +198,10 @@ settings:
   view-visual: "可视化"
   view-json: "JSON"
   export: "导出"
-  import: "导入"
   apply: "应用"
   json-valid: "JSON 有效"
-  imported: "设置已导入"
   exported: "已将设置复制到剪贴板"
   applied: "设置已应用"
-  import-hint: "粘贴设置 JSON，或返回 application/json 的 URL。"
-  import-placeholder: "在此粘贴设置 JSON，或 https://example.com/settings.json"
   options: 选项
   show-stopped-containers: 显示已停止的容器
   group-containers: 按命名空间分组容器
@@ -254,6 +258,7 @@ log_actions:
   copy_log: 复制日志
   jump_to_context: 跳转到上下文
 toasts:
+  settings-reset: "设置已重置为默认值"
   showing-all-containers: "正在显示所有容器，包括已停止的"
   showing-running-containers: "仅显示运行中的容器"
   expanded-all: "已展开所有分区"
@@ -442,11 +447,14 @@ cloud:
     create-alerts: "启用所选信号"
     later: "稍后再说"
 cloud-search:
+  local-search: "本地搜索"
+  enable-streaming-for-indexed: "启用 Stream Logs 以获得索引历史"
+  connect-for-indexed: "连接 Dozzle Cloud 以索引所有容器的历史"
+  search-locally: "改为本地搜索"
+  local-scope: "扫描运行中的容器，从最新开始"
   containers-section: "容器"
   search-logs-for: '搜索日志 "{query}"'
   across-containers: "已在所有容器中建立索引"
-  connect-to-enable: "连接 Dozzle Cloud 以搜索日志"
-  enable-streaming-to-search: "启用日志流式传输到 Cloud"
   open-container: "打开容器"
   search-logs-shortcut: "搜索日志"
   cloud-connected: "Cloud 已连接"
@@ -470,6 +478,17 @@ cloud-search:
   cta-settings: "Cloud 设置"
   container-removed-pill: "已删除"
 command-palette:
+  language: "语言"
+  date-format: "日期格式"
+  font-size: "字体大小"
+  table-stats: "表格统计"
+  grouping: "容器分组"
+  redirect: "自动跳转"
+  hour-style: "小时制"
+  search-on: "启用搜索"
+  search-off: "禁用搜索"
+  topbar-show: "显示状态栏"
+  topbar-hide: "折叠状态栏"
   section-commands: 命令
   restart-container: 重启 {name}
   stop-container: 停止 {name}

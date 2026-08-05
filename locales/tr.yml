@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Durdurulmuş konteynerleri dahil et"
   clear: Temizle
   download: İndir
   download-filtered: Filtrelenmiş Logları İndir
@@ -44,6 +45,9 @@ action:
   create-alert: Uyarı oluştur
   more-actions: Diğer eylemler
 label:
+  hosts-selected: "{count} sunucu"
+  loading: "Yükleniyor"
+  all-logs: "Tüm günlükler"
   containers: Konteynerlar
   container: Konteyner yok | 1 konteyner | {count} konteyner
   host-count: Ana Bilgisayar yok | 1 Ana Bilgisayar | {count} Ana Bilgisayar
@@ -155,6 +159,7 @@ title:
   settings: Ayarlar
   notifications: Bildirimler
 button:
+  undo: "Geri al"
   logout: Çıkış Yap
   login: Giriş Yap
   settings: Ayarlar
@@ -173,6 +178,9 @@ placeholder:
   search: Ara
   find-regex: Bul / RegEx
 settings:
+  reset-all: "Tüm ayarları sıfırla"
+  reset-desc: "Her tercihi varsayılana döndürür. Konteynerler ve günlükler etkilenmez."
+  reset-confirm: "Sıfırlamayı onayla"
   help-support: >
     Lütfen GitHub'da bağış yaparak veya bizi sponsor olarak destekleyerek Dozzle'ı destekleyin. Katkılarınız Dozzle'ı herkes için geliştirmemize yardımcı oluyor. Teşekkürler! 🙏🏼
   about-desc: Dozzle kurulumunuz ve projeyi nasıl destekleyebileceğiniz hakkında bilgiler.
@@ -193,14 +201,10 @@ settings:
   view-visual: "Görsel"
   view-json: "JSON"
   export: "Dışa aktar"
-  import: "İçe aktar"
   apply: "Uygula"
   json-valid: "Geçerli JSON"
-  imported: "Ayarlar içe aktarıldı"
   exported: "Ayarlar panoya kopyalandı"
   applied: "Ayarlar uygulandı"
-  import-hint: "Ayar JSON'unu veya application/json döndüren bir URL'yi yapıştırın."
-  import-placeholder: "Ayar JSON'unu buraya yapıştırın veya https://example.com/settings.json"
   options: Seçenekler
   show-stopped-containers: Durdurulan konteynerleri göster
   group-containers: Konteynerleri ad alanına göre grupla
@@ -258,6 +262,7 @@ log_actions:
   copy_log: Günlüğü kopyala
   jump_to_context: Bağlama git
 toasts:
+  settings-reset: "Ayarlar sıfırlandı"
   showing-all-containers: "Durdurulmuşlar dahil tüm konteynerler gösteriliyor"
   showing-running-containers: "Yalnızca çalışan konteynerler gösteriliyor"
   expanded-all: "Tüm bölümler genişletildi"
@@ -446,11 +451,14 @@ cloud:
     create-alerts: "Seçili sinyalleri aç"
     later: "Bunu daha sonra yapacağım"
 cloud-search:
+  local-search: "Yerel arama"
+  enable-streaming-for-indexed: "Dizinli geçmiş için Stream Logs'u etkinleştir"
+  connect-for-indexed: "Tüm konteynerlerde dizinli geçmiş için Dozzle Cloud'a bağlan"
+  search-locally: "Bunun yerine yerelde ara"
+  local-scope: "Çalışan konteynerleri en yeniden başlayarak tarar"
   containers-section: "Konteynerler"
   search-logs-for: '"{query}" için logları ara'
   across-containers: "tüm konteynerleriniz arasında indekslenmiş"
-  connect-to-enable: "Logları aramak için Dozzle Cloud'a bağlanın"
-  enable-streaming-to-search: "Log akışını Cloud'a etkinleştirin"
   open-container: "konteyneri aç"
   search-logs-shortcut: "logları ara"
   cloud-connected: "Cloud bağlı"
@@ -474,6 +482,17 @@ cloud-search:
   cta-settings: "Cloud ayarları"
   container-removed-pill: "silindi"
 command-palette:
+  language: "Dil"
+  date-format: "Tarih biçimi"
+  font-size: "Yazı boyutu"
+  table-stats: "Tablo istatistikleri"
+  grouping: "Konteynerleri grupla"
+  redirect: "Otomatik yönlendirme"
+  hour-style: "Saat biçimi"
+  search-on: "Aramayı etkinleştir"
+  search-off: "Aramayı devre dışı bırak"
+  topbar-show: "İstatistik çubuğunu göster"
+  topbar-hide: "İstatistik çubuğunu daralt"
   section-commands: Komutlar
   restart-container: "{name} yeniden başlat"
   stop-container: "{name} durdur"

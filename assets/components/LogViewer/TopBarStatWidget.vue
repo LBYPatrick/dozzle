@@ -18,18 +18,21 @@
 
       <!-- Scroll-position percentage on the left, while scrolled up. -->
       <transition name="pct">
-        <span v-if="paused && !loading" class="text-primary flex items-center gap-3 text-sm font-semibold tabular-nums">
+        <span
+          v-if="paused && !loading"
+          class="text-primary-safe flex items-center gap-3 text-sm font-semibold tabular-nums"
+        >
           {{ Math.round(clamped * 100) }}%
           <span class="bg-base-content/15 h-4 w-px"></span>
         </span>
       </transition>
 
-      <span class="text-primary flex items-center gap-1.5">
+      <span class="text-primary-safe flex items-center gap-1.5">
         <PhCpu class="size-4" />
         <span class="text-sm font-semibold tabular-nums">{{ cpu.toFixed(1) }}%</span>
       </span>
       <span class="bg-base-content/15 h-4 w-px"></span>
-      <span class="text-secondary flex items-center gap-1.5">
+      <span class="text-secondary-safe flex items-center gap-1.5">
         <PhMemory class="size-4" />
         <span class="text-sm font-semibold tabular-nums">{{
           formatBytes(memoryUsage, { short: true, decimals: 1 })

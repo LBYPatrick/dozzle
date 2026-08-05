@@ -6,15 +6,27 @@
   >
     <!-- Input row -->
     <div class="group/field flex items-center gap-3 px-4 py-3.5">
-      <mdi:magnify
-        class="text-base-content/60 group-focus-within/field:text-primary size-5 shrink-0 transition-colors"
-      />
+      <!-- The glyph is the mode indicator. A leading "/" turns the palette into
+           a command autocomplete, which was a silent change: the field looked
+           exactly like container search while behaving nothing like it. A
+           chevron is the prompt glyph everywhere else that has one, and it is
+           drawn in stroke like the magnifier it replaces — a filled shape beside
+           an outlined field would read as a different weight of control, not the
+           same one in another mode. -->
+      <Transition name="mode-icon" mode="out-in">
+        <mdi:chevron-right v-if="isCommandMode" key="command" class="command-glyph size-5 shrink-0" />
+        <mdi:magnify
+          v-else
+          key="search"
+          class="text-base-content/60 group-focus-within/field:text-primary size-5 shrink-0 transition-colors"
+        />
+      </Transition>
       <input
         tabindex="0"
         class="text-base-content placeholder:text-base-content/40 flex-1 bg-transparent text-base outline-none"
         ref="input"
-        @keydown.down="selectedIndex = Math.min(selectedIndex + 1, totalCount - 1)"
-        @keydown.up="selectedIndex = Math.max(selectedIndex - 1, 0)"
+        @keydown.down.prevent="selectedIndex = Math.min(selectedIndex + 1, totalCount - 1)"
+        @keydown.up.prevent="selectedIndex = Math.max(selectedIndex - 1, 0)"
         @keydown.enter.exact="onEnter"
         @keydown.shift.enter.exact.prevent="runLogSearch"
         @keydown.alt.enter.exact.prevent="onPin"
@@ -60,7 +72,14 @@
               :class="{ 'bg-base-content/10': index === selectedIndex }"
               @click.prevent="runCommand(command)"
             >
-              <component :is="command.icon" class="text-base-content/60 size-4 shrink-0" />
+              <!-- A colour command shows its colour. The inset ring keeps a pale
+                   swatch visible against the row on the light theme. -->
+              <span
+                v-if="command.swatch"
+                class="size-4 shrink-0 rounded-full ring-1 ring-black/15 ring-inset"
+                :style="{ backgroundColor: command.swatch }"
+              />
+              <component v-else :is="command.icon" class="text-base-content/60 size-4 shrink-0" />
               <span class="min-w-0 flex-1 truncate text-sm">{{ command.title }}</span>
               <span class="text-base-content/30 shrink-0 font-mono text-xs">{{ command.slash }}</span>
               <ic:sharp-keyboard-return v-if="index === selectedIndex" class="text-base-content/40 size-4" />
@@ -116,26 +135,20 @@
         </ul>
       </template>
 
-      <!-- Log search CTA -->
-      <div
-        v-if="logSearchVisible"
-        class="border-base-content/10 border-t"
-        :class="{ 'cursor-pointer': cloudSearch.available.value, 'opacity-70': !cloudSearch.available.value }"
-        @click="cloudSearch.available.value && runLogSearch()"
-      >
-        <div
-          class="flex items-center gap-3 px-4 py-3"
-          :class="cloudSearch.available.value ? 'bg-primary/[0.07] hover:bg-primary/10' : ''"
-        >
-          <mdi:cloud-search-outline
-            class="size-5 shrink-0"
-            :class="cloudSearch.available.value ? 'text-primary' : 'text-base-content/40'"
-          />
+      <!-- Log search CTA. Always actionable: without Cloud it runs the local
+           fleet-wide scan instead of advertising a product. The row used to sit
+           dimmed and inert saying "Connect Dozzle Cloud to search logs", which
+           read as "this cannot be done" when the server has always been able to
+           do it for every container it is streaming. -->
+      <div v-if="logSearchVisible" class="border-base-content/10 cursor-pointer border-t" @click="runLogSearch()">
+        <div class="bg-primary/[0.07] hover:bg-primary/10 flex items-center gap-3 px-4 py-3">
+          <mdi:cloud-search-outline v-if="cloudSearch.available.value" class="text-primary size-5 shrink-0" />
+          <mdi:text-search v-else class="text-primary size-5 shrink-0" />
           <div class="flex min-w-0 flex-1 flex-col">
-            <span
-              class="truncate text-sm font-semibold"
-              :class="cloudSearch.available.value ? 'text-primary' : 'text-base-content/60'"
-            >
+            <!-- text-primary-safe, not text-primary: the raw accent is tuned
+                 to sit behind dark text and measures 1.6:1 as a foreground on
+                 the light theme. -->
+            <span class="text-primary-safe truncate text-sm font-semibold">
               <i18n-t keypath="cloud-search.search-logs-for">
                 <template #query>
                   <span class="font-mono">{{ searchQuery }}</span>
@@ -147,17 +160,11 @@
                 <mdi:flash class="text-primary size-3" />
                 {{ $t("cloud-search.across-containers") }}
               </template>
-              <template v-else-if="cloudConfig?.linked && !cloudConfig.streamLogs">
-                <mdi:cloud-off-outline class="size-3" />
-                <button type="button" class="link link-hover" @click.stop="openCloudSettings">
-                  {{ $t("cloud-search.enable-streaming-to-search") }}
-                </button>
-              </template>
+              <!-- Says what the local scan actually covers, so the difference
+                   from Cloud is a stated limit rather than a surprise. -->
               <template v-else>
-                <mdi:cloud-off-outline class="size-3" />
-                <button type="button" class="link link-hover" @click.stop="openCloudSettings">
-                  {{ $t("cloud-search.connect-to-enable") }}
-                </button>
+                <mdi:history class="size-3" />
+                {{ $t("cloud-search.local-scope") }}
               </template>
             </span>
           </div>
@@ -175,26 +182,30 @@
       <span v-if="totalCount" class="flex items-center gap-1.5">
         <kbd class="kbd kbd-xs">↵</kbd> {{ $t("cloud-search.open-container") }}
       </span>
-      <span v-if="cloudSearch.available.value && logSearchVisible" class="flex items-center gap-1">
+      <!-- Not gated on Cloud any more: Shift+Enter searches either way, and
+           hiding the shortcut was telling people it did not exist. -->
+      <span v-if="logSearchVisible" class="flex items-center gap-1">
         <kbd class="kbd kbd-xs">⇧</kbd><kbd class="kbd kbd-xs">↵</kbd>
         <span class="ml-0.5">{{ $t("cloud-search.search-logs-shortcut") }}</span>
       </span>
 
+      <!-- States which engine is about to run, rather than treating one of them
+           as a missing prerequisite. "Connect Dozzle Cloud to search logs" was
+           simply untrue once the local scan existed. -->
       <span v-if="cloudSearch.available.value" class="ml-auto flex items-center gap-1.5">
         <mdi:cloud-check-outline class="text-primary size-3.5" />
         {{ $t("cloud-search.cloud-connected") }}
       </span>
       <span v-else-if="cloudConfig?.linked" class="ml-auto flex items-center gap-1.5">
-        <mdi:cloud-off-outline class="size-3.5" />
+        <mdi:magnify class="size-3.5" />
+        {{ $t("cloud-search.local-search") }}
         <button type="button" class="link link-hover" @click.stop="openCloudSettings">
-          {{ $t("cloud-search.enable-streaming-to-search") }}
+          {{ $t("cloud-search.enable-streaming-for-indexed") }}
         </button>
       </span>
       <span v-else class="ml-auto flex items-center gap-1.5">
-        <mdi:cloud-off-outline class="size-3.5" />
-        <button type="button" class="link link-hover" @click.stop="openCloudSettings">
-          {{ $t("cloud-search.connect-to-enable") }}
-        </button>
+        <mdi:magnify class="size-3.5" />
+        {{ $t("cloud-search.local-search") }}
       </span>
     </div>
   </div>
@@ -223,11 +234,14 @@ function openCloudSettings() {
 const router = useRouter();
 const route = useRoute();
 
-// Prefill with the current /cloud/search query so the user can refine
-// without retyping. Empty everywhere else. Null-safe for unit tests
-// that mount the component without a router context.
-const initialQuery = route?.path === "/cloud/search" && typeof route.query?.q === "string" ? route.query.q : "";
-const query = ref(initialQuery);
+// Two ways the input can arrive non-empty, and they want opposite caret
+// behaviour (see onMounted): a seeded command prefix from Cmd+Shift+P, and the
+// current /cloud/search query so refining a search does not mean retyping it.
+// Route lookup is null-safe for unit tests that mount without a router.
+const { initialQuery: seededQuery } = useFuzzySearch();
+const routeQuery = route?.path === "/cloud/search" && typeof route.query?.q === "string" ? route.query.q : "";
+const seeded = seededQuery.value;
+const query = ref(seeded || routeQuery);
 const input = ref<HTMLInputElement>();
 
 function clearQuery() {
@@ -280,7 +294,10 @@ onMounted(async () => {
     const animations = dialog.getAnimations();
     await Promise.all(animations.map((animation) => animation.finished));
     input.value?.focus();
-    if (initialQuery) input.value?.select();
+    // A seeded "/" is a starting point to type after, so the caret stays at the
+    // end; a query carried in from the route is a value you are likely to
+    // replace wholesale, so it arrives selected.
+    if (routeQuery && !seeded) input.value?.select();
   }
 });
 
@@ -428,7 +445,7 @@ function onEnter() {
     runCommand(commandEntries.value[selectedIndex.value]);
   } else if (containerEntries.value.length > 0) {
     selected(containerEntries.value[selectedIndex.value - commandCount].item);
-  } else if (cloudSearch.available.value && logSearchVisible.value) {
+  } else if (logSearchVisible.value) {
     runLogSearch();
   }
 }
@@ -444,10 +461,17 @@ function onPin() {
 }
 
 function runLogSearch() {
-  if (isCommandMode.value || !cloudSearch.available.value) return;
+  if (isCommandMode.value) return;
   const q = searchQuery.value.trim();
   if (!q) return;
-  router.push({ path: "/cloud/search", query: { q } });
+  if (cloudSearch.available.value) {
+    router.push({ path: "/cloud/search", query: { q } });
+  } else {
+    // The local fleet-wide view reads `?search=` through useSearchFilter, so
+    // the query is applied — and the server's backward scan already running —
+    // by the time the page paints. No second search mechanism to maintain.
+    router.push({ path: "/logs", query: { search: q } });
+  }
   close();
 }
 
@@ -493,5 +517,40 @@ function matchedName({ item, matches = [] }: FuseResult<Item>) {
 .clear-leave-to {
   opacity: 0;
   transform: scale(0.6);
+}
+
+/* Mixing toward base-content rather than picking a second colour: it deepens on
+   the light theme and brightens on the dark one from whichever accent is
+   configured, so a custom accent stays the accent in both. */
+.command-glyph {
+  color: color-mix(in oklab, var(--color-primary) 78%, var(--color-base-content));
+}
+
+/* The two glyphs trade places rather than cutting, so entering command mode
+   reads as one control changing state — the same swap the sidebar's eye
+   toggle uses. out-in, so they never overlap in a 20px box. */
+.mode-icon-enter-active,
+.mode-icon-leave-active {
+  transition:
+    opacity 120ms ease,
+    transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mode-icon-enter-from,
+.mode-icon-leave-to {
+  opacity: 0;
+  transform: scale(0.72) rotate(-12deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mode-icon-enter-active,
+  .mode-icon-leave-active {
+    transition: opacity 120ms ease;
+  }
+
+  .mode-icon-enter-from,
+  .mode-icon-leave-to {
+    transform: none;
+  }
 }
 </style>

@@ -101,8 +101,8 @@
 
 <script setup lang="ts">
 import { Container } from "@/models/Container";
-import { toRefs } from "@vueuse/core";
 import type { DataTableColumn } from "@/components/common/DataTable.vue";
+import { CONTAINER_TABLE_PAGE_SIZES, type Settings } from "@/stores/settings";
 
 const { hosts } = useHosts();
 const selectedHost = ref<string | null>(null);
@@ -172,24 +172,25 @@ const {
 }>();
 type keys = keyof typeof fields;
 
-const statMode = useStorage<"chart" | "progress">("DOZZLE_TABLE_STAT_MODE", "chart");
-const perPage = useStorage("DOZZLE_TABLE_PAGE_SIZE", 15);
-const pageSizes = [15, 30, 50, 100];
+// These live in the settings profile rather than three loose localStorage keys
+// of this component's own, so exporting your settings actually takes the table
+// with it.
+const statMode = containerTableStatMode;
+const perPage = containerTablePageSize;
+const pageSizes = CONTAINER_TABLE_PAGE_SIZES;
 
-const storage = useStorage<{ column: keys; direction: 1 | -1 }>("DOZZLE_TABLE_CONTAINERS_SORT", {
-  column: "created" as keys,
-  direction: -1 as 1 | -1,
-});
-const { column: sortField, direction } = toRefs(storage.value);
+// The comparators multiply by this, so the stored boolean is mapped once here
+// rather than at each of the six call sites.
+const direction = computed<1 | -1>(() => (containerTableSortAsc.value ? 1 : -1));
 
-// Adapter between the persisted shape and DataTable's model. This table always
+// Adapter between the stored shape and DataTable's model. This table always
 // sorts by something, so a null key from the shared control falls back to the
 // current column rather than clearing the order.
 const sort = computed({
-  get: () => ({ key: sortField.value as string, direction: direction.value }),
+  get: () => ({ key: containerTableSortColumn.value as string, direction: direction.value }),
   set: ({ key, direction: dir }) => {
-    if (key) sortField.value = key as keys;
-    direction.value = dir;
+    if (key) containerTableSortColumn.value = key as Settings["containerTableSortColumn"];
+    containerTableSortAsc.value = dir === 1;
   },
 });
 
@@ -221,8 +222,8 @@ const filteredContainers = computed(() =>
   containers.filter((c) => selectedHost.value === null || c.host === selectedHost.value),
 );
 const sortedContainers = computedWithControl(
-  () => [filteredContainers.value.length, sortField.value, direction.value, counter.value],
-  () => filteredContainers.value.sort((a, b) => fields[sortField.value].sortFunc(a, b)),
+  () => [filteredContainers.value.length, containerTableSortColumn.value, direction.value, counter.value],
+  () => filteredContainers.value.sort((a, b) => fields[containerTableSortColumn.value].sortFunc(a, b)),
 );
 
 const totalPages = computed(() => Math.ceil(sortedContainers.value.length / perPage.value));
@@ -281,11 +282,13 @@ function isVisible(field: keys) {
 }
 
 .tone-running {
-  @apply text-success bg-success/12;
+  @apply bg-success/12;
+  color: var(--color-success-text);
 }
 
 .tone-transient {
-  @apply text-warning bg-warning/12;
+  @apply bg-warning/12;
+  color: var(--color-warning-text);
 }
 
 .tone-stopped {

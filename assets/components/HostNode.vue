@@ -6,7 +6,8 @@
     :title="host.name"
     :open="isOpen(hostKey(host.id))"
     @update:open="setOpen(hostKey(host.id), $event)"
-    :class="{ 'text-base-content/50': !host.available }"
+    :class="{ 'text-base-content/50': !host.available && !isEmpty }"
+    :disabled="isEmpty"
   >
     <template #icon>
       <HostIcon :type="host.type" class="size-4 shrink-0 opacity-70" />
@@ -64,4 +65,10 @@ const { isOpen, setOpen } = useCollapsedSections();
 // Pinning no longer changes what a host branch holds — a pinned container stays
 // in place with a marker — so the branch has nothing to debounce any more.
 const groups = computed(() => groupContainersForHost(visibleContainers.value, host.id));
+
+// `visibleContainers` is the store's running-vs-all view, so this follows the
+// eye toggle: a host whose containers are all stopped has nothing to show while
+// the filter is "running only", and expanding it would open onto an empty list.
+// Dimming and disabling says so before the click rather than after it.
+const isEmpty = computed(() => groups.value.length === 0);
 </script>

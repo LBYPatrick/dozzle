@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Gestoppte Container einbeziehen"
   clear: Leeren
   download: Herunterladen
   download-filtered: Gefilterte Logs Herunterladen
@@ -44,6 +45,9 @@ action:
   create-alert: Alarm erstellen
   more-actions: Weitere Aktionen
 label:
+  hosts-selected: "{count} Hosts"
+  loading: "Wird geladen"
+  all-logs: "Alle Logs"
   containers: Container
   container: Keine Container | 1 Container | {count} Container
   host-count: Keine Hosts | 1 Host | {count} Hosts
@@ -152,6 +156,7 @@ title:
   settings: Einstellungen
   notifications: Benachrichtigungen
 button:
+  undo: "Rückgängig"
   logout: Ausloggen
   login: Anmeldung
   settings: Einstellungen
@@ -170,6 +175,9 @@ placeholder:
   search: Suche
   find-regex: Suchen / RegEx
 settings:
+  reset-all: "Alle Einstellungen zurücksetzen"
+  reset-desc: "Setzt jede Einstellung auf den Standard zurück. Container und Logs bleiben unberührt."
+  reset-confirm: "Zurücksetzen bestätigen"
   help-support: >
     Bitte unterstützen Sie Dozzle durch Spenden oder Sponsoring auf GitHub. Ihre Beiträge helfen uns, Dozzle für alle zu verbessern. Vielen Dank! 🙏🏼
   about-desc: Informationen zu Ihrer Dozzle-Installation und wie Sie das Projekt unterstützen können.
@@ -190,14 +198,10 @@ settings:
   view-visual: "Visuell"
   view-json: "JSON"
   export: "Exportieren"
-  import: "Importieren"
   apply: "Anwenden"
   json-valid: "Gültiges JSON"
-  imported: "Einstellungen importiert"
   exported: "Einstellungen in die Zwischenablage kopiert"
   applied: "Einstellungen angewendet"
-  import-hint: "Einstellungs-JSON einfügen oder eine URL, die application/json zurückgibt."
-  import-placeholder: "Einstellungs-JSON hier einfügen oder https://example.com/settings.json"
   options: Optionen
   show-stopped-containers: Zeige gestoppte Container
   group-containers: Container nach Namespace gruppieren
@@ -254,6 +258,7 @@ log_actions:
   copy_log: Log kopieren
   jump_to_context: Zum Kontext springen
 toasts:
+  settings-reset: "Einstellungen zurückgesetzt"
   showing-all-containers: "Zeigt alle Container, auch gestoppte"
   showing-running-containers: "Zeigt nur laufende Container"
   expanded-all: "Alle Abschnitte ausgeklappt"
@@ -442,11 +447,14 @@ cloud:
     create-alerts: "Ausgewählte Signale aktivieren"
     later: "Das mache ich später"
 cloud-search:
+  local-search: "Lokale Suche"
+  enable-streaming-for-indexed: "Stream Logs für indizierten Verlauf aktivieren"
+  connect-for-indexed: "Dozzle Cloud verbinden für indizierten Verlauf über alle Container"
+  search-locally: "Stattdessen lokal suchen"
+  local-scope: "Durchsucht laufende Container, neueste zuerst"
   containers-section: "Container"
   search-logs-for: 'Logs durchsuchen nach "{query}"'
   across-containers: "indexiert über alle deine Container"
-  connect-to-enable: "Dozzle Cloud verbinden, um Logs zu durchsuchen"
-  enable-streaming-to-search: "Log-Streaming zur Cloud aktivieren"
   open-container: "Container öffnen"
   search-logs-shortcut: "Logs durchsuchen"
   cloud-connected: "Cloud verbunden"
@@ -470,6 +478,17 @@ cloud-search:
   cta-settings: "Cloud-Einstellungen"
   container-removed-pill: "gelöscht"
 command-palette:
+  language: "Sprache"
+  date-format: "Datumsformat"
+  font-size: "Schriftgröße"
+  table-stats: "Tabellenwerte"
+  grouping: "Container gruppieren"
+  redirect: "Automatische Weiterleitung"
+  hour-style: "Stundenformat"
+  search-on: "Suche aktivieren"
+  search-off: "Suche deaktivieren"
+  topbar-show: "Statusleiste anzeigen"
+  topbar-hide: "Statusleiste einklappen"
   section-commands: Befehle
   restart-container: "{name} neu starten"
   stop-container: "{name} stoppen"

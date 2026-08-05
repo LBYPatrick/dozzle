@@ -53,6 +53,16 @@ describe("groupContainersForHost", () => {
     expect(names(groupContainersForHost(containers, "localhost"))).toEqual(["a", "b", "c"]);
   });
 
+  /**
+   * The sidebar reads an empty result as "this host has nothing to show under
+   * the current filter" and dims and disables the branch, so returning no groups
+   * (rather than one empty group) is load-bearing, not incidental.
+   */
+  test("returns no groups for a host with nothing to show", () => {
+    expect(groupContainersForHost([], "localhost")).toEqual([]);
+    expect(groupContainersForHost([container("elsewhere", "other-host")], "localhost")).toEqual([]);
+  });
+
   test('a namespace of one lands in the catch-all under "at-least-2"', () => {
     const containers = [container("solo", "localhost", "proj"), container("loose")];
 

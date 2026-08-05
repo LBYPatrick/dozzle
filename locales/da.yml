@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Inkludér stoppede containere"
   clear: Ryd
   download: Download
   download-filtered: Download Filtrerede Logs
@@ -44,6 +45,9 @@ action:
   create-alert: Opret advarsel
   more-actions: Flere handlinger
 label:
+  hosts-selected: "{count} værter"
+  loading: "Indlæser"
+  all-logs: "Alle logs"
   containers: Containere
   container: Ingen containere | 1 container | {count} containere
   host-count: Ingen Værter | 1 Vært | {count} Værter
@@ -152,6 +156,7 @@ title:
   settings: Indstillinger
   notifications: Notifikationer
 button:
+  undo: "Fortryd"
   logout: Logout
   login: Login
   settings: Indstillinger
@@ -170,6 +175,9 @@ placeholder:
   search: Søg
   find-regex: Find / RegEx
 settings:
+  reset-all: "Nulstil alle indstillinger"
+  reset-desc: "Sætter alle indstillinger tilbage til standard. Containere og logs røres ikke."
+  reset-confirm: "Bekræft nulstilling"
   help-support: >
     Støt venligst Dozzle ved at donere eller sponsorere os på GitHub. Dine bidrag hjælper os med at forbedre Dozzle for alle. Tak! 🙏🏼
   about-desc: Information om din Dozzle-installation og hvordan du kan støtte projektet.
@@ -190,14 +198,10 @@ settings:
   view-visual: "Visuel"
   view-json: "JSON"
   export: "Eksportér"
-  import: "Importér"
   apply: "Anvend"
   json-valid: "Gyldig JSON"
-  imported: "Indstillinger importeret"
   exported: "Indstillinger kopieret til udklipsholder"
   applied: "Indstillinger anvendt"
-  import-hint: "Indsæt indstillings-JSON, eller en URL der returnerer application/json."
-  import-placeholder: "Indsæt indstillings-JSON her, eller https://example.com/settings.json"
   options: Muligheder
   show-stopped-containers: Vis stoppet containere
   group-containers: Gruppér containere efter namespace
@@ -254,6 +258,7 @@ log_actions:
   copy_log: Kopier log
   jump_to_context: Hop til kontekst
 toasts:
+  settings-reset: "Indstillinger nulstillet"
   showing-all-containers: "Viser alle containere, inklusive stoppede"
   showing-running-containers: "Viser kun kørende containere"
   expanded-all: "Udvidede alle sektioner"
@@ -442,11 +447,14 @@ cloud:
     create-alerts: "Slå valgte signaler til"
     later: "Det gør jeg senere"
 cloud-search:
+  local-search: "Lokal søgning"
+  enable-streaming-for-indexed: "Aktivér Stream Logs for indekseret historik"
+  connect-for-indexed: "Forbind Dozzle Cloud for indekseret historik på tværs af alle containere"
+  search-locally: "Søg lokalt i stedet"
+  local-scope: "Scanner kørende containere, nyeste først"
   containers-section: "Containere"
   search-logs-for: 'Søg logs efter "{query}"'
   across-containers: "indekseret på tværs af alle dine containere"
-  connect-to-enable: "Tilslut Dozzle Cloud for at søge i logs"
-  enable-streaming-to-search: "Aktiver log-streaming til Cloud"
   open-container: "åbn container"
   search-logs-shortcut: "søg logs"
   cloud-connected: "Cloud tilsluttet"
@@ -470,6 +478,17 @@ cloud-search:
   cta-settings: "Cloud-indstillinger"
   container-removed-pill: "slettet"
 command-palette:
+  language: "Sprog"
+  date-format: "Datoformat"
+  font-size: "Skriftstørrelse"
+  table-stats: "Tabelstatistik"
+  grouping: "Gruppér containere"
+  redirect: "Automatisk omdirigering"
+  hour-style: "Timeformat"
+  search-on: "Aktivér søgning"
+  search-off: "Deaktivér søgning"
+  topbar-show: "Vis statuslinje"
+  topbar-hide: "Fold statuslinje sammen"
   section-commands: Kommandoer
   restart-container: Genstart {name}
   stop-container: Stop {name}

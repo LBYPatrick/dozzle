@@ -115,6 +115,69 @@ floating, collapsible, two-row glass bar following Apple HIG.
   zeros; the ceiling still reports, being a property of the host.
 - Bar row 1 is pinned to a constant height so switching form never shifts the page.
 
+## Command palette (Cmd/Ctrl+Shift+P)
+
+- **Brought up to parity with the settings surface.** The palette covered nine
+  preferences out of twenty-six; every display mode added since — font size,
+  CPU/memory and network/disk stat modes, trend shape, the container table's stat
+  rendering and page size, container grouping, auto-redirect, hour and date
+  format, in-log search, the collapsible stat bar — was reachable only by opening
+  Settings or a view's own menu. All are commands now: 23 of 26 settings, with
+  the remaining three named and justified in `SETTINGS_WITHOUT_COMMANDS` (locale
+  is an open-ended value space; table sort is direct manipulation you do by
+  clicking the header).
+- **Reset all settings**, on both surfaces, with a different safety net on each
+  because the surfaces differ. The panel arms a two-step confirm; a toast would
+  be invisible there, since the settings sheet is a `<dialog>` and therefore in
+  the browser's top layer, which the toast layer cannot rise above however high
+  its z-index. The palette has already closed by the time its toast appears, so
+  it offers a plain Undo instead — one click to take it back rather than one
+  more before acting. `resetSettings()` returns the undo closure rather than
+  just resetting, which is what lets the two callers differ.
+- **`ToastItem` gained a non-timed action button.** `TimedButton` is for
+  something about to happen unless you stop it; Undo is for something already
+  done, so it renders as a plain button beside the close.
+- **Titles are composed from the labels the settings UI already uses** —
+  `"CPU & memory" + "Trend chart"` — so a new command needs no new translation
+  and the palette can never describe a setting differently from the panel that
+  owns it. Only short group labels that did not already exist were added
+  (10 keys, 16 locales).
+- **Colour commands show the colour.** The accent was left out at first on the
+  grounds that nine rows reading "Accent color: Violet" is a picker with the
+  picking removed — true of the _label_, not of the row. `Command` gained an
+  optional `swatch`, so `/accent violet` renders the colour itself, with an inset
+  ring to keep a pale swatch visible on the light theme. Nine commands, no new
+  translations (the colour names are literals, as in the picker).
+- **Command mode announces itself.** A leading `/` turned the palette into a
+  command autocomplete silently: the field looked exactly like container search
+  while behaving nothing like it. The magnifier now swaps to a boxed slash —
+  mirroring the character you typed — in a deeper shade of the _configured_
+  accent (`color-mix` toward base-content, so it deepens on light and brightens
+  on dark, and a custom accent stays the accent). Deliberately distinct from the
+  plain `text-primary` the magnifier already takes on focus, so the two states
+  cannot be read as one. The glyphs cross-fade and rotate rather than cutting,
+  `out-in` so they never overlap in a 20px box, with a reduced-motion path that
+  keeps the fade and drops the travel.
+- **`enumStateCommands`** mirrors the existing `booleanStateCommands` for
+  settings with more than two values: one command per value, never a cycle, so
+  you can name the state you want without knowing the one you are in.
+- **Parity is enforced, not just performed.** The settings commands were
+  extracted into `settingCommands(t)`, a pure function needing no router, store
+  or app context, and each command declares the `setting` it drives.
+  `commands.spec.ts` then builds the real list and asserts every key in
+  `Settings` is either commanded or explicitly excluded — so adding a setting
+  without deciding either way fails the suite instead of shipping unreachable.
+  It also checks idempotency by running each command twice, and that every value
+  of the tri-state settings is reachable (a bare toggle would strand "auto").
+
+- **Cmd/Ctrl+Shift+P opens the palette already in command mode**, the way an
+  editor does: Cmd+K is "find a container", this is "run a command". It seeds the
+  input with the `/` prefix rather than adding a second mode flag, so the palette
+  needs no knowledge of how it was opened — it already switches on a leading
+  slash. The caret lands after the prefix instead of selecting it, since a seeded
+  `/` is a starting point to type after; a query carried in from `/cloud/search`
+  still arrives selected, being a value you are likely to replace wholesale.
+
 ## Search (in-log, Cmd/Ctrl+F)
 
 - The floating draggable search box is replaced by an integrated search that
@@ -157,7 +220,7 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
 - Key files: `assets/components/FuzzySearchModal.vue` (+ `.spec.ts`),
   `composable/commands.ts` (new, ~358 lines).
 
-## Settings popup, JSON/visual editor, import/export
+## Settings popup, JSON/visual editor, export
 
 - The `/settings` route is **removed entirely** — settings is now only a
   fullscreen in-place popup (dim overlay + glass card). The header gear, sidebar
@@ -182,15 +245,89 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   route and the popup — destination/alert drawers open over the popup).
 - **Visual / JSON toggle:** JSON view uses a lazily-loaded CodeMirror editor with
   an Apply action and live validity feedback. Segmented control toggles the view.
-- **Export** settings to clipboard as JSON; **import** from pasted JSON or a URL
-  returning `application/json`. Import validates: only known keys with matching
-  types are applied, string enums are checked against allowed values, and numeric
-  settings (`menuWidth`) are clamped.
+- **Export** settings to clipboard as JSON. The separate import panel (paste a
+  document, or fetch a URL returning `application/json`) is gone: the JSON view
+  is already a full editor with Apply, so the panel was a second, weaker way to
+  do the same thing — and it collapsed the header into two competing modes.
+  Applying still validates: only known keys with matching types are taken, string
+  enums are checked against allowed values, numeric settings are clamped or
+  restricted to a fixed set, and everything else is ignored.
+- **The document is nested, the store is not.** Export used to be
+  `JSON.stringify(settings)` — 26 keys in one flat blob, in whatever order they
+  happened to be declared. It is now grouped (`appearance`, `dateTime`, `logs`,
+  `stats`, `containers`, `containerTable`, `sidebar`), which also lets the
+  document carry clearer names than the store's historical ones:
+  `appearance/theme` rather than `lightTheme`, and `dateTime/locale` rather than
+  `dateLocale`, which sat directly beside an unrelated `locale`.
+
+  Settings stay flat _internally_, because ~30 modules import individual refs off
+  the store (`compact`, `softWrap`, …) and nesting it would mean rewriting every
+  one of them to no benefit. The nesting is a property of the document, so it
+  lives with the serializer as one path-to-key map, and the two are free to
+  differ. A `readPath(source, "stats/trendShape")` helper addresses the nested
+  document in flat slash form; it returns `undefined` for anything that does not
+  resolve — a missing key, or a path running into a primitive or an array
+  partway down — because "absent" is what every caller wants there: an
+  incomplete document should leave a setting alone, not throw.
+
+  Import takes either shape. A path that does not resolve falls back to the flat
+  key, so documents exported before the nesting still apply, and so does a
+  partial one holding a single group.
+
+  `settings.spec.ts` covers it, including a guard that the map has exactly as
+  many leaves as the store has keys — it is hand-maintained, so a setting added
+  without a path would otherwise vanish silently from export and import.
+
+- **Every changeable preference is in the document.** The container table's stat
+  mode, page size and sort order lived in three loose `DOZZLE_TABLE_*`
+  localStorage keys, so exporting your settings — or moving to another browser —
+  silently skipped them; they are settings now, with a one-time migration off the
+  old keys so an upgrade does not reset anyone's table. The log view's CPU/memory,
+  network/disk and trend-shape choices were already stored but reachable only
+  from that view's own actions menu, so Settings never showed the whole of what
+  you can change; they now have rows in the Display section, sharing the actions
+  menu's labels so the two surfaces cannot drift.
 - Key files: `assets/components/Settings/SettingsModal.vue` (new),
   `Settings/SettingsPanels.vue` (new, ~324 lines), `common/JsonEditor.vue` (new),
   `composable/settingsModal.ts`, `composable/jsonEditor.ts`,
   `stores/settings.ts` (import/validation logic). The old `pages/settings.vue`
   route (325 lines) is deleted — settings live in the modal now.
+
+## Accent contrast (WCAG)
+
+`--color-primary` is tuned to sit _behind_ dark text — every swatch in the
+palette is a mid-to-light hue (L 66-80%) paired with an `oklch(24%)` content
+colour. Used as a foreground it measured **1.3-1.8:1** on the light theme, and
+the sidebar's selected row was **1.46:1** against its own accent wash. AA wants
+4.5:1. The dark theme happened to clear it (5.9-7.9:1), which is exactly how a
+violation like this survives review: it looks fine in whichever theme you use.
+
+- **`--color-primary-text` / `--color-secondary-text`** derive a foreground form
+  from whichever accent is configured — same hue and chroma, forced to a
+  lightness that clears 4.5:1 on every surface it can land on. The two
+  lightnesses (0.46 light, 0.73 dark) were solved numerically across all nine
+  palette entries against base-100/200/300 and the 18% selection wash; worst case
+  is 4.54:1 light and 4.64:1 dark. Derived rather than hand-picked per colour, so
+  a custom accent is covered too.
+- Relative colour syntax (`oklch(from … 0.46 c h)`) does the derivation, behind
+  `@supports`, with the plain accent as the fallback — no worse than what shipped.
+- Applied to every place the accent was carrying _text_: the sidebar's selected
+  row, dropdown selection, the collapsed stat widget's readouts, links in log
+  messages and in muted copy, the table's link hover, analytics badges, the
+  mobile stat chip, the completion list's matched text, status pills, the cloud
+  search CTA, and the log view's scroll-progress figure.
+- **Icons keep the raw accent.** They are decoration or state, judged against the
+  3:1 non-text threshold rather than 4.5:1, and swapping them would flatten the
+  accent out of the UI entirely.
+- **The four status colours get the same treatment, but by default rather than
+  on request.** They measured 1.98:1 (warning) to 3.44:1 (success) as text on
+  light — every one under AA, and warning under even the 3:1 a meaningful icon
+  needs. Being read is their whole job, so `.text-success/-warning/-error/-info`
+  override the utility outright: a `text-error` written anywhere later is
+  readable without anyone remembering a suffix. One lightness pair covers all six
+  colours. `@apply text-error` sites inline the raw colour onto their own
+  selector, where a utility override cannot reach them, so those eight were
+  pointed at the token directly.
 
 ## Theming
 
@@ -269,6 +406,113 @@ The global fuzzy-search modal was extended into a VS Code-style command palette.
   `width: auto` so the indent margin does not compound.
 - Search moved to the head of the pane; the dashboard's own search bar and the
   `hasInlineSearch` mechanism are gone.
+
+## Sidebar: hosts with nothing to show
+
+- A host whose containers are all filtered out by the current display setting —
+  the eye toggle's running-vs-all — now **dims and stops responding**, rather
+  than inviting a click that opens onto an empty list. `MenuSection` gained a
+  `disabled` state for it: the node is forced shut (so one left open cannot be
+  stranded holding nothing when the filter changes under it), the chevron goes
+  `invisible` rather than `hidden` so icons and labels still line up across
+  rows, and the hover-revealed actions are dropped since the row cannot act.
+- `<details>` has no disabled state of its own — a click on the summary toggles
+  it natively — so the click is refused in a handler rather than styled away.
+- Dimmed to 35% rather than the offline host's 50%: an empty host is not a
+  problem to look at, it is a branch with nothing behind it.
+- Empty hosts are also skipped when collecting the sidebar's collapsible keys,
+  or "expand all" would stay permanently live with nothing left to expand.
+
+## Running vs all, as a view-level filter
+
+- Multi-container views (host, group, host-group, the fleet search) default to
+  running containers, and now take `?stopped=1` to include the stopped ones —
+  in the tail _and_ in the backward scan. Exposed on the multi-container actions
+  menu and in the fleet view's header, both bound to the same `showAllContainers`
+  setting the sidebar's eye drives, so "running vs all" means one thing across
+  the app rather than one thing per surface. It reconnects the stream, because
+  the server decides the set: this is a different subscription, not a
+  client-side unhide.
+- **Per route, deliberately.** Applying it centrally in
+  `streamLogsForContainers` also caught the single-container and merged routes,
+  which name their containers outright — a stopped container then matched
+  nothing, the stream had no containers to end, and `Test_handler_streamLogs_happy`
+  hung until the suite timed out. Both halves are now tested: a stopped container
+  still streams from its own view, and a host view opens one container by default
+  and two with `stopped=1`.
+
+## Search freeze on the backfill path
+
+The page locked up for a moment just before search results appeared — and only
+ever when there were matches, which was the clue: no matches means no events, so
+no work.
+
+- **The live stream was buffered and the search backfill was not.** Incoming log
+  lines go through a 250ms/1000ms debounced flush, but `logs-backfill` — one SSE
+  event per time window the server scans — spliced straight into `messages` as
+  each arrived. Every event rebuilt the whole array and re-rendered every row, and
+  because backfill _prepends_, every existing row moved, so Vue patched all of
+  them. Ten windows against a list already holding hundreds of lines is the
+  freeze.
+- Backfill now batches through its own buffer on the same cadence, so a burst of
+  windows costs one rebuild instead of one per window. Ordering is preserved (each
+  window is older, so a new batch goes in front of the ones already waiting), the
+  buffer is flushed the moment `search-status` reports `done` so the last batch
+  does not sit out the debounce, and it is cancelled on clear so a pending batch
+  can never land on a list it no longer belongs to.
+- `EventSource.spec.ts` covers all three. The batching test is written so it
+  fails against the old code — verified by restoring the synchronous splice, which
+  reproduces it exactly (`expected [...6 entries] to have a length of 0`).
+- **The bigger cause was upstream of rendering: the first connection carried no
+  filter at all.** `refDebounced` initialises from its source, so seeding the
+  query _after_ the search state was built left the debounced value empty for a
+  full 400ms — long enough for the stream to connect unfiltered, which on a fleet
+  view means the server tails every running container on every host and floods
+  the browser, only to reconnect and throw it all away. The query is seeded at
+  construction now, so the first URL already carries `filter=`. Also verified by
+  reintroducing the late assignment, which fails the new test.
+- The backfill path had no ceiling while the live path capped at `maxLogs`, so
+  prepended results could push the list past it and every later render paid for
+  rows nobody had scrolled to. Capped now, dropping from the tail — backfill
+  reaches backwards, so the oldest lines are furthest from what was asked for.
+
+## Log row provenance
+
+- **Host and container names were two filled `RandomColorTag`s at a fixed
+  `w-30`/`md:w-40` each** — 20rem of every row reserved for provenance before the
+  timestamp began, whether the names needed it or not. Two faults in one: the
+  width was spent regardless of content, and a saturated filled plate states
+  context at the volume of content.
+- `LogSource` replaces both with one cell: a 3px colour mark plus text, at
+  `w-32`/`md:w-44`. Identity-by-colour survives (it is genuinely how you scan a
+  merged stream) as a hairline rather than a plate, and the cell costs a little
+  over half what the pair did.
+- **Stacked, at the log's own size, with nothing elided.** Host and container sit
+  on two lines so each gets the cell's full width instead of the two competing for
+  one strip. Both at the same size, hierarchy carried by tone: shrinking the pair
+  to 0.72em of an already-`text-[0.8em]` list produced a 9px label, which is not a
+  legible answer to a width problem.
+- **The host is only shown when it varies.** On a single-host install the same
+  word on every row is repetition, and it was taking the width the container name
+  needed. `AllLogs` enables `showHostname` only above one host.
+- The column width is _derived_: `LogList` measures the longest name it actually
+  renders (it counts host names only while hostnames are shown) and publishes it
+  as `--log-source-chars`, once for the list rather than per row.
+- That number is a **floor**, and it sits on the text column rather than the
+  cell. Both details were got wrong once each, with a visible symptom each time.
+  As a `width` on the cell, an estimate that came out short made the cell too
+  narrow, the text spilled, and the timestamp drew over it. As a `min-width` on
+  the _cell_ it still had to cover the colour mark and its gap, so the text got
+  ~9px less than the character count asked for: every row overflowed by a hair,
+  each sized to its own name, and the messages stopped starting at the same x —
+  which the old fixed-width tags had got right. On the text column it is exact,
+  and the cell is mark + gap + N characters, identical on every row.
+- No ceiling and no truncation, so a name longer than the estimate widens its own
+  row rather than being cut. That is the safe direction to fail: it costs
+  alignment on one row, where the earlier version let the timestamp cover the
+  name outright.
+- The palette is exported from `RandomColorTag` and shared, so a container's mark
+  and its tag can never drift to different colours.
 
 ## Log viewer misc
 
@@ -487,6 +731,59 @@ plausible-looking numbers rather than Apple's.
   press.
 - Reduced-motion paths for the drill-in and import transitions keep the
   cross-fade and drop only the travel.
+
+## Fleet-wide log search without Dozzle Cloud
+
+The palette offered "Search logs for X" and then, without Cloud, sat dimmed and
+inert under "Connect Dozzle Cloud to search logs" — which reads as _this cannot
+be done_. It could: `streamLogsForContainers` runs a backward scan across
+whatever container set it is handed (`internal/web/logs.go`), walking back in
+exponentially growing windows and streaming matches over `logs-backfill`. Six
+routes already used it. Nothing pointed it at the whole fleet.
+
+- **`GET /api/logs/stream`** (`streamAllLogs`) hands that same path every running
+  container on every host. Three lines; the engine was already there.
+- **`/logs`** renders it through the ordinary log viewer, with hostnames shown —
+  a fleet-wide view is the one place two containers can share a name and mean
+  different machines.
+- **The palette routes to whichever is available**: `/cloud/search` when Cloud is
+  linked, `/logs?search=…` otherwise. `?search=` is already read by
+  `useSearchFilter`, so the query is applied and the server's scan is already
+  running by the time the page paints — no second search mechanism to maintain.
+- **The CTA is always actionable**, and its subtitle states what the local scan
+  covers ("Scans running containers, newest first") so the difference from Cloud
+  is a stated limit rather than a surprise.
+- **What Cloud still buys**, stated plainly: an index (so a query with no recent
+  matches does not degrade to scanning every container's retained history),
+  retention beyond the Docker log driver's rotation, and hits from containers
+  that no longer exist. The local path is fast where it matters — the 50-match
+  cap and doubling windows mean a recent hit returns almost immediately — and
+  honestly slower on a cold, deep query.
+- **Host filter on the fleet view.** Row 1 of the top bar carries a multi-select
+  of hosts (only when there is more than one — a filter with one option is a
+  control that cannot do anything), with a reset back to all. Empty means every
+  host, which is exactly what the server treats as no filter, so there is no
+  second way to express "all". Sent as `?hosts=` and applied to _both_ the tail
+  and the scan, so narrowing actually reduces what the server reads rather than
+  hiding rows after the fact. The panel stays open while ticking hosts — closing
+  after each would make choosing three of five a three-trip job.
+- The header's container count used to render a bare "No containers" floating in
+  the bar when nothing was running; it is guarded now, and the count follows the
+  host filter so the header describes the same set the log body draws from.
+- **Tails the running containers, searches all of them.** These are different
+  questions and the route now answers them separately
+  (`streamLogsForContainersWithSearch`). Tailing a stopped container is
+  pointless — its stream EOFs at once, and that path emits a "container-stopped"
+  event, so including the dead in the live fan-out would post one event row per
+  corpse. Searching one is the opposite: a container that crashed is usually the
+  whole reason someone is searching, and scoping the scan to what is currently
+  running quietly answers a narrower question than the one asked. `logs_test.go`
+  asserts both halves — history is read for the stopped container, nothing tries
+  to tail it.
+- The per-view routes pass no search filter, so they still search exactly what
+  they show; there the visible set _is_ the subject. Widening those (a host
+  search covering that host's stopped containers) is a one-argument change if
+  wanted.
 
 ## Backend (Go)
 

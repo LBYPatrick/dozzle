@@ -6,6 +6,8 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const CONTAINER_TABLE_PAGE_SIZES: typeof import('./stores/settings').CONTAINER_TABLE_PAGE_SIZES
+  const CONTAINER_TABLE_SORT_COLUMNS: typeof import('./stores/settings').CONTAINER_TABLE_SORT_COLUMNS
   const DEFAULT_MENU_WIDTH: typeof import('./stores/settings').DEFAULT_MENU_WIDTH
   const DEFAULT_SETTINGS: typeof import('./stores/settings').DEFAULT_SETTINGS
   const EMPTY_SUMMARY: typeof import('./composable/statSummary').EMPTY_SUMMARY
@@ -14,6 +16,7 @@ declare global {
   const K8sOwner: typeof import('./stores/k8s').K8sOwner
   const MIN_MENU_WIDTH: typeof import('./stores/settings').MIN_MENU_WIDTH
   const PRIMARY_COLORS: typeof import('./composable/primaryColor').PRIMARY_COLORS
+  const SETTINGS_WITHOUT_COMMANDS: typeof import('./composable/commands').SETTINGS_WITHOUT_COMMANDS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const allLevels: typeof import('./composable/logContext').allLevels
   const applyPrimaryColor: typeof import('./composable/primaryColor').applyPrimaryColor
@@ -33,6 +36,10 @@ declare global {
   const computedWithControl: typeof import('@vueuse/core').computedWithControl
   const config: typeof import('./stores/config').default
   const containerGroupKey: typeof import('./composable/collapsedSections').containerGroupKey
+  const containerTablePageSize: typeof import('./stores/settings').containerTablePageSize
+  const containerTableSortAsc: typeof import('./stores/settings').containerTableSortAsc
+  const containerTableSortColumn: typeof import('./stores/settings').containerTableSortColumn
+  const containerTableStatMode: typeof import('./stores/settings').containerTableStatMode
   const controlledComputed: typeof import('@vueuse/core').controlledComputed
   const controlledRef: typeof import('@vueuse/core').controlledRef
   const cpuDisplayMode: typeof import('./stores/settings').cpuDisplayMode
@@ -156,6 +163,7 @@ declare global {
   const reactiveComputed: typeof import('@vueuse/core').reactiveComputed
   const reactiveOmit: typeof import('@vueuse/core').reactiveOmit
   const reactivePick: typeof import('@vueuse/core').reactivePick
+  const readPath: typeof import('./stores/settings').readPath
   const readonly: typeof import('vue').readonly
   const ref: typeof import('vue').ref
   const refAutoReset: typeof import('@vueuse/core').refAutoReset
@@ -165,6 +173,7 @@ declare global {
   const refThrottled: typeof import('@vueuse/core').refThrottled
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const resetMenuWidth: typeof import('./stores/settings').resetMenuWidth
+  const resetSettings: typeof import('./stores/settings').resetSettings
   const resolveComponent: typeof import('vue').resolveComponent
   const resolvePrimaryColor: typeof import('./composable/primaryColor').resolvePrimaryColor
   const resourceStatMode: typeof import('./stores/settings').resourceStatMode
@@ -177,6 +186,7 @@ declare global {
   const setActivePinia: typeof import('pinia').setActivePinia
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
   const setTitle: typeof import('./composable/title').setTitle
+  const settingCommands: typeof import('./composable/commands').settingCommands
   const settings: typeof import('./stores/settings').settings
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
@@ -201,6 +211,7 @@ declare global {
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
   const toRelativeTime: typeof import('./utils/index').toRelativeTime
+  const toSettingsDocument: typeof import('./stores/settings').toSettingsDocument
   const toValue: typeof import('vue').toValue
   const topBarCollapsed: typeof import('./stores/settings').topBarCollapsed
   const trendShape: typeof import('./stores/settings').trendShape
@@ -215,6 +226,7 @@ declare global {
   const until: typeof import('@vueuse/core').until
   const useActiveElement: typeof import('@vueuse/core').useActiveElement
   const useAlertForm: typeof import('./composable/alertForm').useAlertForm
+  const useAllContainersStream: typeof import('./composable/eventStreams').useAllContainersStream
   const useAnimate: typeof import('@vueuse/core').useAnimate
   const useAnimatedWidth: typeof import('./composable/animatedWidth').useAnimatedWidth
   const useAnnouncements: typeof import('./stores/announcements').useAnnouncements
@@ -506,7 +518,7 @@ declare global {
   export type { K8sNamespace, K8sOwner, K8sOwnerRef } from './stores/k8s'
   import('./stores/k8s')
   // @ts-ignore
-  export type { Settings } from './stores/settings'
+  export type { Settings, SettingsPath } from './stores/settings'
   import('./stores/settings')
 }
 
@@ -515,6 +527,8 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly CONTAINER_TABLE_PAGE_SIZES: UnwrapRef<typeof import('./stores/settings')['CONTAINER_TABLE_PAGE_SIZES']>
+    readonly CONTAINER_TABLE_SORT_COLUMNS: UnwrapRef<typeof import('./stores/settings')['CONTAINER_TABLE_SORT_COLUMNS']>
     readonly DEFAULT_MENU_WIDTH: UnwrapRef<typeof import('./stores/settings')['DEFAULT_MENU_WIDTH']>
     readonly DEFAULT_SETTINGS: UnwrapRef<typeof import('./stores/settings')['DEFAULT_SETTINGS']>
     readonly EMPTY_SUMMARY: UnwrapRef<typeof import('./composable/statSummary')['EMPTY_SUMMARY']>
@@ -523,6 +537,7 @@ declare module 'vue' {
     readonly K8sOwner: UnwrapRef<typeof import('./stores/k8s')['K8sOwner']>
     readonly MIN_MENU_WIDTH: UnwrapRef<typeof import('./stores/settings')['MIN_MENU_WIDTH']>
     readonly PRIMARY_COLORS: UnwrapRef<typeof import('./composable/primaryColor')['PRIMARY_COLORS']>
+    readonly SETTINGS_WITHOUT_COMMANDS: UnwrapRef<typeof import('./composable/commands')['SETTINGS_WITHOUT_COMMANDS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly allLevels: UnwrapRef<typeof import('./composable/logContext')['allLevels']>
     readonly applyPrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['applyPrimaryColor']>
@@ -542,6 +557,10 @@ declare module 'vue' {
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
     readonly config: UnwrapRef<typeof import('./stores/config')['default']>
     readonly containerGroupKey: UnwrapRef<typeof import('./composable/collapsedSections')['containerGroupKey']>
+    readonly containerTablePageSize: UnwrapRef<typeof import('./stores/settings')['containerTablePageSize']>
+    readonly containerTableSortAsc: UnwrapRef<typeof import('./stores/settings')['containerTableSortAsc']>
+    readonly containerTableSortColumn: UnwrapRef<typeof import('./stores/settings')['containerTableSortColumn']>
+    readonly containerTableStatMode: UnwrapRef<typeof import('./stores/settings')['containerTableStatMode']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
     readonly cpuDisplayMode: UnwrapRef<typeof import('./stores/settings')['cpuDisplayMode']>
@@ -665,6 +684,7 @@ declare module 'vue' {
     readonly reactiveComputed: UnwrapRef<typeof import('@vueuse/core')['reactiveComputed']>
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
+    readonly readPath: UnwrapRef<typeof import('./stores/settings')['readPath']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
@@ -674,6 +694,7 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resetMenuWidth: UnwrapRef<typeof import('./stores/settings')['resetMenuWidth']>
+    readonly resetSettings: UnwrapRef<typeof import('./stores/settings')['resetSettings']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolvePrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['resolvePrimaryColor']>
     readonly resourceStatMode: UnwrapRef<typeof import('./stores/settings')['resourceStatMode']>
@@ -686,6 +707,7 @@ declare module 'vue' {
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly setTitle: UnwrapRef<typeof import('./composable/title')['setTitle']>
+    readonly settingCommands: UnwrapRef<typeof import('./composable/commands')['settingCommands']>
     readonly settings: UnwrapRef<typeof import('./stores/settings')['settings']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
@@ -710,6 +732,7 @@ declare module 'vue' {
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toRelativeTime: UnwrapRef<typeof import('./utils/index')['toRelativeTime']>
+    readonly toSettingsDocument: UnwrapRef<typeof import('./stores/settings')['toSettingsDocument']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly topBarCollapsed: UnwrapRef<typeof import('./stores/settings')['topBarCollapsed']>
     readonly trendShape: UnwrapRef<typeof import('./stores/settings')['trendShape']>
@@ -724,6 +747,7 @@ declare module 'vue' {
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAlertForm: UnwrapRef<typeof import('./composable/alertForm')['useAlertForm']>
+    readonly useAllContainersStream: UnwrapRef<typeof import('./composable/eventStreams')['useAllContainersStream']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useAnimatedWidth: UnwrapRef<typeof import('./composable/animatedWidth')['useAnimatedWidth']>
     readonly useAnnouncements: UnwrapRef<typeof import('./stores/announcements')['useAnnouncements']>

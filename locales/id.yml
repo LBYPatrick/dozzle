@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Sertakan kontainer yang berhenti"
   clear: Bersihkan
   download: Unduh
   download-filtered: Unduh Log yang Difilter
@@ -45,6 +46,9 @@ action:
   more-actions: Tindakan lainnya
 
 label:
+  hosts-selected: "{count} host"
+  loading: "Memuat"
+  all-logs: "Semua log"
   containers: Kontainer
   container: Tidak ada kontainer | 1 kontainer | {count} kontainer
   host-count: Tidak ada Host | 1 Host | {count} Host
@@ -158,6 +162,7 @@ title:
   notifications: Notifikasi
 
 button:
+  undo: "Urungkan"
   logout: Keluar
   login: Masuk
   settings: Pengaturan
@@ -178,6 +183,9 @@ placeholder:
   find-regex: Cari / RegEx
 
 settings:
+  reset-all: "Setel ulang semua pengaturan"
+  reset-desc: "Mengembalikan setiap preferensi ke bawaan. Kontainer dan log tidak tersentuh."
+  reset-confirm: "Konfirmasi setel ulang"
   help-support: >
     Silakan dukung Dozzle dengan berdonasi atau mensponsori kami di GitHub. Kontribusi Anda membantu kami meningkatkan Dozzle untuk semua orang. Terima kasih! 🙏🏼
   about-desc: Informasi tentang instalasi Dozzle Anda dan cara mendukung proyek ini.
@@ -198,14 +206,10 @@ settings:
   view-visual: "Visual"
   view-json: "JSON"
   export: "Ekspor"
-  import: "Impor"
   apply: "Terapkan"
   json-valid: "JSON valid"
-  imported: "Pengaturan diimpor"
   exported: "Pengaturan disalin ke papan klip"
   applied: "Pengaturan diterapkan"
-  import-hint: "Tempel JSON pengaturan, atau URL yang mengembalikan application/json."
-  import-placeholder: "Tempel JSON pengaturan di sini, atau https://example.com/settings.json"
   options: Opsi
   show-stopped-containers: Tampilkan kontainer yang dihentikan
   group-containers: Kelompokkan kontainer berdasarkan namespace
@@ -265,6 +269,7 @@ log_actions:
   jump_to_context: Lompat ke konteks
 
 toasts:
+  settings-reset: "Pengaturan disetel ulang"
   showing-all-containers: "Menampilkan semua kontainer, termasuk yang berhenti"
   showing-running-containers: "Menampilkan hanya kontainer yang berjalan"
   expanded-all: "Semua bagian dibentangkan"
@@ -454,11 +459,14 @@ cloud:
     create-alerts: "Aktifkan sinyal terpilih"
     later: "Nanti saja"
 cloud-search:
+  local-search: "Pencarian lokal"
+  enable-streaming-for-indexed: "Aktifkan Stream Logs untuk riwayat terindeks"
+  connect-for-indexed: "Hubungkan Dozzle Cloud untuk riwayat terindeks di semua kontainer"
+  search-locally: "Cari secara lokal"
+  local-scope: "Memindai kontainer yang berjalan, terbaru dahulu"
   containers-section: "Kontainer"
   search-logs-for: 'Cari log untuk "{query}"'
   across-containers: "diindeks di semua kontainer Anda"
-  connect-to-enable: "Hubungkan Dozzle Cloud untuk mencari log"
-  enable-streaming-to-search: "Aktifkan streaming log ke Cloud"
   open-container: "buka kontainer"
   search-logs-shortcut: "cari log"
   cloud-connected: "Cloud terhubung"
@@ -482,6 +490,17 @@ cloud-search:
   cta-settings: "Pengaturan Cloud"
   container-removed-pill: "dihapus"
 command-palette:
+  language: "Bahasa"
+  date-format: "Format tanggal"
+  font-size: "Ukuran font"
+  table-stats: "Statistik tabel"
+  grouping: "Kelompokkan kontainer"
+  redirect: "Pengalihan otomatis"
+  hour-style: "Format jam"
+  search-on: "Aktifkan pencarian"
+  search-off: "Nonaktifkan pencarian"
+  topbar-show: "Tampilkan bilah statistik"
+  topbar-hide: "Ciutkan bilah statistik"
   section-commands: Perintah
   restart-container: Mulai ulang {name}
   stop-container: Hentikan {name}

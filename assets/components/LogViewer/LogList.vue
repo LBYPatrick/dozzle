@@ -1,5 +1,10 @@
 <template>
-  <ul class="group pt-4" :class="{ 'disable-wrap': !softWrap, [size]: true, compact }" data-logs>
+  <ul
+    class="group pt-4"
+    :class="{ 'disable-wrap': !softWrap, [size]: true, compact }"
+    :style="{ '--log-source-chars': sourceChars }"
+    data-logs
+  >
     <li
       v-for="item in messages"
       ref="list"
@@ -23,7 +28,61 @@ const { messages } = defineProps<{
   messages: LogEntry<LogMessage>[];
 }>();
 
-const { containers } = useLoggingContext();
+const { containers, showContainerName, showHostname } = useLoggingContext();
+
+const { hosts } = useHosts();
+
+// How wide the provenance column needs to be, in characters, for every name on
+// screen to fit. Computed once for the list rather than per row — there are
+// thousands of rows — and shared through a CSS variable so every cell lands on
+// the same edge and the timestamps stay flush.
+//
+// It measures only what is actually rendered: counting host names into the width
+// while hostnames are hidden would reserve a column nobody can see. The value is
+// a floor rather than a fixed width (see LogSource), so getting it wrong costs
+// alignment, never legibility.
+const MIN_SOURCE_CHARS = 12;
+
+const containerStore = useContainerStore();
+
+const sourceChars = computed(() => {
+  let longest = 0;
+
+  const measure = (containerId: string | undefined) => {
+    if (!containerId) return;
+    const c = containerStore.findContainerById?.(containerId);
+    if (showContainerName?.value ?? true) {
+      longest = Math.max(longest, c?.name?.length ?? 0);
+    }
+    if (showHostname?.value ?? true) {
+      longest = Math.max(longest, hosts.value[c?.host as string]?.name?.length ?? 0);
+    }
+  };
+
+  // The containers the view is scoped to...
+  for (const container of containers.value) {
+    // Optional throughout: a container can be in the list before the store has
+    // filled it in, and reading .length off that undefined threw during render,
+    // taking the whole log list down with it.
+    if (showContainerName?.value ?? true) {
+      longest = Math.max(longest, container?.name?.length ?? 0);
+    }
+    if (showHostname?.value ?? true) {
+      longest = Math.max(longest, hosts.value[container?.host]?.name?.length ?? 0);
+    }
+  }
+
+  // ...and anything the rows actually reference, which is not always the same
+  // set: a line can outlive the container it came from, and backfill reaches
+  // back past what is currently listed. Measuring only the scope let those rows
+  // exceed the column, and since the width is uniform that would have meant
+  // clipping them.
+  for (const message of messages) {
+    measure(message.containerID);
+  }
+
+  return Math.max(longest, MIN_SOURCE_CHARS);
+});
 
 const route = useRoute();
 const permalinkLogId = computed(() => (typeof route.query.logId === "string" ? route.query.logId : ""));
@@ -118,7 +177,10 @@ ul {
   }
 
   :deep(a[rel~="external"]) {
-    @apply text-primary underline-offset-4 hover:underline;
+    /* Links inside log messages sit on the log surface, where the raw accent
+     measured under 2:1 on the light theme. */
+    @apply underline-offset-4 hover:underline;
+    color: var(--color-primary-text);
   }
 }
 

@@ -42,6 +42,24 @@ export function useGroupedStream(group: Ref<GroupedContainers>): LogStreamSource
   return useLogStream(computed(() => `/api/groups/${group.value.name}/logs/stream`));
 }
 
+// Every running container on every host. Backs fleet-wide log search: the
+// server's backward scan already runs across whatever set it is given, so this
+// is search across everything without an index and without leaving the host.
+export function useAllContainersStream(hosts?: Ref<string[]>): LogStreamSource {
+  // The entity ref every other stream source receives is, for this one, the set
+  // of hosts to query — empty meaning all of them. Sent as a param rather than
+  // filtered client-side so the server's backward scan only reads the machines
+  // you asked about.
+  return useLogStream(
+    computed(() => {
+      const selected = hosts?.value ?? [];
+      return selected.length > 0
+        ? `/api/logs/stream?hosts=${selected.map(encodeURIComponent).join(",")}`
+        : `/api/logs/stream`;
+    }),
+  );
+}
+
 export function useMergedStream(containers: Ref<Container[]>): LogStreamSource {
   const url = computed(() => {
     const ids = containers.value.map((c) => c.id).join(",");
@@ -95,6 +113,11 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
       params.append("filter", debouncedSearchFilter.value);
       if (inverseFilter.value) params.append("inverse", "true");
     }
+    // Multi-container views default to running containers only; this asks the
+    // server to include the stopped ones too. Sent for every stream — the
+    // single-container and merged routes name their containers outright and
+    // ignore it, which keeps one setting rather than one per view.
+    if (showAllContainers.value) params.append("stopped", "1");
     for (const level of levels.value) {
       params.append("levels", level);
     }
@@ -175,6 +198,31 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
     }
   }
   const flushBuffer = debounce(flushNow, 250, { maxWait: 1000 });
+
+  // Search results arrive as one SSE event per time window the server scans, and
+  // they used to be spliced into `messages` synchronously as each one landed.
+  // Every event therefore rebuilt the whole array and re-rendered every row —
+  // and because these prepend, every existing row moved, so Vue patched all of
+  // them. Ten windows against a list already holding hundreds of lines is what
+  // froze the page, and only ever when there were matches: no matches, no
+  // events, no work.
+  //
+  // Batched through the same 250ms/1000ms cadence the live stream uses, so a
+  // burst of windows costs one rebuild instead of one per window.
+  let backfillBuffer: LogEntry<LogMessage>[] = [];
+
+  function flushBackfillNow() {
+    if (backfillBuffer.length === 0) return;
+    // Capped like the live path, which had a ceiling all along while this one
+    // did not: prepended results could push the list past maxLogs and every
+    // subsequent render paid for rows nobody had scrolled to. The tail is what
+    // gets dropped, since backfill is reaching backwards and the oldest lines
+    // are the ones furthest from what was asked for.
+    messages.value = [...backfillBuffer, ...messages.value].slice(0, config.maxLogs);
+    backfillBuffer = [];
+  }
+  const flushBackfill = debounce(flushBackfillNow, 250, { maxWait: 1000 });
+
   let es: EventSource | null = null;
 
   function close() {
@@ -186,11 +234,18 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
 
   function clearMessages() {
     flushBuffer.cancel();
+    flushBackfill.cancel();
     messages.value = [];
     buffer = [];
+    backfillBuffer = [];
   }
 
-  const urlWithParams = computed(() => withBase(`${url.value}?${params.value.toString()}`));
+  // The url may already carry params of its own (the fleet stream's host
+  // filter), so the separator cannot be assumed.
+  const urlWithParams = computed(() => {
+    const separator = url.value.includes("?") ? "&" : "?";
+    return withBase(`${url.value}${separator}${params.value.toString()}`);
+  });
 
   function connect({ clear } = { clear: true }) {
     close();
@@ -222,7 +277,11 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
     es.addEventListener("logs-backfill", (e) => {
       const data = parseEventData<LogEvent[]>(e);
       const logs = data.map((e) => asLogEntry(e));
-      messages.value = [...logs, ...messages.value];
+      // Each window is older than the one before it, so a new batch goes in
+      // front of the batches already waiting — the same order the unbuffered
+      // version produced by prepending each event as it arrived.
+      backfillBuffer = [...logs, ...backfillBuffer];
+      flushBackfill();
     });
 
     es.addEventListener("search-status", (e) => {
@@ -239,6 +298,9 @@ function useLogStream(url: Ref<string>, container?: Ref<Container>) {
         scannedTo: data.scannedTo,
         reason: data.reason,
       };
+      // Nothing more is coming, so do not sit on the last batch for the debounce
+      // interval — that would read as the search having stalled at the end.
+      if (data.done) flushBackfill.flush();
     });
 
     es.onmessage = (e) => {

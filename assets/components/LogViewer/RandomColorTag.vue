@@ -13,7 +13,8 @@
   </div>
 </template>
 <script lang="ts">
-const colors = [
+// Exported so LogSource marks a container in the same colour this tag would.
+export const COLOR_PALETTE = [
   "hsl(200, 85%, 65%)", // Vibrant Sky Blue
   "hsl(150, 85%, 65%)", // Vibrant Mint
   "hsl(300, 85%, 65%)", // Vibrant Purple
@@ -35,6 +36,8 @@ const colors = [
   "hsl(350, 85%, 65%)", // Vibrant Strawberry
   "hsl(190, 85%, 65%)", // Vibrant Azure
 ] as const;
+
+const colors = COLOR_PALETTE;
 </script>
 <script lang="ts" setup>
 const { value, truncateRight = false } = defineProps<{

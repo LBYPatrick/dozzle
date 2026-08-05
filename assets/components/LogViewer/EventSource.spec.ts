@@ -172,6 +172,70 @@ describe("<ContainerEventSource />", () => {
     expect(message).toMatchSnapshot();
   });
 
+  describe("search backfill", () => {
+    const backfill = (id: number, ts: number) =>
+      JSON.stringify([{ ts, m: `match ${id}`, id, rm: `match ${id}`, c: "abc" }]);
+
+    // The server emits one backfill event per time window it scans. These used
+    // to be spliced into the message list synchronously as each arrived, so a
+    // search that matched anything rebuilt the whole array and re-rendered every
+    // row once per window — the page froze right before results appeared, and
+    // only ever when there were matches. They are batched now.
+    test("a burst of windows is collected, not spliced in one at a time", async () => {
+      const wrapper = createLogEventSource();
+      sources[sourceUrl].emitOpen();
+
+      for (let i = 1; i <= 6; i++) {
+        sources[sourceUrl].emit("logs-backfill", { data: backfill(i, 1560336942000 + i) });
+      }
+      await nextTick();
+
+      // The discriminating assertion: the unbatched version rebuilt the list on
+      // every event, so all six were already in by now — and each rebuild had
+      // re-rendered every row, which is what locked the page up.
+      // @ts-ignore
+      expect(wrapper.vm.messages, "windows should still be buffered").toHaveLength(0);
+
+      await vi.advanceTimersByTimeAsync(400);
+      await nextTick();
+
+      // @ts-ignore
+      expect(wrapper.vm.messages, "the whole burst should land in one rebuild").toHaveLength(6);
+    });
+
+    test("windows stay in order, oldest first", async () => {
+      const wrapper = createLogEventSource();
+      sources[sourceUrl].emitOpen();
+
+      // Each window reaches further back, so later events are older lines.
+      sources[sourceUrl].emit("logs-backfill", { data: backfill(2, 1560336942200) });
+      sources[sourceUrl].emit("logs-backfill", { data: backfill(1, 1560336942100) });
+
+      await vi.advanceTimersByTimeAsync(400);
+      await nextTick();
+
+      // @ts-ignore
+      const ids = wrapper.vm.messages.map((m: { id: number }) => m.id);
+      expect(ids).toEqual([1, 2]);
+    });
+
+    // Sitting on the final batch for the debounce interval reads as the search
+    // having stalled just as it finishes.
+    test("the last batch lands as soon as the scan reports done", async () => {
+      const wrapper = createLogEventSource();
+      sources[sourceUrl].emitOpen();
+
+      sources[sourceUrl].emit("logs-backfill", { data: backfill(1, 1560336942100) });
+      sources[sourceUrl].emit("search-status", {
+        data: JSON.stringify({ scannedTo: "2026-06-01T14:31:00Z", matches: 1, done: true }),
+      });
+      await nextTick();
+
+      // @ts-ignore
+      expect(wrapper.vm.messages).toHaveLength(1);
+    });
+  });
+
   describe("search status", () => {
     test("shows no-logs when not searching and the stream is empty", async () => {
       const wrapper = createLogEventSource();

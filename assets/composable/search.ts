@@ -16,10 +16,16 @@ export type SearchStatus = {
 // ref.
 const SEARCH_DEBOUNCE_MS = 400;
 
-function createSearchState() {
-  const searchQueryFilter = ref<string>("");
+function createSearchState(initialQuery = "") {
+  // Seeded at construction, not assigned afterwards. refDebounced initialises
+  // from its source, so a query applied after this point lags by the full
+  // debounce — and the stream connects in that window with no `filter` at all.
+  // On a fleet view that means the server tails every running container on
+  // every host and floods the browser for 400ms, only to reconnect and throw it
+  // away. That burst was the stutter just before results appeared.
+  const searchQueryFilter = ref<string>(initialQuery);
   const debouncedSearchFilter = refDebounced(searchQueryFilter, SEARCH_DEBOUNCE_MS);
-  const showSearch = ref(false);
+  const showSearch = ref(initialQuery !== "");
   const inverseFilter = ref(false);
   // True while the log stream is actively scanning history for matches.
   // Progress is unknown, so the UI shows this as an indeterminate indicator.
@@ -104,22 +110,33 @@ export function useSearchFilter(): SearchState {
 
   let state = stateByContext.get(context);
   if (!state) {
-    state = createSearchState();
+    state = createSearchState(takeInitialQuery());
     stateByContext.set(context, state);
-    applyInitialQuery(state);
   }
   return state;
 }
 
 // A `?search=` in the URL seeds the first view that asks; later panes open
 // empty, which is what you want when you pin a second container to compare.
-const searchParams = new URLSearchParams(window.location.search);
-const initialQuery = searchParams.get("search") ?? "";
-let initialQueryApplied = false;
+//
+// Read at call time, not at module load. It used to capture
+// window.location.search once when this module was first imported, which meant
+// the query was only ever seen on a cold page load — arriving at a view by
+// router.push (as the palette's log search does) left it empty, no `filter` on
+// the stream, and therefore no results at all.
+//
+// Latched on the search string rather than a bare boolean, so the "first view
+// only" rule still holds within one URL while a later navigation to a different
+// query seeds again.
+let seededFrom: string | null = null;
 
-function applyInitialQuery(state: SearchState) {
-  if (initialQueryApplied || initialQuery === "") return;
-  initialQueryApplied = true;
-  state.searchQueryFilter.value = initialQuery;
-  state.showSearch.value = true;
+function takeInitialQuery(): string {
+  const search = window.location.search;
+  if (seededFrom === search) return "";
+
+  const query = new URLSearchParams(search).get("search") ?? "";
+  if (query === "") return "";
+
+  seededFrom = search;
+  return query;
 }

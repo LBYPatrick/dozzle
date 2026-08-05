@@ -57,7 +57,7 @@
         <button
           v-for="ex in examples"
           :key="ex.key"
-          class="badge badge-sm badge-outline hover:border-primary hover:text-primary cursor-pointer"
+          class="badge badge-sm badge-outline hover:border-primary hover:text-primary-safe cursor-pointer"
           @click="applyExample(ex.sql)"
         >
           {{ $t(ex.key, ex.params ?? {}) }}
@@ -76,7 +76,7 @@
           <button
             v-for="col in columns"
             :key="col.name"
-            class="badge badge-sm badge-ghost hover:border-primary hover:text-primary cursor-pointer font-mono"
+            class="badge badge-sm badge-ghost hover:border-primary hover:text-primary-safe cursor-pointer font-mono"
             :title="col.type"
             @click="insertColumn(col.name)"
           >

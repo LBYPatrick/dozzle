@@ -28,7 +28,7 @@
         </div>
         <ul v-if="config.authProvider === 'simple' || config.logoutUrl" class="menu mt-4 p-0">
           <li>
-            <button @click.prevent="logout()" class="text-primary p-2">
+            <button @click.prevent="logout()" class="text-primary-safe p-2">
               <material-symbols:logout />
               {{ $t("button.logout") }}
             </button>

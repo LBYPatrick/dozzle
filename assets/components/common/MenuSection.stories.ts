@@ -56,3 +56,24 @@ export const WithTrailingAndActions: Story = {
   }),
   args: { title: "staging-node", variant: "host", count: 1, open: true },
 };
+
+/**
+ * Nothing to show under the current container filter. The node dims, refuses to
+ * open, and drops its chevron and hover actions — the click is answered before
+ * it happens rather than by an empty list afterwards.
+ */
+export const Disabled: Story = {
+  render: (args) => ({
+    components: { MenuSection },
+    setup: () => ({ args }),
+    template: wrap(`
+      <MenuSection v-bind="args">
+        <template #icon><ph:computer-tower class="size-4 shrink-0 opacity-70" /></template>
+        <template #actions>
+          <button class="btn btn-square btn-ghost btn-xs text-primary"><ph:arrows-merge /></button>
+        </template>
+        <li><a class="py-1">present, but the node cannot open onto it</a></li>
+      </MenuSection>`),
+  }),
+  args: { title: "idle-node", variant: "host", disabled: true, open: true },
+};

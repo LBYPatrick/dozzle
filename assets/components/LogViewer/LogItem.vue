@@ -11,16 +11,18 @@
 
     <LogStd :std="logEntry.std" class="shrink-0 select-none" v-if="showStd" />
 
-    <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 has-[>_*:nth-of-type(2)]:flex-col-reverse md:flex-row!">
-      <RandomColorTag class="w-30 shrink-0 select-none md:w-40" :value="host.name" v-if="showHostname" />
-      <RandomColorTag
-        v-if="showContainerName"
-        class="w-30 shrink-0 select-none group-[.compact]:flex-1 md:w-40"
-        :value="container.id"
-        truncateRight
-      >
-        {{ container.name }}
-      </RandomColorTag>
+    <div class="flex gap-x-2 gap-y-1 group-[.compact]:gap-y-0 md:flex-row!">
+      <!-- No width class: the cell sizes itself from --log-source-chars, which
+           LogList derives from the longest name on screen. Uniform down the
+           column, so the timestamps stay flush, without reserving room for
+           names nobody has. -->
+      <LogSource
+        v-if="showHostname || showContainerName"
+        class="shrink-0 select-none"
+        :host="showHostname ? host.name : undefined"
+        :container-name="showContainerName ? container.name : undefined"
+        :color-key="container.id"
+      />
       <LogDate v-if="showTimestamp" :date="logEntry.date" class="shrink-0 select-none" />
     </div>
     <slot />

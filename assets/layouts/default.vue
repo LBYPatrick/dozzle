@@ -134,6 +134,17 @@ onKeyStroke("k", (e) => {
   }
 });
 
+// Cmd/Ctrl+Shift+P opens the same palette already in command mode, as editors
+// do: Cmd+K is "find a container", this is "run a command". Seeding the "/"
+// rather than adding a second mode flag means the palette needs no knowledge of
+// how it was opened — it already switches on a leading slash.
+onKeyStroke(["p", "P"], (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+    showFuzzySearch("/");
+    e.preventDefault();
+  }
+});
+
 onKeyStroke(["s", "S"], (e) => {
   if (e.metaKey && e.ctrlKey && !isMobile.value && !forceMenuHidden.value) {
     collapseNav.value = !collapseNav.value;

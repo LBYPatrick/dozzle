@@ -10,9 +10,9 @@
     data-testid="search"
     role="button"
     tabindex="0"
-    @click="openSearch"
-    @keydown.enter.prevent="openSearch"
-    @keydown.space.prevent="openSearch"
+    @click="openSearch()"
+    @keydown.enter.prevent="openSearch()"
+    @keydown.space.prevent="openSearch()"
   >
     <!-- 70%, not 60%: against the field's own fill, 60% measures 3.5:1 on the
          light theme, under AA for text this size. 70% clears it in both themes

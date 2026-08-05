@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net/url"
 	"regexp"
@@ -531,4 +532,147 @@ func makeMessage(message string, stream container.StdType) []byte {
 	data = append(data, []byte(message)...)
 
 	return data
+}
+
+// The fleet-wide route is what makes log search work without Dozzle Cloud: it
+// hands the backward scan every container, so a query finds lines from things
+// that have since died — usually the whole reason someone is searching. Only the
+// running ones are tailed live, because a stopped container EOFs at once and
+// would post a "container-stopped" row for every corpse on the host.
+func Test_handler_streamAllLogs_searches_stopped_containers_but_tails_only_running(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	req, err := http.NewRequestWithContext(ctx, "GET", "/api/logs/stream", nil)
+	require.NoError(t, err, "NewRequest should not return an error.")
+
+	q := req.URL.Query()
+	q.Add("stdout", "true")
+	q.Add("stderr", "true")
+	q.Add("filter", "NOMATCH")
+	q.Add("levels", "info")
+	req.URL.RawQuery = q.Encode()
+
+	created := time.Now().Add(-5 * time.Second)
+	running := container.Container{ID: "running-1", Name: "one", Host: "localhost", State: "running", Created: created, StartedAt: created}
+	stopped := container.Container{ID: "stopped-1", Name: "two", Host: "localhost", State: "exited", Created: created, StartedAt: created}
+
+	mockedClient := new(MockedClient)
+	mockedClient.On("Host").Return(container.Host{ID: "localhost"})
+	mockedClient.On("ListContainers", mock.Anything, mock.Anything).Return([]container.Container{running, stopped}, nil)
+	mockedClient.On("FindContainer", mock.Anything, running.ID).Return(running, nil)
+	mockedClient.On("FindContainer", mock.Anything, stopped.ID).Return(stopped, nil)
+	mockedClient.On("ContainerEvents", mock.Anything, mock.AnythingOfType("chan<- container.ContainerEvent")).Return(nil)
+	mockedClient.On("ContainerLogsBetweenDates", mock.Anything, mock.Anything, mock.Anything, mock.Anything, container.STDALL).
+		Return(io.NopCloser(strings.NewReader("")), nil)
+	mockedClient.On("ContainerLogs", mock.Anything, running.ID, mock.Anything, container.STDALL).
+		Return(io.NopCloser(strings.NewReader("")), io.EOF).
+		Run(func(args mock.Arguments) {
+			go func() {
+				time.Sleep(100 * time.Millisecond)
+				cancel()
+			}()
+		})
+
+	handler := createDefaultHandler(mockedClient)
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code, "the route should exist")
+	body := rr.Body.String()
+	assert.Contains(t, body, "event: search-status", "the backward scan should run")
+
+	// The point of the split: history is read for the dead container too...
+	mockedClient.AssertCalled(t, "ContainerLogsBetweenDates", mock.Anything, stopped.ID, mock.Anything, mock.Anything, container.STDALL)
+	// ...but nothing tries to tail it.
+	mockedClient.AssertNotCalled(t, "ContainerLogs", mock.Anything, stopped.ID, mock.Anything, mock.Anything)
+}
+
+// Running-vs-all is the viewer's choice, so it belongs to the multi-container
+// routes only. A single-container view names its container outright, and its
+// logs are exactly what you open that view for when it has stopped — applying
+// the filter there returned an empty set, and the stream then had nothing to
+// end and hung until the test timed out.
+func Test_handler_streamContainerLogs_ignores_the_stopped_filter(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	id := "123456"
+	req, err := http.NewRequestWithContext(ctx, "GET", "/api/hosts/localhost/containers/"+id+"/logs/stream", nil)
+	require.NoError(t, err, "NewRequest should not return an error.")
+
+	q := req.URL.Query()
+	q.Add("stdout", "true")
+	q.Add("stderr", "true")
+	addAllLogLevels(q)
+	req.URL.RawQuery = q.Encode()
+
+	now := time.Now()
+	stopped := container.Container{ID: id, Tty: false, Host: "localhost", State: "exited", StartedAt: now}
+
+	mockedClient := new(MockedClient)
+	mockedClient.On("Host").Return(container.Host{ID: "localhost"})
+	mockedClient.On("ListContainers", mock.Anything, mock.Anything).Return([]container.Container{stopped}, nil)
+	mockedClient.On("FindContainer", mock.Anything, id).Return(stopped, nil)
+	mockedClient.On("ContainerEvents", mock.Anything, mock.AnythingOfType("chan<- container.ContainerEvent")).Return(nil)
+	mockedClient.On("ContainerLogs", mock.Anything, mock.Anything, now, container.STDALL).
+		Return(io.NopCloser(bytes.NewReader(makeMessage("INFO from a stopped container\n", container.STDOUT))), nil).
+		Run(func(args mock.Arguments) {
+			go func() {
+				time.Sleep(50 * time.Millisecond)
+				cancel()
+			}()
+		})
+
+	handler := createDefaultHandler(mockedClient)
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Contains(t, rr.Body.String(), "from a stopped container", "a stopped container must still stream its own logs")
+}
+
+// The multi-container routes do take it, and default to running only.
+func Test_handler_streamHostLogs_stopped_filter(t *testing.T) {
+	run := func(t *testing.T, query string) string {
+		ctx, cancel := context.WithCancel(context.Background())
+		req, err := http.NewRequestWithContext(ctx, "GET", "/api/hosts/localhost/logs/stream?stdout=true&stderr=true&"+query, nil)
+		require.NoError(t, err)
+
+		// All levels, so no filter is active and the backward scan does not run:
+		// this test is about which containers get tailed, not about search.
+		q := req.URL.Query()
+		addAllLogLevels(q)
+		req.URL.RawQuery = q.Encode()
+
+		now := time.Now()
+		running := container.Container{ID: "alive", Name: "alive", Host: "localhost", State: "running", StartedAt: now}
+		stopped := container.Container{ID: "dead", Name: "dead", Host: "localhost", State: "exited", StartedAt: now}
+
+		mockedClient := new(MockedClient)
+		mockedClient.On("Host").Return(container.Host{ID: "localhost"})
+		mockedClient.On("ListContainers", mock.Anything, mock.Anything).Return([]container.Container{running, stopped}, nil)
+		mockedClient.On("FindContainer", mock.Anything, mock.Anything).Return(running, nil)
+		mockedClient.On("ContainerEvents", mock.Anything, mock.AnythingOfType("chan<- container.ContainerEvent")).Return(nil)
+		mockedClient.On("ContainerLogs", mock.Anything, mock.Anything, mock.Anything, container.STDALL).
+			Return(io.NopCloser(strings.NewReader("")), io.EOF).
+			Run(func(args mock.Arguments) {
+				go func() {
+					time.Sleep(50 * time.Millisecond)
+					cancel()
+				}()
+			})
+
+		handler := createDefaultHandler(mockedClient)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+		calls := 0
+		for _, c := range mockedClient.Calls {
+			if c.Method == "ContainerLogs" {
+				calls++
+			}
+		}
+		return fmt.Sprintf("%d", calls)
+	}
+
+	assert.Equal(t, "1", run(t, ""), "running only by default")
+	assert.Equal(t, "2", run(t, "stopped=1"), "stopped=1 opens the stopped container too")
 }

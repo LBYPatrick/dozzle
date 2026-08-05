@@ -68,7 +68,7 @@
                 <!-- Only once it has actually been measured. The date alone is
                      still worth showing while the span is unknown; a percentage
                      invented to fill the gap is not. -->
-                <span v-if="progressPercent !== undefined" class="text-primary shrink-0 font-semibold tabular-nums"
+                <span v-if="progressPercent !== undefined" class="text-primary-safe shrink-0 font-semibold tabular-nums"
                   >{{ progressPercent }}%</span
                 >
                 <RelativeTime :date="scrollContext.currentDate" class="truncate whitespace-nowrap" />

@@ -1,4 +1,5 @@
 toolbar:
+  include-stopped: "Include stopped containers"
   clear: Clear
   download: Download
   download-filtered: Download Filtered Logs
@@ -44,6 +45,9 @@ action:
   create-alert: Create alert
   more-actions: More actions
 label:
+  hosts-selected: "{count} hosts"
+  loading: "Loading"
+  all-logs: "All logs"
   containers: Containers
   container: No containers | 1 container | {count} containers
   host-count: No Hosts | 1 Host | {count} Hosts
@@ -158,6 +162,7 @@ title:
   settings: Settings
   notifications: Notifications
 button:
+  undo: "Undo"
   logout: Logout
   login: Login
   settings: Settings
@@ -176,11 +181,14 @@ placeholder:
   search: Search
   find-regex: Find / RegEx
 cloud-search:
+  local-search: "Local search"
+  enable-streaming-for-indexed: "Enable Stream Logs for indexed history"
+  connect-for-indexed: "Connect Dozzle Cloud for indexed history across every container"
+  search-locally: "Search locally instead"
+  local-scope: "Scans running containers, newest first"
   containers-section: Containers
   search-logs-for: Search logs for "{query}"
   across-containers: indexed across all your containers
-  connect-to-enable: Connect Dozzle Cloud to search logs
-  enable-streaming-to-search: Enable Stream Logs to Cloud to search
   open-container: open container
   search-logs-shortcut: search logs
   cloud-connected: Cloud connected
@@ -204,6 +212,17 @@ cloud-search:
   cta-settings: "Cloud settings"
   container-removed-pill: removed
 command-palette:
+  language: "Language"
+  date-format: "Date format"
+  font-size: "Font size"
+  table-stats: "Table stats"
+  grouping: "Group containers"
+  redirect: "Auto-redirect"
+  hour-style: "Hour format"
+  search-on: "Enable search"
+  search-off: "Disable search"
+  topbar-show: "Show stat bar"
+  topbar-hide: "Collapse stat bar"
   section-commands: Commands
   restart-container: Restart {name}
   stop-container: Stop {name}
@@ -234,17 +253,16 @@ command-palette:
   open-settings: Open settings
   open-settings-json: Edit settings as JSON
 settings:
+  reset-all: "Reset all settings"
+  reset-desc: "Returns every preference to its default. Containers and logs are untouched."
+  reset-confirm: "Confirm reset"
   view-visual: Visual
   view-json: JSON
   export: Export
-  import: Import
   apply: Apply
   json-valid: Valid JSON
-  imported: Settings imported
   exported: Copied settings to clipboard
   applied: Settings applied
-  import-hint: Paste settings JSON, or a URL that returns application/json.
-  import-placeholder: Paste settings JSON here, or https://example.com/settings.json
   help-support: >
     Please support Dozzle by donating or sponsoring us on GitHub. Your contributions help us improve Dozzle for
     everyone. Thank you! 🙏🏼
@@ -322,6 +340,7 @@ log_actions:
   copy_log: Copy log
   jump_to_context: Jump to context
 toasts:
+  settings-reset: "Settings reset to defaults"
   showing-all-containers: "Showing all containers, including stopped ones"
   showing-running-containers: "Showing running containers only"
   expanded-all: "Expanded every section"

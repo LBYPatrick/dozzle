@@ -1,26 +1,34 @@
 <template>
-  <div class="dropdown dropdown-end dropdown-hover z-20" @mouseleave="collapseSubmenus" @focusout="onFocusOut">
-    <!-- The stream state lives on the trigger itself: one dot per stream that
-         is currently being shown. Compact, and it needs no room in the bar. -->
-    <label
-      tabindex="0"
-      class="btn btn-ghost btn-sm w-8 gap-0 px-0 md:gap-0.5"
-      :title="$t('action.more-actions')"
-      :aria-label="$t('action.more-actions')"
+  <div class="dropdown dropdown-end z-20" :class="{ 'dropdown-open': open }" ref="root">
+    <!-- A real button, opened by press — see ContainerActionsToolbar for why
+         `dropdown-hover` on a <label> had to go. The stream marks differ in
+         shape as well as hue so the state does not rest on telling red from
+         blue. -->
+    <button
+      type="button"
+      ref="trigger"
+      class="btn btn-ghost btn-sm size-11 gap-0 px-0 md:gap-0.5"
+      aria-haspopup="menu"
+      :aria-expanded="open"
+      :title="streamSummary"
+      :aria-label="streamSummary"
+      @click="toggle"
     >
-      <carbon:circle-solid class="text-red w-2 md:w-2.5" v-if="streamConfig.stderr" />
-      <carbon:circle-solid class="text-blue w-2 md:w-2.5" v-if="streamConfig.stdout" />
-    </label>
+      <carbon:circle-outline class="text-error w-2.5 md:w-3" v-if="streamConfig.stderr" />
+      <carbon:circle-solid class="text-info w-2 md:w-2.5" v-if="streamConfig.stdout" />
+      <mdi:dots-horizontal class="size-4" v-if="!streamConfig.stderr && !streamConfig.stdout" />
+    </button>
     <ul
-      tabindex="0"
-      class="menu dropdown-content glass-surface rounded-box z-50 max-h-[calc(100dvh-7rem)] w-52 flex-nowrap overflow-y-auto overscroll-contain p-1"
-      @click="hideMenu"
+      v-if="open"
+      role="menu"
+      class="menu dropdown-content glass-surface glass-surface-sheer glass-surface-popover z-50 max-h-[calc(100dvh-7rem)] w-52 flex-nowrap overflow-y-auto overscroll-contain rounded-[var(--control-radius)] p-1"
+      @click="onItemClick"
     >
       <li>
-        <a @click="clear()">
+        <button type="button" role="menuitem" @click="clear()">
           <octicon:trash-24 /> {{ $t("toolbar.clear") }}
           <KeyShortcut char="l" :modifiers="['shift', 'meta']" />
-        </a>
+        </button>
       </li>
       <li v-if="enableDownload">
         <a :href="downloadUrl" download>
@@ -30,7 +38,9 @@
       </li>
       <li class="line"></li>
       <li>
-        <a
+        <button
+          type="button"
+          role="menuitem"
           @click="
             streamConfig.stdout = true;
             streamConfig.stderr = true;
@@ -39,10 +49,12 @@
           <mdi:check class="w-4" v-if="streamConfig.stderr && streamConfig.stdout" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.show-all") }}
-        </a>
+        </button>
       </li>
       <li>
-        <a
+        <button
+          type="button"
+          role="menuitem"
           @click="
             streamConfig.stdout = true;
             streamConfig.stderr = false;
@@ -51,10 +63,12 @@
           <mdi:check class="w-4" v-if="!streamConfig.stderr && streamConfig.stdout" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.show", { std: "STDOUT" }) }}
-        </a>
+        </button>
       </li>
       <li>
-        <a
+        <button
+          type="button"
+          role="menuitem"
           @click="
             streamConfig.stdout = false;
             streamConfig.stderr = true;
@@ -63,24 +77,24 @@
           <mdi:check class="w-4" v-if="streamConfig.stderr && !streamConfig.stdout" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.show", { std: "STDERR" }) }}
-        </a>
+        </button>
       </li>
       <li class="line"></li>
       <StatDisplayMenu />
       <li class="line"></li>
       <li>
-        <a @click="showHostname = !showHostname">
+        <button type="button" role="menuitem" @click="showHostname = !showHostname">
           <mdi:check class="w-4" v-if="showHostname" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.show-hostname") }}
-        </a>
+        </button>
       </li>
       <li>
-        <a @click="showContainerName = !showContainerName">
+        <button type="button" role="menuitem" @click="showContainerName = !showContainerName">
           <mdi:check class="w-4" v-if="showContainerName" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.show-container-name") }}
-        </a>
+        </button>
       </li>
       <li class="line"></li>
       <!-- Which containers this view draws from at all, as opposed to the two
@@ -88,11 +102,11 @@
            the server decides the set, so including stopped containers is a
            different subscription rather than a client-side unhide. -->
       <li>
-        <a @click="toggleStopped()">
+        <button type="button" role="menuitem" @click="toggleStopped()">
           <mdi:check class="w-4" v-if="showAllContainers" />
           <div v-else class="w-4"></div>
           {{ $t("toolbar.include-stopped") }}
-        </a>
+        </button>
       </li>
     </ul>
   </div>
@@ -117,7 +131,17 @@ const toggleStopped = () => {
 
 const { downloadUrl, isFiltered } = useDownloadUrl(containers, streamConfig, levels, name);
 
-const { hideMenu, collapseSubmenus, onFocusOut } = useDropdownMenu();
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle, onItemClick } = useDropdownMenu(root, trigger);
+
+// The trigger's accessible name says what the marks mean rather than leaving
+// them to be decoded from two coloured dots.
+const streamSummary = computed(() => {
+  const { stdout, stderr } = streamConfig.value;
+  const shown = [stdout && "stdout", stderr && "stderr"].filter(Boolean).join(" + ");
+  return shown ? `${t("action.more-actions")} — ${shown}` : t("action.more-actions");
+});
 </script>
 
 <style scoped>
@@ -126,7 +150,8 @@ li.line {
   @apply bg-base-content/20 h-px;
 }
 
-a {
+a,
+button[role="menuitem"] {
   @apply whitespace-nowrap;
 }
 

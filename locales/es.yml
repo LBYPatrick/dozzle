@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Barras"
   shape-line: "Línea"
   shape-area: "Área"
+  confirm: ¿Confirmar?
+drawer:
+  log-entry: Entrada de registro
+  message: Mensaje
+  formatted: Formateado
+  raw: Sin formato
+  fields: Campos
+  show-all: Mostrar todo
+  hide-all: Ocultar todo
+  source: Origen
+  image: Imagen
+  container-id: ID del contenedor
+  terminal: Terminal
+  analytics: Análisis
 action:
   copy-log: Copiar registro
   copy-link: Copiar enlace permanente
@@ -107,6 +121,7 @@ label:
   avail: "Disp."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Buscando {name}…
 tooltip:
   search: Buscar contenedores (⌘ + K, CTRL + K)
   pin-column: Anclar como columna
@@ -118,6 +133,8 @@ tooltip:
   volumes: Volúmenes
   volume-unreachable: no accesible desde este host
   volume-full: "{destination} está al {pct}"
+  pin-container: Fijar a la barra lateral
+  unpin-container: Quitar de la barra lateral
 error:
   page-not-found: Esta página no existe.
   host-group-not-found: 'No se encontraron hosts en el grupo "{name}"'
@@ -141,6 +158,7 @@ error:
     title: Algo no está bien
     message: >-
       Dozzle UI se agotó el tiempo de espera al conectarse a la API. Por favor, compruebe la conexión de red y vuelva a intentarlo.
+  page-not-found-hint: Puede que el enlace esté obsoleto o que el contenedor ya no exista.
 alert:
   redirected:
     title: Redirigido a nuevo contenedor
@@ -170,6 +188,7 @@ button:
   collapse-top-bar: Contraer barra superior
   expand-top-bar: Expandir barra superior
   clear-input: Borrar
+  back-to-dashboard: Volver al panel
 placeholder:
   search-containers: Buscar contenedores (⌘ + K, CTRL + K)
   search: Buscar
@@ -318,6 +337,8 @@ settings:
       start-line: Este es un mensaje de error de múltiples líneas
       middle-line: con una segunda línea
       end-line: y finalmente una tercera línea.
+  whats-new: Novedades
+  open-notifications: Gestionar notificaciones
 releases:
   features: una nueva característica | {count} características
   bugFixes: una corrección de error | {count} correcciones
@@ -381,6 +402,7 @@ notifications:
     containers-count: "{count} contenedores"
     triggered-count: "{count} activados"
     last-triggered: "Último: {time}"
+    change-destination: Cambiar destino
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

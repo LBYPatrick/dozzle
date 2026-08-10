@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Słupki"
   shape-line: "Linia"
   shape-area: "Obszar"
+  confirm: Potwierdzić?
+drawer:
+  log-entry: Wpis dziennika
+  message: Wiadomość
+  formatted: Sformatowany
+  raw: Surowy
+  fields: Pola
+  show-all: Pokaż wszystko
+  hide-all: Ukryj wszystko
+  source: Źródło
+  image: Obraz
+  container-id: ID kontenera
+  terminal: Terminal
+  analytics: Analiza
 action:
   copy-log: Skopiuj log
   copy-link: Skopiuj permalink
@@ -107,6 +121,7 @@ label:
   avail: "Dost."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Szukanie {name}…
 tooltip:
   search: Przeszukaj kontenery (⌘ + k, ⌃k)
   pin-column: Przypnij jako kolumna
@@ -118,6 +133,8 @@ tooltip:
   volumes: Wolumeny
   volume-unreachable: nieosiągalne z tego hosta
   volume-full: "{destination} zapełniony w {pct}"
+  pin-container: Przypnij do panelu bocznego
+  unpin-container: Odepnij z panelu bocznego
 error:
   page-not-found: Ta strona nie istnieje
   host-group-not-found: "Nie znaleziono hostów w grupie „{name}”"
@@ -142,6 +159,7 @@ error:
     title: Coś jest nie tak
     message: >-
       Przekroczono limit czasu w trakcie połączenia do API. Sprawdź ustawienia sieciowe.
+  page-not-found-hint: Link może być nieaktualny lub kontener już nie istnieje.
 alert:
   redirected:
     title: Przekierowywanie do nowego kontenera
@@ -172,6 +190,7 @@ button:
   collapse-top-bar: Zwiń górny pasek
   expand-top-bar: Rozwiń górny pasek
   clear-input: Wyczyść
+  back-to-dashboard: Powrót do pulpitu
 placeholder:
   search-containers: Przeszukaj kontery (⌘ + k, ⌃k)
   search: Szukaj
@@ -249,6 +268,8 @@ settings:
       start-line: To jest wieloliniowy komunikat o błędzie
       middle-line: z drugą linią
       end-line: i wreszcie trzecią linią.
+  whats-new: Nowości
+  open-notifications: Zarządzaj powiadomieniami
 releases:
   features: jedna nowa funkcjonalność | {count} funkcjonalności
   bugFixes: jeden naprawiony błąd | {count} poprawki
@@ -312,6 +333,7 @@ notifications:
     containers-count: "{count} kontenerów"
     triggered-count: "{count} wyzwolonych"
     last-triggered: "Ostatnio: {time}"
+    change-destination: Zmień cel
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

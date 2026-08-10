@@ -1,32 +1,46 @@
 <template>
-  <div class="dropdown dropdown-end dropdown-hover z-20" @mouseleave="collapseSubmenus" @focusout="onFocusOut">
-    <!-- The stream state lives on the trigger itself: one dot per stream that
-         is currently being shown. Compact, and it needs no room in the bar. -->
-    <label
-      tabindex="0"
-      class="btn btn-ghost btn-sm w-8 gap-0 px-0 md:gap-0.5"
-      :title="$t('action.more-actions')"
-      :aria-label="$t('action.more-actions')"
+  <div class="dropdown dropdown-end z-20" :class="{ 'dropdown-open': open }" ref="root">
+    <!-- A real button, opened by press. It was a <label> on `dropdown-hover`:
+         no button semantics, nothing announced to a screen reader, and — since
+         a touch device never hovers — no way to open it on a phone at all.
+
+         The stream state lives on the trigger: one mark per stream currently
+         shown. The marks differ in shape as well as hue (stderr is a ring,
+         stdout a disc), because two coloured dots encode the whole state in
+         colour alone and red/blue is the most common confusion there is. -->
+    <button
+      type="button"
+      ref="trigger"
+      class="btn btn-ghost btn-sm size-11 gap-0 px-0 md:gap-0.5"
+      aria-haspopup="menu"
+      :aria-expanded="open"
+      :title="streamSummary"
+      :aria-label="streamSummary"
+      @click="toggle"
     >
-      <carbon:circle-solid class="text-red w-2 md:w-2.5" v-if="streamConfig.stderr" />
-      <carbon:circle-solid class="text-blue w-2 md:w-2.5" v-if="streamConfig.stdout" />
-    </label>
+      <carbon:circle-outline class="text-error w-2.5 md:w-3" v-if="streamConfig.stderr" />
+      <carbon:circle-solid class="text-info w-2 md:w-2.5" v-if="streamConfig.stdout" />
+      <!-- Neither stream shown is a state too, and an empty button is not a
+           state, it is a broken button. -->
+      <mdi:dots-horizontal class="size-4" v-if="!streamConfig.stderr && !streamConfig.stdout" />
+    </button>
     <ul
-      tabindex="0"
-      class="menu dropdown-content glass-surface rounded-box z-50 max-h-[calc(100dvh-7rem)] w-52 flex-nowrap overflow-y-auto overscroll-contain p-1"
-      @click="hideMenu"
+      v-if="open"
+      role="menu"
+      class="menu dropdown-content glass-surface glass-surface-sheer glass-surface-popover z-50 max-h-[calc(100dvh-7rem)] w-52 flex-nowrap overflow-y-auto overscroll-contain rounded-[var(--control-radius)] p-1"
+      @click="onItemClick"
     >
       <li v-if="!historical">
-        <a @click="clear()">
+        <button type="button" role="menuitem" @click="clear()">
           <octicon:trash-24 /> {{ $t("toolbar.clear") }}
           <KeyShortcut char="l" :modifiers="['shift', 'meta']" />
-        </a>
+        </button>
       </li>
       <li v-if="hasComplexLogs">
-        <a @click="showDrawer(LogAnalytics, { container }, 'lg')">
+        <button type="button" role="menuitem" @click="showDrawer(LogAnalytics, { container }, 'lg')">
           <ph:file-sql /> SQL Analytics
           <KeyShortcut char="f" :modifiers="['shift', 'meta']" />
-        </a>
+        </button>
       </li>
       <li class="line"></li>
       <li>
@@ -37,7 +51,9 @@
           </summary>
           <ul class="menu">
             <li>
-              <a
+              <button
+                type="button"
+                role="menuitem"
                 @click="
                   streamConfig.stdout = true;
                   streamConfig.stderr = true;
@@ -46,10 +62,12 @@
                 <mdi:check class="w-4" v-if="streamConfig.stdout == true && streamConfig.stderr == true" />
                 <div v-else class="w-4"></div>
                 {{ $t("toolbar.show-all") }}
-              </a>
+              </button>
             </li>
             <li>
-              <a
+              <button
+                type="button"
+                role="menuitem"
                 @click="
                   streamConfig.stdout = true;
                   streamConfig.stderr = false;
@@ -58,10 +76,12 @@
                 <mdi:check class="w-4" v-if="streamConfig.stdout == true && streamConfig.stderr == false" />
                 <div v-else class="w-4"></div>
                 {{ $t("toolbar.show", { std: "STDOUT" }) }}
-              </a>
+              </button>
             </li>
             <li>
-              <a
+              <button
+                type="button"
+                role="menuitem"
                 @click="
                   streamConfig.stdout = false;
                   streamConfig.stderr = true;
@@ -70,7 +90,7 @@
                 <mdi:check class="w-4" v-if="streamConfig.stdout == false && streamConfig.stderr == true" />
                 <div v-else class="w-4"></div>
                 {{ $t("toolbar.show", { std: "STDERR" }) }}
-              </a>
+              </button>
             </li>
           </ul>
         </details>
@@ -87,22 +107,33 @@
           </summary>
           <ul class="menu">
             <li>
-              <a @click="showAllLevels()">
+              <button type="button" role="menuitem" @click="showAllLevels()">
                 <mdi:check class="w-4" v-if="allLevelsShown" />
                 <div v-else class="w-4"></div>
                 {{ $t("toolbar.show-all") }}
-              </a>
+              </button>
             </li>
             <li class="line"></li>
             <li v-for="level in allLevels">
-              <a class="capitalize" @click="levels.has(level) ? levels.delete(level) : levels.add(level)">
+              <button
+                type="button"
+                role="menuitem"
+                class="capitalize"
+                @click="levels.has(level) ? levels.delete(level) : levels.add(level)"
+              >
                 <mdi:check class="w-4" v-if="levels.has(level)" />
                 <div v-else class="w-4"></div>
 
+                <!-- The shared pill, tinted from the level ramp. This was a
+                     daisyUI `.badge` with a solid level colour and an
+                     `!important` light-theme text override on top — a fifth
+                     small-label system, and the only one that needed a hack to
+                     stay readable. A tonal pill needs none: the wash carries
+                     the hue, the label carries the level's own readable form. -->
                 <div class="flex">
-                  <div class="badge" :data-level="level">{{ level }}</div>
+                  <span class="status-pill level-pill" :data-level="level">{{ level }}</span>
                 </div>
-              </a>
+              </button>
             </li>
           </ul>
         </details>
@@ -118,31 +149,43 @@
         </a>
       </li>
       <li v-if="isSupported">
-        <a @click="copyLogs()">
+        <button type="button" role="menuitem" @click="copyLogs()">
           <mdi:content-copy />
           {{ isFiltered ? $t("toolbar.copy-filtered-logs") : $t("toolbar.copy-logs") }}
-        </a>
+        </button>
       </li>
       <li>
-        <a @click="copyPermalink()">
+        <button type="button" role="menuitem" @click="copyPermalink()">
           <material-symbols:link />
           {{ $t("toolbar.copy-permalink") }}
-        </a>
+        </button>
       </li>
 
-      <!-- Container Actions (Enabled via config) -->
+      <!-- Container actions (enabled via config).
+           §16 Agency: these three interrupt a running service, and `update`
+           pulls a new image and recreates the container — genuinely
+           irreversible. They fired on a single click with no confirmation and
+           no way back. They arm on the first press instead, and disarm on
+           their own if you walk away, which is the same two-step the settings
+           reset uses. Starting a container is not destructive and stays
+           immediate. -->
       <template v-if="enableActions && !historical">
         <li class="line"></li>
         <li>
           <button
-            @click="stop()"
+            type="button"
+            role="menuitem"
+            :class="{ 'is-armed': armed === 'stop' }"
+            @click.stop="confirmAction('stop', stop)"
             :disabled="actionStates.stop || actionStates.restart"
             v-if="container.state == 'running'"
           >
-            <carbon:stop-filled-alt /> {{ $t("toolbar.stop") }}
+            <carbon:stop-filled-alt /> {{ armed === "stop" ? $t("toolbar.confirm") : $t("toolbar.stop") }}
           </button>
 
           <button
+            type="button"
+            role="menuitem"
             @click="start()"
             :disabled="actionStates.start || actionStates.restart"
             v-if="container.state != 'running'"
@@ -151,20 +194,40 @@
           </button>
         </li>
         <li>
-          <button @click="restart()" :disabled="disableRestart">
+          <button
+            type="button"
+            role="menuitem"
+            :class="{ 'is-armed': armed === 'restart' }"
+            @click.stop="confirmAction('restart', restart)"
+            :disabled="disableRestart"
+          >
             <carbon:restart
               :class="{
                 'animate-spin': actionStates.restart,
-                'text-secondary': actionStates.restart,
+                'text-secondary-safe': actionStates.restart,
               }"
             />
-            {{ $t("toolbar.restart") }}
+            {{ armed === "restart" ? $t("toolbar.confirm") : $t("toolbar.restart") }}
           </button>
         </li>
         <li>
-          <button @click="update()" :disabled="actionStates.update">
+          <button
+            type="button"
+            role="menuitem"
+            :class="{ 'is-armed': armed === 'update' }"
+            @click.stop="confirmAction('update', update)"
+            :disabled="actionStates.update"
+          >
             <carbon:upgrade />
-            {{ container.isSwarm ? $t("toolbar.update-service") : $t("toolbar.update") }}
+            <span>
+              {{
+                armed === "update"
+                  ? $t("toolbar.confirm")
+                  : container.isSwarm
+                    ? $t("toolbar.update-service")
+                    : $t("toolbar.update")
+              }}
+            </span>
           </button>
         </li>
       </template>
@@ -172,18 +235,18 @@
       <template v-if="enableShell && !historical">
         <li class="line"></li>
         <li>
-          <a @click="showDrawer(Terminal, { container, action: 'attach' }, 'lg')">
+          <button type="button" role="menuitem" @click="showDrawer(Terminal, { container, action: 'attach' }, 'lg')">
             <ri:terminal-window-fill />
             {{ $t("toolbar.attach") }}
             <KeyShortcut char="a" :modifiers="['shift', 'meta']" />
-          </a>
+          </button>
         </li>
         <li>
-          <a @click="showDrawer(Terminal, { container, action: 'exec' }, 'lg')">
+          <button type="button" role="menuitem" @click="showDrawer(Terminal, { container, action: 'exec' }, 'lg')">
             <material-symbols:terminal />
             {{ $t("toolbar.shell") }}
             <KeyShortcut char="e" :modifiers="['shift', 'meta']" />
-          </a>
+          </button>
         </li>
       </template>
     </ul>
@@ -345,7 +408,47 @@ const allLevelsShown = computed(() => levels.value.size === allLevels.length);
 // whole set off underneath you.
 const showAllLevels = () => allLevels.forEach((level) => levels.value.add(level));
 
-const { hideMenu, collapseSubmenus, onFocusOut } = useDropdownMenu();
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle, close, onItemClick } = useDropdownMenu(root, trigger);
+
+// The trigger's accessible name says what the marks mean rather than leaving
+// them to be decoded from two coloured dots.
+const streamSummary = computed(() => {
+  const { stdout, stderr } = streamConfig.value;
+  const shown = [stdout && "stdout", stderr && "stderr"].filter(Boolean).join(" + ");
+  return shown ? `${t("action.more-actions")} — ${shown}` : t("action.more-actions");
+});
+
+// Two-step confirmation for the actions that interrupt or replace a running
+// container. Arms on the first press, fires on the second, and disarms after a
+// few seconds so an abandoned menu is not left loaded.
+type Armable = "stop" | "restart" | "update";
+const armed = ref<Armable | null>(null);
+let armTimer: ReturnType<typeof setTimeout> | undefined;
+
+function confirmAction(name: Armable, perform: () => void) {
+  clearTimeout(armTimer);
+  if (armed.value !== name) {
+    armed.value = name;
+    armTimer = setTimeout(() => (armed.value = null), 4000);
+    return;
+  }
+  armed.value = null;
+  perform();
+  close();
+}
+
+// Closing the menu forgets what was armed; reopening it should not present a
+// loaded button you armed a minute ago.
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    clearTimeout(armTimer);
+    armed.value = null;
+  }
+});
+
+onBeforeUnmount(() => clearTimeout(armTimer));
 </script>
 
 <style scoped>
@@ -370,14 +473,11 @@ a {
   }
 }
 
-/* Keep the solid level colors, but use white labels in the light theme so the
- * text reads against the saturated chip backgrounds. warn is a light orange,
- * where dark text has better contrast than white, so it keeps the default. */
-[data-theme="light"] .badge[data-level="info"],
-[data-theme="light"] .badge[data-level="debug"],
-[data-theme="light"] .badge[data-level="trace"],
-[data-theme="light"] .badge[data-level="error"],
-[data-theme="light"] .badge[data-level="fatal"] {
-  color: oklch(100% 0 0) !important;
+/* An armed destructive action. Loud enough that the second press is a
+ * deliberate one, and it reverts on its own after a few seconds. */
+.is-armed {
+  background-color: color-mix(in oklab, var(--color-error) 18%, transparent) !important;
+  color: var(--color-error-text) !important;
+  font-weight: 600;
 }
 </style>

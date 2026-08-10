@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Balken"
   shape-line: "Lijn"
   shape-area: "Vlak"
+  confirm: Bevestigen?
+drawer:
+  log-entry: Logregel
+  message: Bericht
+  formatted: Opgemaakt
+  raw: Ruw
+  fields: Velden
+  show-all: Alles tonen
+  hide-all: Alles verbergen
+  source: Bron
+  image: Image
+  container-id: Container-ID
+  terminal: Terminal
+  analytics: Analyse
 action:
   copy-log: Log kopiëren
   copy-link: Permalink kopiëren
@@ -107,6 +121,7 @@ label:
   avail: "Besch."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Zoeken naar {name}…
 tooltip:
   search: Zoek containers (⌘ + k, ⌃k)
   pin-column: Vastzetten als kolom
@@ -118,6 +133,8 @@ tooltip:
   volumes: Volumes
   volume-unreachable: niet bereikbaar vanaf deze host
   volume-full: "{destination} is {pct} vol"
+  pin-container: Vastzetten in zijbalk
+  unpin-container: Losmaken uit zijbalk
 error:
   page-not-found: Deze pagina bestaat niet
   host-group-not-found: 'Geen hosts gevonden in groep "{name}"'
@@ -142,6 +159,7 @@ error:
     title: Er gaat iets mis
     message: >-
       De verbinding met de API is verlopen. Controleer je netwerkverbinding en probeer het opnieuw.
+  page-not-found-hint: De link is mogelijk verouderd, of de container bestaat niet meer.
 alert:
   redirected:
     title: Doorgestuurd naar nieuwe container
@@ -171,6 +189,7 @@ button:
   collapse-top-bar: Bovenbalk inklappen
   expand-top-bar: Bovenbalk uitklappen
   clear-input: Wissen
+  back-to-dashboard: Terug naar dashboard
 placeholder:
   search-containers: Zoek containers (⌘ + k, ⌃k)
   search: Zoeken
@@ -247,6 +266,8 @@ settings:
       start-line: Dit is een foutmelding over meerdere regels
       middle-line: met een tweede regel
       end-line: en tenslotte een derde regel.
+  whats-new: Wat is er nieuw
+  open-notifications: Meldingen beheren
 releases:
   features: één nieuwe functie | {count} functies
   bugFixes: één bugfix | {count} bugfixes
@@ -310,6 +331,7 @@ notifications:
     containers-count: "{count} containers"
     triggered-count: "{count} geactiveerd"
     last-triggered: "Laatst: {time}"
+    change-destination: Bestemming wijzigen
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

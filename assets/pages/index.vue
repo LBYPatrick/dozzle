@@ -17,7 +17,7 @@
            machine, and a single tile repeating it is furniture. -->
       <section v-if="hostList.length > 1" class="flex shrink-0 flex-col">
         <h2 class="section-heading">
-          {{ $t("label.hosts") }} <span class="count">{{ hostList.length }}</span>
+          {{ $t("label.hosts") }} <span class="section-count">{{ hostList.length }}</span>
         </h2>
         <!-- Capped, then scrolled. A large fleet must not push the containers
              off-screen — the table is what the page is for. -->
@@ -96,15 +96,10 @@ watchEffect(() => {
 <style scoped>
 @reference "@/main.css";
 
-/* h-8 matches the table's control bar, which is as tall as the buttons on it,
-   so both headings sit on the same line as their section's controls. */
-.section-heading {
-  @apply text-base-content/45 flex h-8 shrink-0 items-center gap-2 text-xs font-semibold tracking-wider uppercase;
-}
-
-.count {
-  @apply bg-base-content/8 text-base-content/60 rounded-full px-1.5 py-0.5 text-[0.7rem] tabular-nums;
-}
+/* `.section-heading` and `.section-count` are in main.css. They used to be
+   declared here *and* verbatim in ContainerTable, for two headings that sit
+   side by side on this very screen — and the two copies had already drifted to
+   different opacities (/45 against /50). */
 
 /* Both stops collapse onto their edge when the corresponding var is 0, so a
    list against an edge (or too short to scroll) gets no mask there at all

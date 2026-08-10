@@ -15,6 +15,8 @@
       :aria-checked="model === opt.value"
       :aria-label="opt.title"
       :title="opt.title"
+      :tabindex="model === opt.value || (!hasSelection && i === 0) ? 0 : -1"
+      @keydown="onKeydown"
       class="segment relative z-10 inline-flex items-center justify-center text-sm whitespace-nowrap transition-[color,transform] duration-150 focus-visible:outline-none active:scale-[0.96]"
       :class="
         model === opt.value
@@ -50,6 +52,34 @@ const { options, dense = false } = defineProps<{
 const select = (value: T) => {
   model.value = value;
 };
+
+const hasSelection = computed(() => options.some((o) => o.value === model.value));
+
+// Roving tabindex + arrow keys, which is what `role="radiogroup"` promises and
+// this control did not deliver: every segment was separately tabbable, and the
+// arrow keys did nothing. A three-segment control was therefore three tab stops
+// that all had to be found and pressed, rather than one stop you steer.
+function onKeydown(event: KeyboardEvent) {
+  const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+  const jump = { Home: 0, End: options.length - 1 }[event.key];
+
+  let next: number;
+  if (step !== undefined) {
+    const current = options.findIndex((o) => o.value === model.value);
+    // Wraps, as a radio group does — running off the end of a segmented control
+    // and stopping there makes the last segment feel like a wall.
+    next = ((((current === -1 ? 0 : current) + step) % options.length) + options.length) % options.length;
+  } else if (jump !== undefined) {
+    next = jump;
+  } else {
+    return;
+  }
+
+  event.preventDefault();
+  select(options[next].value);
+  // Selection follows focus in a radio group, so focus has to follow it back.
+  nextTick(() => btns.value[next]?.focus());
+}
 
 const root = ref<HTMLElement>();
 const btns = ref<(HTMLElement | null)[]>([]);

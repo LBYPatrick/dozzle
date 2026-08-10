@@ -18,8 +18,8 @@
          light theme, under AA for text this size. 70% clears it in both themes
          (4.6:1 light, 5.7:1 dark) and the glyph still reads as secondary. -->
     <mdi:magnify
-      class="group-hover/field:text-primary group-focus/field:text-primary size-4 shrink-0 transition-colors"
-      :class="cloudReady ? 'text-primary' : 'text-base-content/70'"
+      class="group-hover/field:text-primary-safe group-focus/field:text-primary-safe size-4 shrink-0 transition-colors"
+      :class="cloudReady ? 'text-primary-safe' : 'text-base-content/70'"
     />
     <!-- Show the active query when we're on the cloud search page so the
          topbar reflects what the user is looking at. -->

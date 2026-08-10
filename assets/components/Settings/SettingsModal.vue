@@ -16,7 +16,7 @@
         <button class="btn btn-ghost btn-sm -ml-1 gap-1 pl-1" @click="closeSubview">
           <mdi:chevron-left class="size-5" /> {{ $t("title.settings") }}
         </button>
-        <h2 class="text-base font-semibold">{{ subviewTitle }}</h2>
+        <h2 class="type-heading">{{ subviewTitle }}</h2>
         <form method="dialog" class="ml-auto">
           <button class="btn btn-ghost btn-sm btn-square" :aria-label="$t('button.cancel')">
             <mdi:close class="size-5" />
@@ -27,7 +27,7 @@
       <!-- Main list -->
       <template v-else>
         <mdi:cog-outline class="text-base-content/60 size-5 shrink-0" />
-        <h2 class="text-base font-semibold">{{ $t("title.settings") }}</h2>
+        <h2 class="type-heading">{{ $t("title.settings") }}</h2>
 
         <SegmentedControl
           class="ml-2"
@@ -76,10 +76,7 @@
 
       <!-- Secondary screen slides in over the main list -->
       <transition name="subview">
-        <div
-          v-if="subview"
-          class="bg-base-200/85 absolute inset-0 overflow-y-auto p-4 backdrop-blur-2xl backdrop-saturate-150 md:p-6"
-        >
+        <div v-if="subview" class="bg-base-200 absolute inset-0 overflow-y-auto p-4 md:p-6">
           <WhatsNewPanel v-if="subview === 'whats-new'" />
           <NotificationsPanel v-else-if="subview === 'notifications'" />
         </div>

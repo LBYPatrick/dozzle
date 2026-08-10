@@ -34,8 +34,12 @@
              itself. backdrop-filter turns an element into a backdrop root, and
              a backdrop root leaves anything floating *inside* it — the actions
              menu — with nothing behind it left to blur. -->
+        <!-- `-chrome`, not the bare material: a full-width bar has no corners,
+             no outline and nothing to cast a shadow onto. Without it this layer
+             inherited the *sheet* elevation and hazed a 56px-blur shadow down
+             over the first rows of the log. -->
         <div
-          class="bg-base-200/72 pointer-events-none absolute inset-0 -z-10 backdrop-blur-xl backdrop-saturate-150"
+          class="glass-surface glass-surface-sheer glass-surface-chrome pointer-events-none absolute inset-0 -z-10"
         ></div>
         <!-- Row 1: identity (tag + name) and stats (network / cpu / memory).
              @container so the stats' container-query visibility (they hide when
@@ -57,7 +61,7 @@
             <transition name="status-fade">
               <span
                 v-if="loadingMore || searchLoading"
-                class="loading loading-spinner loading-xs text-primary shrink-0"
+                class="loading loading-spinner loading-xs text-primary-safe shrink-0"
                 :title="$t('label.loading')"
               ></span>
             </transition>
@@ -123,13 +127,13 @@
     <!-- Scroll controls: a floating glass capsule, single chevrons. -->
     <transition name="fade">
       <div
-        class="border-base-content/10 bg-base-200/70 fixed right-6 bottom-6 z-10 flex flex-col overflow-hidden rounded-[var(--control-radius)] border shadow-lg backdrop-blur-xl"
+        class="glass-surface glass-surface-sheer glass-surface-popover fixed right-6 bottom-6 z-10 flex flex-col overflow-hidden rounded-[var(--control-radius)]"
         v-if="!historical"
         v-show="!atTop || scrollContext.paused"
       >
         <!-- Go to top: loads all the way back to the first line. -->
         <button
-          class="hover:bg-base-content/10 text-primary flex size-11 items-center justify-center transition-colors disabled:opacity-40"
+          class="hover:bg-base-content/10 text-primary-safe flex size-11 items-center justify-center transition-colors disabled:opacity-40"
           :disabled="atTop && !goingToTop"
           @click="scrollToTop()"
           :aria-label="$t('button.scroll-to-top')"
@@ -141,7 +145,7 @@
         <div class="bg-base-content/10 mx-2 h-px"></div>
         <!-- Go to bottom: back to the live tail. -->
         <button
-          class="hover:bg-base-content/10 text-primary flex size-11 items-center justify-center transition-colors disabled:opacity-40"
+          class="hover:bg-base-content/10 text-primary-safe flex size-11 items-center justify-center transition-colors disabled:opacity-40"
           :class="{ 'animate-bounce-fast': hasMore }"
           :disabled="!scrollContext.paused"
           @click="scrollToBottom()"
@@ -331,9 +335,12 @@ useScrollControlsProvider({
   @apply opacity-0;
 }
 
+/* No overshoot. §4: bounce is earned by a gesture that carried momentum, and
+   pressing a collapse chevron carries none — a back-out curve here was the
+   interface adding energy the user never put in. */
 .widget-pop-enter-active {
   transition:
-    transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 220ms cubic-bezier(0.32, 0.72, 0, 1),
     opacity 160ms ease;
 }
 .widget-pop-leave-active {
@@ -388,6 +395,33 @@ useScrollControlsProvider({
 .progress-bar-enter-from,
 .progress-bar-leave-to {
   opacity: 0;
+}
+
+/* All five of this view's transitions in one place. Each keeps its cross-fade —
+   the arrival of a stat widget, a progress readout or a spinner is information,
+   not decoration — and loses only the travel and the scale. */
+@media (prefers-reduced-motion: reduce) {
+  .widget-pop-enter-active,
+  .widget-pop-leave-active,
+  .status-fade-enter-active,
+  .status-fade-leave-active,
+  .progress-status-enter-active,
+  .progress-status-leave-active {
+    transition: opacity 160ms ease;
+  }
+
+  .widget-pop-enter-from,
+  .widget-pop-leave-to,
+  .progress-status-enter-from,
+  .progress-status-leave-to {
+    transform: none;
+  }
+
+  .status-fade-enter-from,
+  .status-fade-leave-to {
+    max-width: 1.25rem;
+    margin-right: 0;
+  }
 }
 </style>
 

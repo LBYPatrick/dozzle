@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "막대"
   shape-line: "선"
   shape-area: "영역"
+  confirm: 확인할까요?
+drawer:
+  log-entry: 로그 항목
+  message: 메시지
+  formatted: 서식 있음
+  raw: 원본
+  fields: 필드
+  show-all: 모두 표시
+  hide-all: 모두 숨기기
+  source: 출처
+  image: 이미지
+  container-id: 컨테이너 ID
+  terminal: 터미널
+  analytics: 분석
 action:
   copy-log: 로그 복사
   copy-link: 영구 링크 복사
@@ -107,6 +121,7 @@ label:
   avail: "가용"
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: "{name} 찾는 중…"
 tooltip:
   search: 컨테이너 검색 (⌘ + k, ⌃k)
   pin-column: 열로 고정
@@ -118,6 +133,8 @@ tooltip:
   volumes: 볼륨
   volume-unreachable: 이 호스트에서 접근할 수 없음
   volume-full: "{destination}이(가) {pct} 사용 중"
+  pin-container: 사이드바에 고정
+  unpin-container: 사이드바에서 고정 해제
 error:
   page-not-found: 페이지를 찾을 수 없습니다
   host-group-not-found: '"{name}" 그룹에 호스트가 없습니다'
@@ -142,6 +159,7 @@ error:
     title: 문제가 발생했습니다
     message: >-
       Dozzle UI가 API 연결 중에 시간 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해 주세요.
+  page-not-found-hint: 링크가 오래되었거나 가리키던 컨테이너가 더 이상 없습니다.
 alert:
   redirected:
     title: 새 컨테이너로 이동했습니다
@@ -172,6 +190,7 @@ button:
   collapse-top-bar: 상단 바 접기
   expand-top-bar: 상단 바 펼치기
   clear-input: 지우기
+  back-to-dashboard: 대시보드로 돌아가기
 placeholder:
   search-containers: 컨테이너 검색 (⌘ + k, ⌃k)
   search: 검색
@@ -250,6 +269,8 @@ settings:
       start-line: 여러 줄로 된 오류 메시지입니다
       middle-line: 두 번째 줄과
       end-line: 마지막 세 번째 줄입니다.
+  whats-new: 새로운 기능
+  open-notifications: 알림 관리
 releases:
   features: 새 기능 1개 | 새 기능 {count}개
   bugFixes: 버그 수정 1개 | 버그 수정 {count}개
@@ -313,6 +334,7 @@ notifications:
     containers-count: "컨테이너 {count}개"
     triggered-count: "{count}회 트리거됨"
     last-triggered: "마지막: {time}"
+    change-destination: 대상 변경
   destination:
     http-webhook: HTTP 웹훅
     dozzle-cloud: Dozzle Cloud

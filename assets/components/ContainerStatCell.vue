@@ -85,7 +85,7 @@ const displayValue = computed(() => {
 const toneClass = computed(() => {
   const value = averageValue.value;
   if (value <= 50) return "text-success";
-  if (value <= 70) return "text-secondary";
+  if (value <= 70) return "text-secondary-safe";
   if (value <= 90) return "text-warning";
   return "text-error";
 });

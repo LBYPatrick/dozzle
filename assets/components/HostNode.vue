@@ -13,7 +13,7 @@
       <HostIcon :type="host.type" class="size-4 shrink-0 opacity-70" />
     </template>
     <template #trailing>
-      <span v-if="!host.available" class="badge badge-error badge-xs p-1.5">offline</span>
+      <span v-if="!host.available" class="status-pill status-pill-error">offline</span>
     </template>
     <MenuSection
       v-for="group in groups"
@@ -33,7 +33,7 @@
       <template #actions>
         <router-link
           :to="{ name: '/merged/[ids]', params: { ids: group.containers.map(({ id }) => id).join(',') } }"
-          class="btn btn-square btn-ghost btn-xs text-primary"
+          class="btn btn-square btn-ghost btn-xs text-primary-safe"
           active-class="menu-active"
           :title="$t('tooltip.merge-all')"
           @click.stop

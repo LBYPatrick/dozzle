@@ -53,7 +53,7 @@
       <div v-else-if="cloudStatus" class="mt-3 space-y-3">
         <div class="flex items-center justify-between text-sm">
           <span class="text-base-content/60">{{ $t("notifications.destination-form.cloud-plan") }}</span>
-          <span class="badge badge-primary badge-sm capitalize">{{ cloudStatus.plan.name }}</span>
+          <span class="status-pill status-pill-primary capitalize">{{ cloudStatus.plan.name }}</span>
         </div>
         <div>
           <div class="mb-1 flex items-center justify-between text-sm">
@@ -83,8 +83,8 @@
     <!-- Link Dozzle Cloud (when creating or not linked) -->
     <div v-else class="card card-border border-primary/30 bg-primary/5">
       <div class="card-body items-center text-center">
-        <mdi:cloud-outline class="text-primary text-4xl" />
-        <h3 class="card-title">{{ $t("notifications.destination-form.link-cloud") }}</h3>
+        <mdi:cloud-outline class="text-primary-safe text-4xl" />
+        <h3 class="type-heading">{{ $t("notifications.destination-form.link-cloud") }}</h3>
         <p class="text-base-content/60 text-sm">{{ $t("notifications.destination-form.cloud-description") }}</p>
         <a :href="cloudLinkUrl" class="btn btn-primary btn-lg mt-2">
           <mdi:link-variant class="text-lg" />

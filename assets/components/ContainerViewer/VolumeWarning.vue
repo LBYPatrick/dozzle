@@ -1,21 +1,34 @@
 <template>
-  <div v-if="worst" class="dropdown dropdown-end" :class="{ 'dropdown-bottom': !openUp }">
+  <!-- Opened by press, on the shared material — it was a focus-opened panel on
+       an opaque `bg-base-200`, and the chip was a sixth hand-rolled small label. -->
+  <div
+    v-if="worst"
+    class="dropdown dropdown-end"
+    :class="[{ 'dropdown-bottom': !openUp }, { 'dropdown-open': open }]"
+    ref="root"
+  >
     <button
-      tabindex="0"
-      role="button"
-      class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium tabular-nums"
+      type="button"
+      ref="trigger"
+      class="status-pill tabular-nums"
       :class="badgeClass"
+      aria-haspopup="menu"
+      :aria-expanded="open"
       :title="title"
+      :aria-label="title"
+      @click="toggle"
     >
       <PhWarning class="size-3.5" />
       <span class="max-md:hidden">{{ worst.destination }}</span>
       <span>{{ formatPct(worst.pct) }}</span>
     </button>
     <div
-      tabindex="0"
-      class="dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 mt-1 w-72 border p-2 text-xs shadow-sm"
+      v-if="open"
+      class="dropdown-content glass-surface glass-surface-sheer glass-surface-popover z-50 mt-1 w-72 origin-top-right rounded-[var(--control-radius)] p-2 text-xs"
     >
-      <div class="text-base-content/60 mb-1.5 px-1 text-[11px] tracking-wide uppercase">{{ t("tooltip.volumes") }}</div>
+      <div class="text-base-content/60 mb-1.5 px-1 text-[0.6875rem] tracking-wide uppercase">
+        {{ t("tooltip.volumes") }}
+      </div>
       <ul class="space-y-1.5">
         <li
           v-for="m in sortedMounts"
@@ -24,7 +37,7 @@
           :class="rowClass(m.pct, m.available)"
         >
           <div class="flex items-baseline justify-between gap-2">
-            <span class="truncate font-mono text-[11.5px]" :title="m.destination">{{ m.destination }}</span>
+            <span class="truncate font-mono text-[0.72rem]" :title="m.destination">{{ m.destination }}</span>
             <span v-if="m.available" class="tabular-nums">{{ formatPct(m.pct) }}</span>
             <span v-else class="text-base-content/50">n/a</span>
           </div>
@@ -34,7 +47,7 @@
           <div class="text-base-content/60 flex justify-between tabular-nums">
             <span v-if="m.available">{{ formatBytes(m.used) }} / {{ formatBytes(m.total) }}</span>
             <span v-else>{{ t("tooltip.volume-unreachable") }}</span>
-            <RelativeTime v-if="m.lastChecked" :date="m.lastChecked" class="text-[10.5px]" />
+            <RelativeTime v-if="m.lastChecked" :date="m.lastChecked" class="text-[0.656rem]" />
           </div>
         </li>
       </ul>
@@ -85,9 +98,12 @@ const worst = computed(() => {
 
 const badgeClass = computed(() => {
   if (!worst.value) return "";
-  if (worst.value.pct >= CRITICAL) return "bg-error/15 text-error hover:bg-error/25";
-  return "bg-warning/15 text-warning hover:bg-warning/25";
+  return worst.value.pct >= CRITICAL ? "status-pill-error" : "status-pill-warning";
 });
+
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle } = useDropdownMenu(root, trigger);
 
 function rowClass(pct: number, available: boolean) {
   if (!available) return "bg-base-content/[0.04]";

@@ -1,17 +1,25 @@
 <template>
   <div
-    class="dropdown dropdown-hover absolute -left-2 z-10 font-sans"
-    :class="shouldShowBelow ? 'dropdown-right' : 'dropdown-right dropdown-end'"
+    class="dropdown absolute -left-2 z-10 font-sans"
+    :class="[shouldShowBelow ? 'dropdown-right' : 'dropdown-right dropdown-end', { 'dropdown-open': open }]"
     v-show="container"
-    ref="dropdownRef"
-    @mouseenter="openMenu"
-    @focusin="openMenu"
+    ref="root"
   >
+    <!-- Opened by press, and present on touch.
+         This was `dropdown-hover` on a trigger that was itself `opacity-0
+         group-hover/entry`, so on a phone or tablet the whole menu — copy log,
+         copy permalink, see-in-context, show details, create alert — did not
+         exist. `.reveal-on-hover` keeps the quiet-until-hovered behaviour on a
+         pointer device and drops it under `@media (pointer: coarse)`.
+
+         `size-8` rather than `btn-xs`: still small enough to stay out of the
+         way of a dense log, but a real target rather than a 24px one. -->
     <router-link
       v-if="isFiltered"
       @click="resetSearch()"
-      tabindex="0"
-      class="btn btn-square btn-xs border-base-content/20 bg-base-100 pointer-events-auto! opacity-0 shadow-sm group-hover/entry:opacity-90"
+      class="btn btn-square reveal-on-hover border-base-content/20 pointer-events-auto! size-8 min-h-0 shadow-sm"
+      :title="$t('action.see-in-context')"
+      :aria-label="$t('action.see-in-context')"
       :to="{
         name: '/container/[id].time.[datetime]',
         params: { id: container.id, datetime: logEntry.date.toISOString() },
@@ -21,24 +29,32 @@
       <material-symbols:eye-tracking />
     </router-link>
     <button
-      tabindex="0"
-      class="btn btn-square btn-xs border-base-content/20 bg-base-100 border opacity-0 shadow-sm group-hover/entry:opacity-90"
       v-else
+      type="button"
+      ref="trigger"
+      class="btn btn-square reveal-on-hover border-base-content/20 size-8 min-h-0 border shadow-sm"
+      aria-haspopup="menu"
+      :aria-expanded="open"
+      :title="$t('action.more-actions')"
+      :aria-label="$t('action.more-actions')"
+      @click="onTriggerClick"
     >
       <ion:ellipsis-vertical />
     </button>
-    <!-- Built on first hover/focus. Every visible log line renders one of these,
-         so eagerly materializing the menu (five rows, two resolved routes) for
+    <!-- Built on first open. Every visible log line renders one of these, so
+         eagerly materializing the menu (five rows, two resolved routes) for
          each of them is what made rebuilding the list — on a stdout/stderr
          toggle, a level change, a search — lock the page up. -->
     <ul
       v-if="menuMounted"
-      tabindex="0"
-      class="menu dropdown-content rounded-box bg-base-200 border-base-content/20 z-50 w-52 border p-1 text-sm shadow-sm"
-      @click="hideMenu"
+      v-show="open"
+      role="menu"
+      class="menu dropdown-content glass-surface glass-surface-sheer glass-surface-popover z-50 w-52 rounded-[var(--control-radius)] p-1 text-sm"
+      @click="onItemClick"
     >
       <li v-if="isFiltered">
         <router-link
+          role="menuitem"
           @click="resetSearch()"
           :to="{
             name: '/container/[id].time.[datetime]',
@@ -51,7 +67,9 @@
         </router-link>
       </li>
       <li>
-        <a
+        <button
+          type="button"
+          role="menuitem"
           @click="copyLogMessage()"
           :disabled="!isSupported"
           :title="!isSupported ? $t('error.copy-not-supported') : ''"
@@ -59,10 +77,12 @@
         >
           <material-symbols:content-copy />
           {{ $t("action.copy-log") }}
-        </a>
+        </button>
       </li>
       <li>
-        <a
+        <button
+          type="button"
+          role="menuitem"
           @click="copyPermalink()"
           :disabled="!isSupported"
           :title="!isSupported ? $t('error.copy-not-supported') : ''"
@@ -70,20 +90,20 @@
         >
           <material-symbols:link />
           {{ $t("action.copy-link") }}
-        </a>
+        </button>
       </li>
 
       <li v-if="logEntry instanceof ComplexLogEntry">
-        <a @click="showDrawer(LogDetails, { entry: logEntry })">
+        <button type="button" role="menuitem" @click="showDrawer(LogDetails, { entry: logEntry })">
           <material-symbols:code-blocks-rounded />
           {{ $t("action.show-details") }}
-        </a>
+        </button>
       </li>
       <li>
-        <a @click="createAlert()">
+        <button type="button" role="menuitem" @click="createAlert()">
           <mdi:bell />
           {{ $t("action.create-alert") }}
-        </a>
+        </button>
       </li>
     </ul>
   </div>
@@ -181,25 +201,22 @@ function createAlert() {
   showDrawer(AlertForm, { prefill: { name, containerExpression: containerExpr, logExpression: logExpr } }, "lg");
 }
 
-function hideMenu(e: MouseEvent) {
-  if (e.target instanceof HTMLAnchorElement) {
-    setTimeout(() => {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    }, 50);
-  }
-}
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle, onItemClick } = useDropdownMenu(root, trigger);
 
-const dropdownRef = useTemplateRef<HTMLDivElement>("dropdownRef");
 const shouldShowBelow = ref(false);
 const menuMounted = ref(false);
 
-function openMenu() {
-  if (!dropdownRef.value) return;
-
-  const rect = dropdownRef.value.getBoundingClientRect();
-  shouldShowBelow.value = rect.top < 150;
+// Which side the menu opens toward is decided at the moment of the press, from
+// where the row actually is — a row near the top of the viewport has no room
+// above it. Measured here rather than on hover because there is no longer a
+// hover to measure on.
+function onTriggerClick() {
+  if (root.value) {
+    shouldShowBelow.value = root.value.getBoundingClientRect().top < 150;
+  }
   menuMounted.value = true;
+  toggle();
 }
 </script>

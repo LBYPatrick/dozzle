@@ -138,7 +138,15 @@ ul {
     monospace;
 
   > li {
-    @apply flex px-2 py-1 break-words last:snap-end odd:bg-gray-400/[0.07] md:px-4;
+    /* The row banding is a theme fill, not a raw `gray-400`. A hardcoded
+       Tailwind grey is blind to both themes and to the fill ramp everything
+       else in the app is mixed from, so it landed at a different weight on
+       light than on dark for no reason anyone chose. */
+    @apply flex px-2 py-1 break-words last:snap-end md:px-4;
+
+    &:nth-child(odd) {
+      background-color: var(--fill-4);
+    }
     &:last-child {
       scroll-margin-block-end: 5rem;
     }
@@ -200,6 +208,19 @@ ul {
   100% {
     /* Settle to the resting bg-secondary/15 declared on the .li above. */
     background-color: color-mix(in oklab, var(--color-secondary) 15%, transparent);
+  }
+}
+
+/* Reduced motion is not "no feedback": the permalinked row still has to be
+   findable, so it keeps the wash and loses the flash, and the search-hit marks
+   keep their highlight and lose the pop. */
+@media (prefers-reduced-motion: reduce) {
+  ul > li.log-permalink-target {
+    animation: none;
+  }
+
+  ul :deep(mark) {
+    animation: none;
   }
 }
 </style>

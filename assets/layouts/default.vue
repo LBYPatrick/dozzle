@@ -47,8 +47,14 @@
     </label>
   </div>
   <!-- Dim only, no screen-wide blur: glass is reserved for the container card
-       (FuzzySearchModal) itself. -->
-  <dialog ref="modal" class="modal modal-scrim items-start transition-none!" @close="closeSearch">
+       (FuzzySearchModal) itself.
+
+       `sheet-dialog`, not `transition-none!`. These two dialogs sit in the same
+       file and behaved differently: the palette hard-cut into place while
+       settings animated. One presentation now, shared below — and it
+       *materialises* (blur and scale together) rather than fading, so the glass
+       reads as a surface arriving instead of a picture appearing (§12). -->
+  <dialog ref="modal" class="modal modal-scrim sheet-dialog items-start" @close="closeSearch">
     <div class="modal-box max-w-2xl overflow-visible! bg-transparent pt-20 shadow-none">
       <FuzzySearchModal @close="closeSearch" v-if="open" />
     </div>
@@ -62,8 +68,15 @@
        rather than drop out of settings entirely. The header carries a back button
        modelling exactly that hierarchy, and closeSettings resets `subview`, so
        without this Escape skipped the level *and* forgot where you were. -->
-  <dialog ref="settingsDialog" class="modal modal-scrim items-start" @close="closeSettings" @cancel="onSettingsCancel">
-    <div class="modal-box max-h-[95vh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5vh] shadow-none">
+  <dialog
+    ref="settingsDialog"
+    class="modal modal-scrim sheet-dialog items-start"
+    @close="closeSettings"
+    @cancel="onSettingsCancel"
+  >
+    <!-- dvh, not vh: on iOS Safari `vh` is measured against the *expanded*
+         viewport, so a 95vh sheet ran under the URL bar. -->
+    <div class="modal-box max-h-[95dvh] max-w-3xl overflow-visible! bg-transparent p-0 pt-[5dvh] shadow-none">
       <SettingsModal v-if="settingsOpen" />
     </div>
     <form method="dialog" class="modal-backdrop">

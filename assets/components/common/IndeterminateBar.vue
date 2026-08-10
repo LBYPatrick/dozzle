@@ -30,4 +30,13 @@ const colorClass = computed(() => {
     transform: translateX(100%);
   }
 }
+
+/* An infinite sweep is the textbook case for reduced motion: it never stops,
+   it is large, and it is purely decorative once the bar itself is visible. The
+   bar stays — it is what says "working" — and holds still. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-background {
+    animation: none;
+  }
+}
 </style>

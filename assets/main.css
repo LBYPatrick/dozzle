@@ -14,6 +14,24 @@
   --color-blue: oklch(65% 0.171 249.5);
   --color-orange: oklch(85% 0.186 48.13);
 
+  /* Log level marks, as their own ramp.
+   *
+   * The five decorative hues above are shared by charts, tags and the level
+   * dots, and one lightness per hue cannot serve all of them: measured against
+   * the log surface, `orange` came out at 1.81:1 on the light theme and
+   * `purple` at 2.96:1 on the dark one. Both are under the 3:1 a non-text mark
+   * needs, and the palette therefore failed at *both* ends — whichever theme
+   * you happened to use looked fine.
+   *
+   * So the level marks get a ramp of their own, per theme, exactly as the ANSI
+   * palette already does. These are the :root (dark) values; the light theme
+   * overrides them below. Everything else keeps the vivid form. */
+  --level-debug: oklch(72% 0.19 321);
+  --level-info: oklch(72% 0.16 158);
+  --level-warn: oklch(80% 0.16 70);
+  --level-error: oklch(68% 0.21 28);
+  --level-unknown: oklch(58% 0 0);
+
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
@@ -179,6 +197,15 @@
   animation: bounce 0.5s 2 both;
 }
 
+/* An attention bounce is exactly the vestibular motion reduced-motion asks to
+   drop. The control still needs to say "there is more below", so it keeps a
+   colour change and loses the travel. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-bounce-fast {
+    animation: none;
+  }
+}
+
 @utility link-primary {
   @apply underline-offset-4 hover:underline;
 }
@@ -236,6 +263,14 @@ body {
   --scrim-alpha: 0.45;
   /* Darker on white, or the same red reads pink and loses contrast against it. */
   --color-pin: oklch(56% 0.2 25);
+
+  /* Level marks, darkened for a light surface. Solved against base-100 and
+     base-200: worst case 4.45:1, where the dark ramp's worst case is 4.39:1. */
+  --level-debug: oklch(55% 0.19 321);
+  --level-info: oklch(52% 0.14 158);
+  --level-warn: oklch(55% 0.15 70);
+  --level-error: oklch(53% 0.21 28);
+  --level-unknown: oklch(55% 0 0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -404,10 +439,300 @@ body {
   color: var(--color-pin);
 }
 
+/* ---------------------------------------------------------------------------
+ * Log levels, as one resolver plus two presentations.
+ *
+ * `[data-level]` used to *paint* — a bare attribute selector with `!important`
+ * backgrounds, living unscoped inside LogLevel.vue. That leak was load-bearing
+ * (the detail drawer's level Tag relied on it) and also a trap: anything
+ * anywhere that carried a `data-level` attribute got a saturated background it
+ * never asked for. The level chip in the actions menu hit exactly that — it
+ * inherited a solid fill *and* set a matching text colour, so the label came out
+ * the same colour as the background it sat on and vanished.
+ *
+ * So the attribute now only resolves a variable. Nothing is painted until an
+ * element opts into a presentation, and both presentations read the same ramp,
+ * so a level is one colour wherever it appears.
+ * ------------------------------------------------------------------------- */
+[data-level="debug"],
+[data-level="trace"] {
+  --lvl: var(--level-debug);
+}
+[data-level="info"] {
+  --lvl: var(--level-info);
+}
+[data-level="warn"] {
+  --lvl: var(--level-warn);
+}
+[data-level="error"],
+[data-level="fatal"] {
+  --lvl: var(--level-error);
+}
+/* An unknown level is drawn only where the caller has asked for it. */
+[data-level="unknown"] {
+  --lvl: transparent;
+}
+[data-level="unknown"].show-unknown {
+  --lvl: var(--level-unknown);
+}
+
+/* Solid: the log gutter's mark, and the level Tag in the detail drawer. */
+.level-fill {
+  background-color: var(--lvl, transparent);
+}
+
+/* Tonal: a level as a *label* you read, in a menu or a list. The wash carries
+   the hue and the text carries a readable form of it — which is the whole
+   reason this is a separate presentation rather than the solid fill with a
+   colour laid over it.
+ *
+ * The text cannot simply be `--lvl`. That ramp is tuned to read as a *mark*
+ * against the log surface, and set as type on a 12% wash of itself it measured
+ * 3.7–4.1:1 on the light theme — under AA for a 12px label. Same trick as
+ * `--color-primary-text`: hold the hue and chroma, force the lightness. Worst
+ * case is 5.43:1 light, 6.33:1 dark.
+ *
+ * Derived rather than hand-listed, and derived from `--lvl` rather than from a
+ * darker copy of the ramp, so the log gutter's dots are left exactly as they
+ * are — a chip in a menu should not be the reason the marks beside every log
+ * line change colour. */
+.level-pill {
+  background-color: color-mix(in oklab, var(--lvl) 12%, transparent);
+  color: var(--lvl);
+  text-transform: capitalize;
+}
+
+@supports (color: oklch(from red l c h)) {
+  .level-pill {
+    color: oklch(from var(--lvl) 0.78 c h);
+  }
+
+  [data-theme="light"] .level-pill {
+    color: oklch(from var(--lvl) 0.44 c h);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Type scale.
+ *
+ * Apple's typography rules are not about picking sizes, they are about the fact
+ * that tracking and leading are *functions of* size: large text reads too loose
+ * at tracking 0 and wants negative, small text wants slightly positive, and
+ * leading tightens as size grows. A `text-2xl font-bold` written inline gets
+ * none of that, which is why the app had accumulated nine different treatments
+ * for the same job — `text-2xl font-bold`, `text-xl font-semibold
+ * tracking-tight`, `text-xl font-bold`, `text-lg font-semibold`, `text-lg
+ * font-bold`, `text-base font-semibold`, `card-title`, and two bare sizes —
+ * with no rule saying which was correct.
+ *
+ * Each step fixes size, weight, leading and tracking together, so a heading is
+ * one class rather than four decisions. Sizes are rem so they scale with the
+ * user's text-size setting.
+ * ------------------------------------------------------------------------- */
+@utility type-display {
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: -0.021em;
+  font-weight: 700;
+}
+
+@utility type-title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.017em;
+  font-weight: 600;
+}
+
+@utility type-heading {
+  font-size: 1.0625rem;
+  line-height: 1.3;
+  letter-spacing: -0.011em;
+  font-weight: 600;
+}
+
+@utility type-body {
+  font-size: 0.9375rem;
+  line-height: 1.47;
+  letter-spacing: 0;
+}
+
+@utility type-caption {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  letter-spacing: 0.005em;
+}
+
+/* Uppercase micro-header. Small caps need *more* tracking, not less, and this
+   is the one place a wide setting is correct rather than decorative. Used by
+   every section header in the app, which previously ran at three different
+   sizes, two tracking values and three opacities. */
+@utility type-section {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+}
+
+/* The section header as a laid-out row: one control-bar tall, so a heading and
+   the buttons of its section share a baseline. Promoted from two verbatim
+   copies (the dashboard's and the container table's) whose opacities had
+   already drifted apart — /45 against /50 — while sitting side by side on the
+   same screen. */
+@utility section-heading {
+  display: flex;
+  height: 2rem;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+}
+
+/* The count that trails a section heading. */
+@utility section-count {
+  border-radius: 999px;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  background-color: var(--fill-4);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+}
+
 /* Dim only, never a screen-wide blur — glass is reserved for the floating card
- * itself. Unlayered so it beats daisyUI's own `.modal[open]` background. */
+ * itself. Unlayered so it beats daisyUI's own `.modal[open]` background.
+ *
+ * `--scrim-progress` lets a surface being dragged away lift its own veil in
+ * step with the gesture (see SideDrawer); it defaults to 1, so a dialog that
+ * never sets it is unaffected. */
 .modal-scrim {
-  background-color: rgb(var(--shadow-ink) / var(--scrim-alpha));
+  background-color: rgb(var(--shadow-ink) / calc(var(--scrim-alpha) * var(--scrim-progress, 1)));
+}
+
+/* ---------------------------------------------------------------------------
+ * One sheet presentation.
+ *
+ * The command palette and the settings sheet are peers in the same layout file
+ * and arrived differently: the palette carried `transition-none!` and hard-cut
+ * into place, settings used daisyUI's default. Two sheets, one file, different
+ * physics — which is precisely the inconsistency §16 Familiarity is about.
+ *
+ * Both materialise now. §12: for a glass surface, animate blur radius and scale
+ * *together* on enter and exit, so it reads as a real material arriving rather
+ * than a flat picture being faded up. The scrim fades on its own, slightly
+ * faster in and slower out, so the page dims before the sheet lands and
+ * brightens after it leaves.
+ * ------------------------------------------------------------------------- */
+.sheet-dialog {
+  transition:
+    background-color 220ms ease,
+    display 220ms allow-discrete,
+    overlay 220ms allow-discrete;
+}
+
+/* NEVER put `filter` on this box.
+ *
+ * The materialize effect was first written as `filter: blur()` on the modal
+ * box, ramping 6px → 0 as the sheet arrived. It looked right and it silently
+ * destroyed the glass on every surface inside: per Filter Effects, *any*
+ * `filter` value other than `none` — `blur(0)` included — makes the element a
+ * Backdrop Root, and a `backdrop-filter` on a descendant is not allowed to
+ * sample past its nearest backdrop root. So the command palette and the
+ * settings sheet were blurring an empty backdrop and rendering as flat tint.
+ *
+ * This is the same trap the `.glass-surface` note describes for *nested*
+ * backdrop-filters, reached from the other direction. The resting state
+ * therefore animates position and opacity only.
+ * ------------------------------------------------------------------------- */
+.sheet-dialog .modal-box {
+  transition:
+    opacity 200ms ease,
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Resting (open) state. */
+.sheet-dialog .modal-box {
+  opacity: 1;
+  transform: none;
+}
+
+/* Closed — where it animates *to* on exit. */
+.sheet-dialog:not([open]) .modal-box {
+  opacity: 0;
+  transform: translateY(-0.75rem) scale(0.97);
+}
+
+/* …and where it animates *from* on enter. Same values, so the two paths are
+   mirror images (§7). */
+@starting-style {
+  .sheet-dialog[open] .modal-box {
+    opacity: 0;
+    transform: translateY(-0.75rem) scale(0.97);
+  }
+}
+
+/* The material still materialises — but on the surface's *own* `backdrop-filter`
+ * rather than a `filter` over it, so the blur ramps up on the thing that is
+ * actually made of glass and no backdrop root is created. This is what §12 asks
+ * for in the first place ("animate blur radius and scale together"), and it is
+ * the same treatment the dropdown menus use. */
+* Gated on `no-preference` rather than overridden later,
+so reduced motion * simply never sets a start value — the surface keeps whatever blur * `.glass-surface` gives it,
+and
+  this
+  block
+  does
+  not
+  have
+  to
+  restate
+  that
+  *
+  value
+  and
+  then
+  drift
+  from
+  it.
+  */
+  @media
+  (prefers-reduced-motion: no-preference) {
+  .sheet-dialog .glass-surface {
+    transition: backdrop-filter 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .sheet-dialog:not([open]) .glass-surface {
+    backdrop-filter: blur(0) saturate(100%);
+  }
+
+  @starting-style {
+    .sheet-dialog[open] .glass-surface {
+      backdrop-filter: blur(0) saturate(100%);
+    }
+  }
+}
+
+/* A sheet still has to read as arriving, so reduced motion keeps the fade and
+   drops the travel, the scale and the blur — the three vestibular parts. */
+@media (prefers-reduced-motion: reduce) {
+  .sheet-dialog .modal-box {
+    transition: opacity 160ms ease;
+  }
+
+  .sheet-dialog:not([open]) .modal-box {
+    transform: none;
+  }
+
+  @starting-style {
+    .sheet-dialog[open] .modal-box {
+      transform: none;
+    }
+  }
 }
 
 /* Every Tailwind shadow utility in the app was being recoloured to a tint of
@@ -989,6 +1314,92 @@ body {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Row targets.
+ *
+ * §1 of the doctrine is the foundation: respond on pointer-down. `.btn` has had
+ * a press scale since the control pass, and HostTile and the settings rows do
+ * it properly — but every *row*-shaped target in the app had nothing at all.
+ * Table rows, log rows, menu items and command-palette rows were all things you
+ * could press with no acknowledgement that you had.
+ *
+ * One class, so the values are decided once. Scale is gentler than a button's
+ * 0.97: a full-width row shrinking by 3% is a visible lurch, where the same
+ * ratio on a 32px button is a tap.
+ * ------------------------------------------------------------------------- */
+@utility row-pressable {
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  &:hover {
+    background-color: var(--fill-4);
+  }
+
+  &:active {
+    background-color: var(--fill-3);
+    transform: scale(0.995);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-pressable {
+    transition: background-color 150ms ease;
+  }
+  .row-pressable:active {
+    transform: none;
+  }
+}
+
+/* Hover-revealed controls, everywhere.
+ *
+ * A control that only exists under the pointer does not exist on a phone. The
+ * sidebar's row actions were guarded above; the log rows' action trigger was
+ * not, which meant copy-log, copy-permalink, see-in-context, show-details and
+ * create-alert were unreachable on every touch device. Same rule, applied to
+ * anything that opts in. */
+/* A 44×44 hit area over a control drawn smaller than that.
+ *
+ * Apple's minimum target is 44pt, and a dense toolbar cannot always afford to
+ * *draw* 44px — a 44px pin in a log title row would dominate the name it
+ * annotates. So the target overflows the drawn control instead of inflating it:
+ * the layout keeps the small control's footprint, the finger gets the full
+ * square. Needs a positioned ancestor, so pair with `relative`.
+ *
+ * Use this only where the visual size is genuinely load-bearing. Where it is
+ * not, make the control 44px and skip this. */
+@utility hit-44 {
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@utility reveal-on-hover {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+:where(.group\/entry:hover, .group\/entry:focus-within) .reveal-on-hover,
+.reveal-on-hover:focus-visible,
+.reveal-on-hover:hover {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .reveal-on-hover {
+    opacity: 1;
+  }
+}
+
 /* One indent step per level, with a hairline guide so the branches are legible
  * the way a file tree's are. The step is measured against the disclosure
  * triangle, so a child sits just inside its parent's label. */
@@ -1038,6 +1449,79 @@ body {
   --glass-opacity: 92%;
 }
 
+/* Sheer material, for menus and small floating widgets over live content. The
+ * variants exist so a surface picks a *weight* rather than inventing a recipe:
+ * before this the app carried eight different glass mixes — five blur radii,
+ * six opacities, four radii, saturation applied at random — and five of them
+ * were invisible to the reduced-transparency and increased-contrast queries
+ * because those only ever landed on .glass-surface. */
+.glass-surface-sheer {
+  --glass-opacity: 76%;
+}
+
+/* Popover depth, for panes that float over the page rather than over a scrim.
+ * A menu casting the full sheet shadow reads as heavier than the sheet it sits
+ * next to. Keeps the top-edge highlight, which is the part that says "glass". */
+.glass-surface-popover {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, oklch(100% 0 0) 20%, transparent),
+    var(--elev-popover);
+}
+
+/* Chrome: glass used as a full-width *background layer* rather than as a
+ * floating object — a nav bar, a top bar, anything spanning edge to edge.
+ *
+ * This variant exists because the first attempt at reusing `.glass-surface`
+ * there was visibly wrong. A bar is not a card: it has no corners to round, no
+ * edges to outline, and above all nothing to cast a shadow onto, because it is
+ * flush against the content rather than hovering over it. Inheriting
+ * `--elev-sheet` meant a 56px-blur drop shadow raking down across the top of
+ * the log list — a grey haze over the first few rows that read as a rendering
+ * fault, which is exactly what it was.
+ *
+ * Note this cannot be done with `shadow-none rounded-none border-0` at the call
+ * site: `.glass-surface` is unlayered so that the reduced-transparency and
+ * increased-contrast queries can reach it, and unlayered rules beat Tailwind's
+ * layered utilities regardless of source order. The variant has to be a peer.
+ *
+ * What is kept is the part that actually says "glass": the tinted translucent
+ * surface and the blur. Separation from the content below is the caller's own
+ * hairline or scroll-edge, which is how a bar should be separated anyway.
+ *
+ * The inset top highlight goes too, and for the same reason as the shadow.
+ * `.glass-surface` draws it because light catching the top edge is a real trait
+ * of a pane *floating* in front of something. A bar anchored flush to the top of
+ * its pane has no top edge for light to catch, so the highlight was not reading
+ * as a material at all — it was a bright hairline ruled across the top of the
+ * log view, most visible on the dark theme where it had the most to contrast
+ * against. */
+.glass-surface-chrome {
+  --chrome-edge: transparent;
+  border: 0;
+  border-radius: 0;
+  /* The one edge a bar *can* have is the one facing its content, and it is
+   * drawn as an inset shadow rather than a border for two reasons.
+   *
+   * It costs no layout, so a scroll edge can appear and disappear without
+   * shifting the bar's contents by a pixel — which is the whole point of a
+   * scroll edge.
+   *
+   * And it is reachable. `.glass-surface` sets `border: 1px solid …` and this
+   * class sets `border: 0`, both unlayered, so a caller's `border-b` and
+   * `border-base-content/10` are Tailwind utilities that lose the cascade to
+   * both — which is exactly what had happened: the drawer panel's scroll edge
+   * and the mobile nav's hairline were written as border classes and neither
+   * had ever rendered. A custom property is settable from anywhere. */
+  box-shadow: inset 0 -1px 0 var(--chrome-edge);
+  transition: box-shadow 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-surface-chrome {
+    transition: none;
+  }
+}
+
 /* Someone who has asked the system to reduce transparency has asked for the
  * blur to stop, not for the panel to go away: the surface turns solid and drops
  * the filter outright. Dropping it is not just cosmetic — a backdrop-filter
@@ -1061,6 +1545,103 @@ body {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Progress, and which indicator means what.
+ *
+ * The app had grown four idioms for "something is happening", three of which
+ * were saying the same thing in different shapes. Written down because the
+ * fourth one will be added by accident otherwise.
+ *
+ *   `loading loading-spinner`  — THE indeterminate activity indicator. Every
+ *     wait of unknown length uses this and only this: in a button, beside a
+ *     status line, or standalone. Sizes follow the context (`xs` inside a
+ *     control, `sm` beside text, `md` standalone). daisyUI ships other
+ *     `loading-*` variants; they are all the same statement drawn differently,
+ *     so none of them are used. (`loading-bars` had exactly one call site.)
+ *
+ *   `CircuitRing`             — not a spinner. It traces a *specific control's*
+ *     rounded-rect outline, and it renders determinate progress as well as
+ *     indeterminate. Reserved for controls it can hug (the search field, the
+ *     collapsed stat widget).
+ *
+ *   `IndeterminateBar`        — a live-stream heartbeat, not a wait. It says
+ *     "this connection is open and delivering", spans the view, and has no end
+ *     state. Never use it for an operation that completes.
+ *
+ * A spinner means work is in flight. It is not a decoration for newness, a
+ * placeholder for a missing value, or a substitute for a status indicator.
+ * ------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+ * Inset grouped list.
+ *
+ * Apple's fundamental list shape, and the app's answer to "a set of related
+ * rows". Two things distinguish it from a stack of bordered divs, and `divide-y`
+ * gets both wrong:
+ *
+ * First, the separator is inset to the leading text edge rather than running
+ * wall to wall. Full-bleed rules cut the group into slices; an inset rule reads
+ * as one card with rows in it, and the indent points at where each row's label
+ * starts.
+ *
+ * Second, the group is a tonal surface with no outline. A panel of
+ * hairline-bordered boxes is a panel of cages.
+ *
+ * Promoted here from the settings sheet, which was the only place that had it.
+ * The drawer panels now use the same shape, so a list of fields in a log detail
+ * and a list of switches in settings are recognisably the same control.
+ * ------------------------------------------------------------------------- */
+@utility inset-group {
+  overflow: hidden;
+  border-radius: var(--control-radius);
+  background-color: var(--fill-4);
+}
+
+.inset-group > * + * {
+  position: relative;
+}
+
+.inset-group > * + *::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-inline: var(--inset-separator, 1rem) 0;
+  height: 1px;
+  background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+}
+
+@media (prefers-contrast: more) {
+  .inset-group > * + *::before {
+    background-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  }
+}
+
+/* A row in one: label on the leading edge, value trailing, both on one line.
+ * The label is the quiet one — it is the same word on every row of its kind and
+ * the value is what you came to read, which is the opposite of the `font-thin`
+ * label over a bold value these replaced. */
+@utility inset-row {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.875rem;
+}
+
+@utility inset-label {
+  flex: none;
+  font-size: 0.8125rem;
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+}
+
+@utility inset-value {
+  min-width: 0;
+  flex: 1;
+  text-align: end;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
 /* The log view's compact stat widgets. The CPU/memory card and the
  * network/disk card share this chrome and this caption treatment so the two sit
  * side by side as one object rather than two unrelated pills. */
@@ -1076,8 +1657,10 @@ body {
   line-height: 1;
 }
 
+/* rem, not px: a fixed pixel size ignores the reader's text-size setting, which
+   is the one accessibility control typography is obliged to respect. */
 .stat-card .name {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1085,32 +1668,74 @@ body {
 }
 
 .stat-caption {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
 }
 
+/* ---------------------------------------------------------------------------
+ * Status pills — the app's one small-label system.
+ *
+ * There were five of them: this one (bordered, mono, uppercase, 2px radius),
+ * ContainerTable's `.state-chip` (borderless, sans, capsule), daisyUI's
+ * `.badge` in four components, a `.badge[data-level]` with an !important
+ * light-theme override, and daisyUI's `.status` dots. Four of the five were
+ * describing container or host state, so they were the same control drawn four
+ * ways.
+ *
+ * One shape now: a tonal capsule, no border (the wash separates it, exactly as
+ * a filled iOS button's does), with the readable foreground form of its tone.
+ * `.status-pill-dot` adds the leading state dot the table used; `font-mono` is
+ * opt-in for the couple of places showing a version string.
+ * ------------------------------------------------------------------------- */
 .status-pill {
-  @apply inline-flex items-center gap-1.5 rounded border px-2 py-0.5 font-mono text-xs font-medium tracking-wider uppercase;
+  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium;
 }
+
+/* The dot is `currentColor`, so it inherits the tone rather than needing one
+   rule per tone. */
+.status-pill-dot::before {
+  content: "";
+  flex: none;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background-color: currentColor;
+}
+
 .status-pill-neutral {
-  @apply bg-base-100 border-base-content/15 text-base-content/70;
+  background-color: var(--fill-4);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
 .status-pill-success {
-  @apply border-success/30 bg-success/10;
+  @apply bg-success/12;
   color: var(--color-success-text);
 }
 .status-pill-primary {
-  @apply border-primary/30 bg-primary/10;
+  @apply bg-primary/12;
   color: var(--color-primary-text);
 }
+.status-pill-secondary {
+  @apply bg-secondary/12;
+  color: var(--color-secondary-text);
+}
+.status-pill-info {
+  @apply bg-info/12;
+  color: var(--color-info-text);
+}
 .status-pill-warning {
-  @apply border-warning/30 bg-warning/10;
+  @apply bg-warning/12;
   color: var(--color-warning-text);
 }
 .status-pill-error {
-  @apply border-error/30 bg-error/10;
+  @apply bg-error/12;
   color: var(--color-error-text);
+}
+
+@media (prefers-contrast: more) {
+  .status-pill {
+    @apply border border-current/40;
+  }
 }

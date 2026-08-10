@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Barres"
   shape-line: "Ligne"
   shape-area: "Aire"
+  confirm: Confirmer ?
+drawer:
+  log-entry: Entrée de log
+  message: Message
+  formatted: Formaté
+  raw: Brut
+  fields: Champs
+  show-all: Tout afficher
+  hide-all: Tout masquer
+  source: Source
+  image: Image
+  container-id: ID du conteneur
+  terminal: Terminal
+  analytics: Analyse
 action:
   copy-log: Copier le journal
   copy-link: Copier le permalien
@@ -107,6 +121,7 @@ label:
   avail: "Dispo."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Recherche de {name}…
 tooltip:
   search: Recherche de conteneurs (⌘ + k, ⌃k)
   pin-column: Epinglé en colonne
@@ -118,6 +133,8 @@ tooltip:
   volumes: Volumes
   volume-unreachable: inaccessible depuis cet hôte
   volume-full: "{destination} est plein à {pct}"
+  pin-container: Épingler à la barre latérale
+  unpin-container: Détacher de la barre latérale
 error:
   page-not-found: Cette page n'existe pas
   host-group-not-found: "Aucun hôte trouvé dans le groupe « {name} »"
@@ -141,6 +158,7 @@ error:
     title: Quelque chose ne va pas
     message: >-
       La connexion de l'interface utilisateur de Dozzle à l'API a mis trop de temps. Veuillez vérifier la connexion et réessayez.
+  page-not-found-hint: "Le lien est peut-être obsolète, ou le conteneur visé n'existe plus."
 alert:
   redirected:
     title: Redirigé vers le nouveau conteneur
@@ -170,6 +188,7 @@ button:
   collapse-top-bar: Réduire la barre supérieure
   expand-top-bar: Développer la barre supérieure
   clear-input: Effacer
+  back-to-dashboard: Retour au tableau de bord
 placeholder:
   search-containers: Recherche de conteneurs (⌘ + k, ⌃k)
   search: Recherche
@@ -246,6 +265,8 @@ settings:
       start-line: Ceci est un message d'erreur multiligne
       middle-line: avec une deuxième ligne
       end-line: et enfin une troisième ligne.
+  whats-new: Nouveautés
+  open-notifications: Gérer les notifications
 releases:
   features: une nouvelle fonctionnalité | {count} fonctionnalités
   bugFixes: correction d'un bug | {count} bugs
@@ -309,6 +330,7 @@ notifications:
     containers-count: "{count} conteneurs"
     triggered-count: "{count} déclenchés"
     last-triggered: "Dernier: {time}"
+    change-destination: Changer la destination
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

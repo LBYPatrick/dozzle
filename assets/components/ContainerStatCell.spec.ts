@@ -82,10 +82,13 @@ describe("<ContainerStatCell /> memory", () => {
 
 describe("<ContainerStatCell /> color thresholds", () => {
   // Text colours, not backgrounds: the row chart is an area painted with
-  // currentColor.
+  // currentColor. All four are the *readable* form of their tone — the other
+  // three arrive there via main.css, which overrides `.text-success` and
+  // friends outright, so secondary names it explicitly to match rather than
+  // being the one threshold drawn in the raw accent.
   test.each([
     [50, "text-success"],
-    [70, "text-secondary"],
+    [70, "text-secondary-safe"],
     [90, "text-warning"],
     [95, "text-error"],
   ])("memory %i%% -> %s", (memory, expected) => {

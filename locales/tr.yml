@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Çubuk"
   shape-line: "Çizgi"
   shape-area: "Alan"
+  confirm: Onaylansın mı?
+drawer:
+  log-entry: Günlük kaydı
+  message: Mesaj
+  formatted: Biçimlendirilmiş
+  raw: Ham
+  fields: Alanlar
+  show-all: Tümünü göster
+  hide-all: Tümünü gizle
+  source: Kaynak
+  image: İmaj
+  container-id: Konteyner kimliği
+  terminal: Terminal
+  analytics: Analiz
 action:
   copy-log: Günlüğü kopyala
   copy-link: Kalıcı bağlantıyı kopyala
@@ -107,6 +121,7 @@ label:
   avail: "Mevcut"
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: "{name} aranıyor…"
 tooltip:
   search: Konteynerlerde ara (⌘ + k, ⌃k)
   pin-column: Sütun olarak sabitle
@@ -118,6 +133,8 @@ tooltip:
   volumes: Birimler
   volume-unreachable: bu sunucudan erişilemiyor
   volume-full: "{destination} {pct} dolu"
+  pin-container: Kenar çubuğuna sabitle
+  unpin-container: Kenar çubuğundan kaldır
 error:
   page-not-found: Bu sayfa bulunamadı
   host-group-not-found: '"{name}" grubunda ana bilgisayar bulunamadı'
@@ -143,6 +160,7 @@ error:
     message: >-
       Dozzle arayüzü API'ye bağlanırken zaman aşımına uğradı. Lütfen ağ
       bağlantısını kontrol edin ve tekrar deneyin.
+  page-not-found-hint: Bağlantı güncel olmayabilir ya da işaret ettiği konteyner artık yok.
 alert:
   redirected:
     title: Yeni konteynere yönlendirildi
@@ -173,6 +191,7 @@ button:
   collapse-top-bar: Üst çubuğu daralt
   expand-top-bar: Üst çubuğu genişlet
   clear-input: Temizle
+  back-to-dashboard: Panoya dön
 placeholder:
   search-containers: Konteynerlerde ara (⌘ + k, ⌃k)
   search: Ara
@@ -250,6 +269,8 @@ settings:
       start-line: Bu, çok satırlı bir hata mesajıdır
       middle-line: ikinci bir satırla
       end-line: ve son olarak üçüncü satır.
+  whats-new: Yenilikler
+  open-notifications: Bildirimleri yönet
 releases:
   features: bir yeni özellik | {count} özellik
   bugFixes: bir hata düzeltmesi | {count} düzeltme
@@ -313,6 +334,7 @@ notifications:
     containers-count: "{count} konteyner"
     triggered-count: "{count} tetiklendi"
     last-triggered: "Son: {time}"
+    change-destination: Hedefi değiştir
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

@@ -7,18 +7,21 @@
        included — sat its text about a pixel above the icon and the close
        button, and the row read as slightly crooked. -->
   <div
-    class="group border-base-content/10 relative flex max-w-sm gap-3 overflow-hidden rounded-2xl border p-3.5 pr-2.5 shadow-xl backdrop-blur-md max-md:w-full"
+    class="group glass-surface glass-surface-popover relative flex max-w-sm gap-3 overflow-hidden rounded-2xl p-3.5 pr-2.5 max-md:w-full"
     :class="[
       multiline ? 'items-start' : 'items-center',
-      {
-        'bg-error/90 text-error-content': toast.type === 'error',
-        'bg-info/90 text-info-content': toast.type === 'info',
-        'bg-warning/90 text-warning-content': toast.type === 'warning',
-      },
+      // Tonal over the material, not a 90%-opaque colour laid on top of it.
+      // The flat fills defeated the blur they sat on, and a toast with no type
+      // matched none of them at all — so a default toast was fully transparent
+      // with only a border and a 12px blur to it.
+      `tone-${toast.type}`,
     ]"
-    role="status"
+    :role="toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'"
     @mouseenter="pause"
     @mouseleave="resume"
+    @focusin="pause"
+    @focusout="resume"
+    @pointerdown="pause"
   >
     <component
       :is="toast.type === 'info' ? CarbonInformation : CarbonWarningAlt"
@@ -27,7 +30,7 @@
     />
 
     <div class="min-w-0 flex-1">
-      <h3 class="text-sm leading-tight font-semibold" v-if="toast.title">{{ toast.title }}</h3>
+      <p class="text-sm leading-tight font-semibold" v-if="toast.title">{{ toast.title }}</p>
       <div
         v-if="toast.message"
         v-html="toast.message"
@@ -53,15 +56,18 @@
         <!-- A plain action, not a countdown: TimedButton is for something about
              to happen unless you stop it, whereas this is for something already
              done that you can take back. -->
+        <!-- Both of these were well under a 44px target — the dismiss was 24px.
+             `.hit-44` overflows a full-size hit area around the drawn control
+             rather than inflating the toast, which has to stay compact. -->
         <button
           v-if="toast.action"
-          class="rounded-full px-2 py-1 text-xs font-semibold transition-colors hover:bg-current/15"
+          class="hit-44 relative min-h-8 rounded-full px-3 py-1 text-xs font-semibold transition-colors hover:bg-current/15"
           @click="runAction"
         >
           {{ toast.action.label }}
         </button>
         <button
-          class="flex size-6 items-center justify-center rounded-full transition-colors hover:bg-current/15"
+          class="hit-44 relative flex size-8 items-center justify-center rounded-full transition-colors hover:bg-current/15"
           :aria-label="$t('button.cancel')"
           @click="$emit('dismiss')"
         >
@@ -150,3 +156,47 @@ onBeforeUnmount(() => {
   cancelAnimationFrame(raf);
 });
 </script>
+
+<style scoped>
+/* Type as a tint on the shared material. `--tone` is set once per type and
+   feeds the wash, the leading edge and the icon; the body text stays
+   base-content, which is the readable colour on this surface in both themes —
+   the `*-content` colours it replaces were chosen to sit on a *saturated*
+   fill, and there is no longer one. */
+.tone-info,
+.tone-error,
+.tone-warning {
+  background-image: linear-gradient(
+    color-mix(in oklab, var(--tone) 16%, transparent),
+    color-mix(in oklab, var(--tone) 16%, transparent)
+  );
+  border-color: color-mix(in oklab, var(--tone) 40%, transparent);
+}
+
+.tone-info {
+  --tone: var(--color-info);
+}
+.tone-error {
+  --tone: var(--color-error);
+}
+.tone-warning {
+  --tone: var(--color-warning);
+}
+
+/* The icon and the progress bar carry the tone; the copy does not need to. */
+.tone-info :deep(svg:first-of-type),
+.tone-error :deep(svg:first-of-type),
+.tone-warning :deep(svg:first-of-type) {
+  color: var(--tone-text);
+}
+
+.tone-info {
+  --tone-text: var(--color-info-text);
+}
+.tone-error {
+  --tone-text: var(--color-error-text);
+}
+.tone-warning {
+  --tone-text: var(--color-warning-text);
+}
+</style>

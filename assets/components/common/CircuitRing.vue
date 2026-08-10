@@ -82,4 +82,12 @@ const ringPath = computed(() => {
     stroke-dashoffset: -100;
   }
 }
+
+/* Same as the indeterminate bar: the ring remains as the "still scanning"
+   mark, it just stops spinning. */
+@media (prefers-reduced-motion: reduce) {
+  .circuit-spin {
+    animation: none;
+  }
+}
 </style>

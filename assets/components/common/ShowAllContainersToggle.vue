@@ -6,7 +6,7 @@
   <button
     type="button"
     class="btn btn-square btn-ghost btn-sm"
-    :class="{ 'is-on text-primary': showAllContainers }"
+    :class="{ 'is-on text-primary-safe': showAllContainers }"
     :aria-pressed="showAllContainers"
     :title="$t('label.show-all-containers')"
     :aria-label="$t('label.show-all-containers')"

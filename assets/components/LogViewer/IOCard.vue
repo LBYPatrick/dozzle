@@ -13,14 +13,14 @@
   >
     <!-- Live per-second rate, split by direction. -->
     <template v-if="mode === 'current'">
-      <PhNetwork class="text-primary size-3.5" />
+      <PhNetwork class="text-primary-safe size-3.5" />
       <span class="name">{{ $t("label.net") }}</span>
       <PhArrowUp class="text-base-content/45 size-3" />
       <span class="value">{{ measured(rate(networkTx)) }}</span>
       <PhArrowDown class="text-base-content/45 size-3" />
       <span class="value">{{ measured(rate(networkRx)) }}</span>
 
-      <PhHardDrives class="text-secondary size-3.5" />
+      <PhHardDrives class="text-secondary-safe size-3.5" />
       <span class="name">{{ $t("label.disk") }}</span>
       <PhArrowUp class="text-base-content/45 size-3" />
       <span class="value">{{ measured(rate(diskWrite)) }}</span>
@@ -30,7 +30,7 @@
 
     <!-- Trend over the tracked window, matching the CPU/memory sparklines. -->
     <template v-else>
-      <PhNetwork class="text-primary size-3.5" />
+      <PhNetwork class="text-primary-safe size-3.5" />
       <span class="name">{{ $t("label.net") }}</span>
       <BarChart
         :chart-data="networkSeries"
@@ -41,7 +41,7 @@
       />
       <span class="value">{{ rate(networkTx + networkRx) }}</span>
 
-      <PhHardDrives class="text-secondary size-3.5" />
+      <PhHardDrives class="text-secondary-safe size-3.5" />
       <span class="name">{{ $t("label.disk") }}</span>
       <BarChart
         :chart-data="diskSeries"
@@ -130,6 +130,6 @@ const tooltip = computed(
 }
 
 .value {
-  @apply text-base-content text-right text-[12px] font-semibold whitespace-nowrap;
+  @apply text-base-content text-right text-[0.75rem] font-semibold whitespace-nowrap;
 }
 </style>

@@ -16,22 +16,41 @@
             }}
           </p>
         </div>
-        <div class="dropdown dropdown-end" @click.stop>
-          <label tabindex="0" class="btn btn-ghost btn-sm btn-square">
+        <!-- The last focus-opened menu in the app: a `<label tabindex=0>` on an
+             opaque panel. Press to open, shared material, real button. -->
+        <div class="dropdown dropdown-end" :class="{ 'dropdown-open': open }" ref="root" @click.stop>
+          <button
+            type="button"
+            ref="trigger"
+            class="btn btn-ghost btn-sm btn-square"
+            aria-haspopup="menu"
+            :aria-expanded="open"
+            :title="$t('action.more-actions')"
+            :aria-label="$t('action.more-actions')"
+            @click="toggle"
+          >
             <ion:ellipsis-vertical />
-          </label>
+          </button>
           <ul
-            tabindex="0"
-            class="menu dropdown-content rounded-box bg-base-100 border-base-content/20 z-50 w-40 border p-1 shadow-sm"
+            v-if="open"
+            role="menu"
+            class="menu dropdown-content glass-surface glass-surface-sheer glass-surface-popover z-50 w-40 origin-top-right rounded-[var(--control-radius)] p-1"
+            @click="onItemClick"
           >
             <li>
-              <a @click="editDestination">{{ $t("notifications.destination.edit") }}</a>
+              <button type="button" role="menuitem" @click="editDestination">
+                {{ $t("notifications.destination.edit") }}
+              </button>
             </li>
             <li v-if="destination.type !== 'cloud'">
-              <a @click="duplicateDestination">{{ $t("notifications.destination.duplicate") }}</a>
+              <button type="button" role="menuitem" @click="duplicateDestination">
+                {{ $t("notifications.destination.duplicate") }}
+              </button>
             </li>
             <li v-if="destination.type !== 'cloud'">
-              <a class="text-error" @click="deleteDestination">{{ $t("notifications.destination.delete") }}</a>
+              <button type="button" role="menuitem" class="text-error" @click="deleteDestination">
+                {{ $t("notifications.destination.delete") }}
+              </button>
             </li>
           </ul>
         </div>
@@ -41,6 +60,10 @@
 </template>
 
 <script lang="ts" setup>
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle, onItemClick } = useDropdownMenu(root, trigger);
+
 import type { Dispatcher } from "@/types/notifications";
 import DestinationForm from "./DestinationForm.vue";
 

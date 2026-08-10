@@ -5,7 +5,7 @@
       <template v-if="step === 'step1'">
         <div class="flex flex-col items-center gap-2 text-center">
           <mdi:check-circle class="text-success text-4xl" />
-          <h3 class="text-xl font-bold">{{ $t("cloud.welcome.title") }}</h3>
+          <h2 class="type-title">{{ $t("cloud.welcome.title") }}</h2>
           <p class="text-base-content/60 text-sm">{{ $t("cloud.welcome.subtitle") }}</p>
         </div>
 
@@ -44,7 +44,7 @@
 
       <!-- Step 2: Triage signal checklist -->
       <template v-else-if="step === 'step2'">
-        <h3 class="text-xl font-bold">{{ $t("cloud.welcome.step2-title") }}</h3>
+        <h2 class="type-title">{{ $t("cloud.welcome.step2-title") }}</h2>
         <p class="text-base-content/60 mt-2 text-sm">{{ $t("cloud.welcome.step2-body") }}</p>
 
         <div class="mt-5 space-y-3">

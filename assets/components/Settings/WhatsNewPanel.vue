@@ -7,7 +7,7 @@
         <div class="flex items-baseline gap-2">
           <carbon:warning v-if="release.breaking > 0" class="stroke-orange self-center" />
           <carbon:information v-else class="text-info self-center" />
-          <a :href="release.htmlUrl" target="_blank" rel="noopener noreferrer" class="link-primary text-lg font-bold">
+          <a :href="release.htmlUrl" target="_blank" rel="noopener noreferrer" class="link-primary type-heading">
             {{ release.name }}
           </a>
           <span v-if="release.latest" class="status-pill status-pill-primary ml-1">{{ $t("releases.latest") }}</span>

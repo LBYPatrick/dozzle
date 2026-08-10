@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Stolpci"
   shape-line: "Črta"
   shape-area: "Površina"
+  confirm: Potrdim?
+drawer:
+  log-entry: Vnos dnevnika
+  message: Sporočilo
+  formatted: Oblikovano
+  raw: Neobdelano
+  fields: Polja
+  show-all: Pokaži vse
+  hide-all: Skrij vse
+  source: Vir
+  image: Slika
+  container-id: ID vsebnika
+  terminal: Terminal
+  analytics: Analitika
 action:
   copy-log: Kopiraj dnevnik
   copy-link: Kopiraj trajno povezavo
@@ -107,6 +121,7 @@ label:
   avail: "Na voljo"
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Iskanje {name} …
 tooltip:
   search: Iskanje zabojnikov (⌘ + k, ⌃k)
   pin-column: Pripni kot stolpec
@@ -118,6 +133,8 @@ tooltip:
   volumes: Nosilci
   volume-unreachable: nedosegljivo iz tega gostitelja
   volume-full: "{destination} je {pct} poln"
+  pin-container: Pripni v stransko vrstico
+  unpin-container: Odpni iz stranske vrstice
 error:
   page-not-found: Ta stran ne obstaja
   host-group-not-found: 'V skupini "{name}" ni najdenih gostiteljev'
@@ -142,6 +159,7 @@ error:
   unable-to-update: Zabojnika ni mogoče posodobiti
   something-went-wrong: Nekaj je šlo narobe
   unknown-error: Neznana napaka
+  page-not-found-hint: Povezava je morda zastarela ali vsebnik ne obstaja več.
 alert:
   redirected:
     title: Preusmerjeno v nov zabojnik
@@ -172,6 +190,7 @@ button:
   login: Prijava
   settings: Nastavitve
   clear-input: Počisti
+  back-to-dashboard: Nazaj na nadzorno ploščo
 placeholder:
   search-containers: Iskanje zabojnikov (⌘ + k, ⌃k)
   search: Iskanje
@@ -252,6 +271,8 @@ settings:
   help-support: "Prosimo, podprite Dozzle z donacijo ali sponzoriranjem na GitHubu.
     Vaši prispevki nam pomagajo izboljšati Dozzle za vse. Hvala! 🙏🏼\n"
   automatic-redirect: Samodejna preusmeritev na nove zabojnike z istim imenom
+  whats-new: Novosti
+  open-notifications: Upravljanje obvestil
 releases:
   features: ena nova funkcija | {count} funkcij
   bugFixes: en popravek napake | {counr} popravkov
@@ -315,6 +336,7 @@ notifications:
     containers-count: "{count} zabojnikov"
     triggered-count: "{count} sproženih"
     last-triggered: "Zadnje: {time}"
+    change-destination: Spremeni cilj
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

@@ -13,6 +13,11 @@
       <ph:push-pin-fill class="swap-on text-pin block size-4" />
       <ph:push-pin class="swap-off block size-4" />
     </label>
+    <!-- The pin is the title bar's primary gesture and was a 16px target — the
+         smallest in the app. It keeps its drawn size (a bigger pin would
+         dominate a row it only annotates) and gains a 44px hit area centred on
+         it, per the ::before below. -->
+
     <div class="inline-flex min-w-0 items-center text-sm">
       <div class="breadcrumbs min-w-0 overflow-x-visible p-0 font-mono">
         <ul>
@@ -90,6 +95,25 @@ const otherContainers = computed(() =>
 </script>
 
 <style scoped>
+/* A 44px hit area over a 16px glyph. Overflowing rather than reserving: the
+   title row is dense, and giving the pin 44px of layout width would push the
+   container name sideways for a control that only needs to be *pressable* at
+   that size, not drawn at it. Sits under the glyph so it never covers the
+   breadcrumb beside it. */
+.pin-swap {
+  position: relative;
+}
+
+.pin-swap::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
 /* Phosphor draws its pushpin on a diagonal, needle to the lower-left. Exactly 45°
    off vertical, not approximately: the needle segment of the path is
    `l-42.63 42.66`, equal run and rise. So the resting state needs no rotation at

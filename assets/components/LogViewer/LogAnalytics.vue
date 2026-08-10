@@ -1,96 +1,90 @@
 <template>
-  <aside class="flex flex-col gap-5 pb-8">
-    <header class="flex items-center gap-3 pr-8">
-      <ph:file-sql class="text-primary size-7 shrink-0" />
-      <div class="flex min-w-0 flex-col">
-        <h1 class="text-xl leading-tight font-semibold">{{ $t("analytics.title") }}</h1>
-        <p class="text-base-content/60 flex items-center gap-1.5 text-sm">
-          <span class="truncate">{{ container.name }}</span>
-          <span class="opacity-40">·</span>
-          <RelativeTime :date="container.created" />
-        </p>
-      </div>
-    </header>
+  <DrawerPanel :eyebrow="$t('drawer.analytics')" :title="$t('analytics.title')">
+    <template #leading><ph:file-sql class="text-primary-safe size-5 shrink-0" /></template>
+    <template #subtitle>{{ container.name }}</template>
 
-    <section class="flex flex-col gap-2">
-      <textarea
-        ref="queryEl"
-        v-model="query"
-        class="textarea textarea-primary w-full resize-y font-mono text-sm leading-relaxed"
-        :class="{ 'textarea-error!': error }"
-        :disabled="state !== 'ready'"
-        rows="3"
-        spellcheck="false"
-        autocapitalize="off"
-        autocomplete="off"
-        :aria-label="$t('analytics.title')"
-        @keydown.meta.enter.prevent="run"
-        @keydown.ctrl.enter.prevent="run"
-      ></textarea>
+    <div class="flex flex-col gap-5">
+      <section class="flex flex-col gap-2">
+        <textarea
+          ref="queryEl"
+          v-model="query"
+          class="textarea textarea-primary w-full resize-y font-mono text-sm leading-relaxed"
+          :class="{ 'textarea-error!': error }"
+          :disabled="state !== 'ready'"
+          rows="3"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          :aria-label="$t('analytics.title')"
+          @keydown.meta.enter.prevent="run"
+          @keydown.ctrl.enter.prevent="run"
+        ></textarea>
 
-      <div class="flex min-h-6 items-center text-sm">
-        <div class="min-w-0 flex-1 truncate">
-          <span class="text-error" v-if="error">{{ error }}</span>
-          <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="state === 'initializing'">
-            <span class="loading loading-spinner loading-xs"></span>{{ $t("analytics.creating_table") }}
-          </span>
-          <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="state === 'downloading'">
-            <span class="loading loading-spinner loading-xs"></span
-            >{{ $t("analytics.downloading", { size: formatBytes(bytes, { decimals: 1 }) }) }}
-          </span>
-          <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="evaluating">
-            <span class="loading loading-spinner loading-xs"></span>{{ $t("analytics.evaluating_query") }}
-          </span>
-          <span class="text-base-content/60" v-else>
-            {{ $t("analytics.total_records", { count: results.numRows.toLocaleString() }) }}
-            <template v-if="results.numRows > pageLimit">{{
-              $t("analytics.showing_first", { count: page.numRows.toLocaleString() })
-            }}</template>
-          </span>
+        <div class="flex min-h-6 items-center text-sm">
+          <div class="min-w-0 flex-1 truncate">
+            <span class="text-error" v-if="error">{{ error }}</span>
+            <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="state === 'initializing'">
+              <span class="loading loading-spinner loading-xs"></span>{{ $t("analytics.creating_table") }}
+            </span>
+            <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="state === 'downloading'">
+              <span class="loading loading-spinner loading-xs"></span
+              >{{ $t("analytics.downloading", { size: formatBytes(bytes, { decimals: 1 }) }) }}
+            </span>
+            <span class="text-base-content/60 inline-flex items-center gap-2" v-else-if="evaluating">
+              <span class="loading loading-spinner loading-xs"></span>{{ $t("analytics.evaluating_query") }}
+            </span>
+            <span class="text-base-content/60" v-else>
+              {{ $t("analytics.total_records", { count: results.numRows.toLocaleString() }) }}
+              <template v-if="results.numRows > pageLimit">{{
+                $t("analytics.showing_first", { count: page.numRows.toLocaleString() })
+              }}</template>
+            </span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section v-if="state === 'ready' && columns.length" class="flex flex-col gap-2 text-xs">
-      <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span class="text-base-content/50 font-medium">{{ $t("analytics.examples") }}</span>
-        <button
-          v-for="ex in examples"
-          :key="ex.key"
-          class="badge badge-sm badge-outline hover:border-primary hover:text-primary-safe cursor-pointer"
-          @click="applyExample(ex.sql)"
-        >
-          {{ $t(ex.key, ex.params ?? {}) }}
-        </button>
-      </div>
-
-      <details class="group">
-        <summary
-          class="text-base-content/50 hover:text-base-content/80 flex w-fit cursor-pointer items-center gap-1 font-medium select-none"
-        >
-          <ph:caret-right class="size-3 transition-transform group-open:rotate-90" />
-          {{ $t("analytics.columns") }}
-          <span class="opacity-60">{{ columns.length }}</span>
-        </summary>
-        <div class="mt-2 flex max-h-40 flex-wrap gap-1.5 overflow-y-auto">
+      <section v-if="state === 'ready' && columns.length" class="flex flex-col gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span class="text-base-content/50 font-medium">{{ $t("analytics.examples") }}</span>
           <button
-            v-for="col in columns"
-            :key="col.name"
-            class="badge badge-sm badge-ghost hover:border-primary hover:text-primary-safe cursor-pointer font-mono"
-            :title="col.type"
-            @click="insertColumn(col.name)"
+            v-for="ex in examples"
+            :key="ex.key"
+            class="status-pill status-pill-neutral hover:text-primary-safe cursor-pointer"
+            @click="applyExample(ex.sql)"
           >
-            {{ col.name }}
+            {{ $t(ex.key, ex.params ?? {}) }}
           </button>
         </div>
-      </details>
-    </section>
 
-    <SQLTable :table="page" :loading="evaluating || state !== 'ready'" />
-  </aside>
+        <details class="group">
+          <summary
+            class="text-base-content/50 hover:text-base-content/80 flex w-fit cursor-pointer items-center gap-1 font-medium select-none"
+          >
+            <ph:caret-right class="size-3 transition-transform group-open:rotate-90" />
+            {{ $t("analytics.columns") }}
+            <span class="opacity-60">{{ columns.length }}</span>
+          </summary>
+          <div class="mt-2 flex max-h-40 flex-wrap gap-1.5 overflow-y-auto">
+            <button
+              v-for="col in columns"
+              :key="col.name"
+              class="status-pill status-pill-neutral hover:text-primary-safe cursor-pointer font-mono"
+              :title="col.type"
+              @click="insertColumn(col.name)"
+            >
+              {{ col.name }}
+            </button>
+          </div>
+        </details>
+      </section>
+
+      <SQLTable :table="page" :loading="evaluating || state !== 'ready'" />
+    </div>
+  </DrawerPanel>
 </template>
 
 <script setup lang="ts">
+import DrawerPanel from "@/components/common/DrawerPanel.vue";
 import { Container } from "@/models/Container";
 import { type Table } from "@apache-arrow/esnext-esm";
 

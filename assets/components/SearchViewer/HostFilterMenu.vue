@@ -10,7 +10,9 @@
     </template>
 
     <li v-for="host in hosts" :key="host.id">
-      <a
+      <button
+        type="button"
+        role="menuitem"
         class="flex items-center gap-2 rounded-lg"
         :class="{ 'font-medium': isSelected(host.id) }"
         @click.stop="toggle(host.id)"
@@ -20,16 +22,16 @@
         <HostIcon :type="host.type" class="size-3.5 shrink-0 opacity-60" />
         <span class="min-w-0 flex-1 truncate">{{ host.name }}</span>
         <span class="text-base-content/40 shrink-0 text-xs tabular-nums">{{ counts[host.id] ?? 0 }}</span>
-      </a>
+      </button>
     </li>
 
     <!-- Only offered when it would change something: a reset that is already the
          current state is a button that does nothing. -->
     <li v-if="model.length > 0" class="border-base-content/10 mt-1 border-t pt-1">
-      <a class="flex items-center gap-2 rounded-lg" @click.stop="model = []">
+      <button type="button" role="menuitem" class="flex items-center gap-2 rounded-lg" @click.stop="model = []">
         <mdi:restore class="size-4 shrink-0" />
         <span>{{ $t("label.all-hosts") }}</span>
-      </a>
+      </button>
     </li>
   </DropdownMenu>
 </template>

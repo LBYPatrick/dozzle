@@ -9,6 +9,7 @@ toolbar:
   show: Show {std}
   show-all: Show all
   stop: Stop
+  confirm: "Confirm?"
   start: Start
   restart: Restart
   update: Update
@@ -37,6 +38,19 @@ toolbar:
   shape-bars: "Bars"
   shape-line: "Line"
   shape-area: "Area"
+drawer:
+  log-entry: Log entry
+  message: Message
+  formatted: Formatted
+  raw: Raw
+  fields: Fields
+  show-all: Show all
+  hide-all: Hide all
+  source: Source
+  image: Image
+  container-id: Container ID
+  terminal: Terminal
+  analytics: Analytics
 action:
   copy-log: Copy log
   copy-link: Copy permalink
@@ -45,6 +59,7 @@ action:
   create-alert: Create alert
   more-actions: More actions
 label:
+  finding-container: "Finding {name}…"
   hosts-selected: "{count} hosts"
   loading: "Loading"
   all-logs: "All logs"
@@ -122,6 +137,7 @@ tooltip:
   volume-full: "{destination} is {pct} full"
 error:
   page-not-found: This page does not exist
+  page-not-found-hint: The link may be out of date, or the container it pointed at is gone.
   host-group-not-found: 'No hosts found in group "{name}"'
   invalid-auth: Username or password are not valid
   copy-not-supported: Copy to clipboard is not supported in your browser
@@ -162,6 +178,7 @@ title:
   settings: Settings
   notifications: Notifications
 button:
+  back-to-dashboard: Back to dashboard
   undo: "Undo"
   logout: Logout
   login: Login
@@ -388,6 +405,7 @@ notifications:
     sample-window: Sample window
     destination: Destination
     dispatcher-deleted: Dispatcher deleted
+    change-destination: Change destination
     containers-count: "{count} containers"
     triggered-count: "{count} triggered"
     last-triggered: "Last: {time}"

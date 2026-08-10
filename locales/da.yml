@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Søjler"
   shape-line: "Linje"
   shape-area: "Areal"
+  confirm: Bekræft?
+drawer:
+  log-entry: Logpost
+  message: Besked
+  formatted: Formateret
+  raw: Rå
+  fields: Felter
+  show-all: Vis alle
+  hide-all: Skjul alle
+  source: Kilde
+  image: Image
+  container-id: Container-ID
+  terminal: Terminal
+  analytics: Analyse
 action:
   copy-log: Kopier log
   copy-link: Kopier permalink
@@ -107,6 +121,7 @@ label:
   avail: "Ledig"
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Finder {name}…
 tooltip:
   search: Søg containere (⌘ + k, ⌃k)
   pin-column: Fastgør som kolonne
@@ -118,6 +133,8 @@ tooltip:
   volumes: Volumener
   volume-unreachable: ikke tilgængelig fra denne host
   volume-full: "{destination} er {pct} fuld"
+  pin-container: Fastgør til sidepanel
+  unpin-container: Frigør fra sidepanel
 error:
   page-not-found: Denne side eksisterer ikke
   host-group-not-found: 'Ingen værter fundet i gruppen "{name}"'
@@ -141,6 +158,7 @@ error:
     title: Der er noget galt
     message: >-
       Dozzle UI timed ud inden der blev forbundet til API. Tjek venligst din internet forbindelse og prøv igen.
+  page-not-found-hint: Linket er måske forældet, eller containeren findes ikke længere.
 alert:
   redirected:
     title: Omdirigeret til ny container
@@ -170,6 +188,7 @@ button:
   collapse-top-bar: Skjul topbjælke
   expand-top-bar: Udvid topbjælke
   clear-input: Ryd
+  back-to-dashboard: Tilbage til dashboardet
 placeholder:
   search-containers: Søg containere (⌘ + k, ⌃k)
   search: Søg
@@ -246,6 +265,8 @@ settings:
       start-line: Dette er en fejlmeddelelse over flere linjer
       middle-line: med en anden linje
       end-line: og endelig tredje linje.
+  whats-new: Nyheder
+  open-notifications: Administrer notifikationer
 releases:
   features: en ny feature | {count} features
   bugFixes: en fejlrettelse | {count} rettelser
@@ -309,6 +330,7 @@ notifications:
     containers-count: "{count} containere"
     triggered-count: "{count} udløst"
     last-triggered: "Sidst: {time}"
+    change-destination: Skift destination
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

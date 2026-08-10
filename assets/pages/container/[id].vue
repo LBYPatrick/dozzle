@@ -1,11 +1,17 @@
 <template>
   <ContainerLog :id show-title :scrollable="pinnedLogs.length > 0" v-if="currentContainer" />
-  <div v-else-if="ready" class="hero bg-base-200 min-h-screen">
-    <div class="hero-content text-center">
-      <div class="max-w-md">
-        <p class="py-6 text-2xl font-bold">{{ $t("error.container-not-found") }}</p>
-      </div>
+  <!-- A dead end with no way out, same as the 404 was: one sentence, no link.
+       §16 Wayfinding — every screen has to answer "how do I get out of here".
+       `dvh` rather than `screen` so it does not run under the iOS URL bar. -->
+  <div v-else-if="ready" class="flex min-h-[70dvh] flex-col items-center justify-center gap-4 px-4 text-center">
+    <ph:magnifying-glass class="text-base-content/30 size-8" />
+    <div class="flex flex-col gap-1">
+      <h1 class="type-title">{{ $t("error.container-not-found") }}</h1>
+      <p class="type-caption text-base-content/60">{{ $t("error.page-not-found-hint") }}</p>
     </div>
+    <router-link :to="{ name: '/' }" class="btn btn-sm btn-primary">
+      {{ $t("button.back-to-dashboard") }}
+    </router-link>
   </div>
 </template>
 

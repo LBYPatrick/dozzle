@@ -48,7 +48,7 @@
         <template #actions>
           <router-link
             :to="{ name: '/host-group/[name]', params: { name: groupName } }"
-            class="btn btn-square btn-ghost btn-xs text-primary"
+            class="btn btn-square btn-ghost btn-xs text-primary-safe"
             active-class="menu-active"
             :title="$t('tooltip.merge-all')"
             @click.stop

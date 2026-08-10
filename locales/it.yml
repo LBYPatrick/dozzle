@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Barre"
   shape-line: "Linea"
   shape-area: "Area"
+  confirm: Confermare?
+drawer:
+  log-entry: Voce di log
+  message: Messaggio
+  formatted: Formattato
+  raw: Grezzo
+  fields: Campi
+  show-all: Mostra tutto
+  hide-all: Nascondi tutto
+  source: Origine
+  image: Immagine
+  container-id: ID contenitore
+  terminal: Terminale
+  analytics: Analisi
 action:
   copy-log: Copia log
   copy-link: Copia permalink
@@ -107,6 +121,7 @@ label:
   avail: "Disp."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Ricerca di {name}…
 tooltip:
   search: Ricerca container (⌘ + k, ⌃k)
   pin-column: Blocca come colonna
@@ -118,6 +133,8 @@ tooltip:
   volumes: Volumi
   volume-unreachable: non raggiungibile da questo host
   volume-full: "{destination} è pieno al {pct}"
+  pin-container: Fissa alla barra laterale
+  unpin-container: Rimuovi dalla barra laterale
 error:
   page-not-found: Questa pagina non esiste
   host-group-not-found: 'Nessun host trovato nel gruppo "{name}"'
@@ -141,6 +158,7 @@ error:
     title: Qualcosa non è corretto
     message: >-
       Dozzle UI timed out durante la connessione alle API. Controlla la configurazione di rete e riprova.
+  page-not-found-hint: Il collegamento potrebbe non essere più valido o il contenitore non esiste più.
 alert:
   redirected:
     title: Reindirizzamento ad un nuovo container
@@ -170,6 +188,7 @@ button:
   collapse-top-bar: Comprimi barra superiore
   expand-top-bar: Espandi barra superiore
   clear-input: Cancella
+  back-to-dashboard: Torna alla dashboard
 placeholder:
   search-containers: Ricerca container (⌘ + k, ⌃k)
   search: Cerca
@@ -246,6 +265,8 @@ settings:
       start-line: Questo è un messaggio di errore su più righe
       middle-line: una seconda riga
       end-line: e infine una terza riga.
+  whats-new: Novità
+  open-notifications: Gestisci notifiche
 releases:
   features: nuova funzione | {count} funzioni
   bugFixes: nuovo bug fix | {count} fix
@@ -309,6 +330,7 @@ notifications:
     containers-count: "{count} container"
     triggered-count: "{count} attivati"
     last-triggered: "Ultimo: {time}"
+    change-destination: Cambia destinazione
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

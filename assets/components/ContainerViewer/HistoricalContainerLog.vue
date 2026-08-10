@@ -22,7 +22,7 @@
            word. -->
       <router-link
         :to="{ name: '/container/[id]', params: { id: container.id } }"
-        class="btn btn-sm border-secondary/25 bg-secondary/15 text-secondary hover:bg-secondary/25 gap-2 font-medium"
+        class="btn btn-sm border-secondary/25 bg-secondary/15 text-secondary-safe hover:bg-secondary/25 gap-2 font-medium"
         v-if="container.state === 'running'"
         :title="$t('label.live-logs')"
       >

@@ -1,9 +1,7 @@
 <template>
   <!-- Single bordered card containing the input, results, and footer in one
        frame to match the design mock. No daisyUI input/dropdown chrome. -->
-  <div
-    class="bg-base-200/95 border-base-content/15 w-full overflow-hidden rounded-xl border shadow-2xl backdrop-blur-xl"
-  >
+  <div class="glass-surface glass-surface-thick w-full overflow-hidden rounded-2xl">
     <!-- Input row -->
     <div class="group/field flex items-center gap-3 px-4 py-3.5">
       <!-- The glyph is the mode indicator. A leading "/" turns the palette into
@@ -18,11 +16,20 @@
         <mdi:magnify
           v-else
           key="search"
-          class="text-base-content/60 group-focus-within/field:text-primary size-5 shrink-0 transition-colors"
+          class="text-base-content/60 group-focus-within/field:text-primary-safe size-5 shrink-0 transition-colors"
         />
       </Transition>
+      <!-- Combobox semantics. Without them a screen reader was told only that
+           there was a text box: the result list below it was an unlabelled
+           stack of anchors, and the arrow-key selection moved a highlight
+           nothing announced. `aria-activedescendant` makes the selected row the
+           thing that gets read as you move. -->
       <input
-        tabindex="0"
+        role="combobox"
+        aria-controls="palette-results"
+        :aria-expanded="totalCount > 0"
+        :aria-activedescendant="totalCount ? `palette-option-${selectedIndex}` : undefined"
+        aria-autocomplete="list"
         class="text-base-content placeholder:text-base-content/40 flex-1 bg-transparent text-base outline-none"
         ref="input"
         @keydown.down.prevent="selectedIndex = Math.min(selectedIndex + 1, totalCount - 1)"
@@ -59,7 +66,12 @@
 
     <!-- Body: results + log search CTA. Only renders when there is something
          to show — keeps the empty modal compact. -->
-    <div v-if="totalCount || logSearchVisible" class="border-base-content/10 border-t">
+    <div
+      v-if="totalCount || logSearchVisible"
+      id="palette-results"
+      role="listbox"
+      class="border-base-content/10 border-t"
+    >
       <!-- Commands section -->
       <template v-if="commandEntries.length">
         <div class="text-base-content/40 px-4 pt-3 pb-1.5 text-xs font-semibold tracking-wider uppercase">
@@ -67,10 +79,13 @@
         </div>
         <ul class="max-h-[50vh] overflow-y-auto overscroll-contain pb-1">
           <li v-for="(command, index) in commandEntries" :ref="(el) => setItemRef(el, index)">
-            <a
-              class="hover:bg-base-content/5 flex cursor-pointer items-center gap-3 px-4 py-2"
+            <div
+              :id="`palette-option-${index}`"
+              role="option"
+              :aria-selected="index === selectedIndex"
+              class="row-pressable flex items-center gap-3 px-4 py-2"
               :class="{ 'bg-base-content/10': index === selectedIndex }"
-              @click.prevent="runCommand(command)"
+              @click="runCommand(command)"
             >
               <!-- A colour command shows its colour. The inset ring keeps a pale
                    swatch visible against the row on the light theme. -->
@@ -83,7 +98,7 @@
               <span class="min-w-0 flex-1 truncate text-sm">{{ command.title }}</span>
               <span class="text-base-content/30 shrink-0 font-mono text-xs">{{ command.slash }}</span>
               <ic:sharp-keyboard-return v-if="index === selectedIndex" class="text-base-content/40 size-4" />
-            </a>
+            </div>
           </li>
         </ul>
       </template>
@@ -98,12 +113,15 @@
         </div>
         <ul class="pb-1">
           <li v-for="(result, index) in containerEntries" :ref="(el) => setItemRef(el, commandEntries.length + index)">
-            <a
-              class="hover:bg-base-content/5 flex cursor-pointer items-center gap-3 px-4 py-2"
+            <div
+              :id="`palette-option-${commandEntries.length + index}`"
+              role="option"
+              :aria-selected="commandEntries.length + index === selectedIndex"
+              class="row-pressable flex items-center gap-3 px-4 py-2"
               :class="{ 'bg-base-content/10': commandEntries.length + index === selectedIndex }"
-              @click.prevent="selected(result.item)"
+              @click="selected(result.item)"
             >
-              <div :class="result.item.state === 'running' ? 'text-primary' : 'text-base-content/50'">
+              <div :class="result.item.state === 'running' ? 'text-primary-safe' : 'text-base-content/50'">
                 <template v-if="result.item.type === 'container'">
                   <octicon:container-24 class="size-4" />
                 </template>
@@ -122,15 +140,21 @@
                 <span class="text-base-content" data-name v-html="matchedName(result)"></span>
               </div>
               <RelativeTime :date="result.item.created" class="text-base-content/40 text-xs" />
-              <span
-                @click.stop.prevent="addColumn(result.item)"
+              <!-- A real button with a real target. It was a 16px <span> with a
+                   click handler: unreachable by keyboard, and the smallest hit
+                   area in the palette. -->
+              <button
+                v-if="result.item.type === 'container' || commandEntries.length + index === selectedIndex"
+                type="button"
+                @click.stop="addColumn(result.item)"
                 :title="$t('tooltip.pin-column')"
-                class="text-base-content/40 hover:text-secondary"
+                :aria-label="$t('tooltip.pin-column')"
+                class="text-base-content/40 hover:text-secondary-safe hit-44 relative flex size-6 shrink-0 items-center justify-center rounded"
               >
                 <ic:sharp-keyboard-return v-if="commandEntries.length + index === selectedIndex" class="size-4" />
-                <cil:columns v-else-if="result.item.type === 'container'" class="size-4" />
-              </span>
-            </a>
+                <cil:columns v-else class="size-4" />
+              </button>
+            </div>
           </li>
         </ul>
       </template>
@@ -142,10 +166,10 @@
            do it for every container it is streaming. -->
       <div v-if="logSearchVisible" class="border-base-content/10 cursor-pointer border-t" @click="runLogSearch()">
         <div class="bg-primary/[0.07] hover:bg-primary/10 flex items-center gap-3 px-4 py-3">
-          <mdi:cloud-search-outline v-if="cloudSearch.available.value" class="text-primary size-5 shrink-0" />
-          <mdi:text-search v-else class="text-primary size-5 shrink-0" />
+          <mdi:cloud-search-outline v-if="cloudSearch.available.value" class="text-primary-safe size-5 shrink-0" />
+          <mdi:text-search v-else class="text-primary-safe size-5 shrink-0" />
           <div class="flex min-w-0 flex-1 flex-col">
-            <!-- text-primary-safe, not text-primary: the raw accent is tuned
+            <!-- text-primary-safe, not text-primary-safe: the raw accent is tuned
                  to sit behind dark text and measures 1.6:1 as a foreground on
                  the light theme. -->
             <span class="text-primary-safe truncate text-sm font-semibold">
@@ -157,7 +181,7 @@
             </span>
             <span class="text-base-content/50 mt-0.5 flex items-center gap-1 text-xs">
               <template v-if="cloudSearch.available.value">
-                <mdi:flash class="text-primary size-3" />
+                <mdi:flash class="text-primary-safe size-3" />
                 {{ $t("cloud-search.across-containers") }}
               </template>
               <!-- Says what the local scan actually covers, so the difference
@@ -193,7 +217,7 @@
            as a missing prerequisite. "Connect Dozzle Cloud to search logs" was
            simply untrue once the local scan existed. -->
       <span v-if="cloudSearch.available.value" class="ml-auto flex items-center gap-1.5">
-        <mdi:cloud-check-outline class="text-primary size-3.5" />
+        <mdi:cloud-check-outline class="text-primary-safe size-3.5" />
         {{ $t("cloud-search.cloud-connected") }}
       </span>
       <span v-else-if="cloudConfig?.linked" class="ml-auto flex items-center gap-1.5">

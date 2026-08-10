@@ -6,7 +6,7 @@
   <div class="my-3 flex flex-1 items-center gap-3 px-2">
     <span class="rule rule-start flex-1"></span>
     <button
-      class="btn btn-xs border-primary/25 bg-primary/12 text-primary hover:bg-primary/20 shrink-0 whitespace-pre-wrap"
+      class="btn btn-xs border-primary/25 bg-primary/12 text-primary-safe hover:bg-primary/20 shrink-0 whitespace-pre-wrap"
       @click="logEntry.loadSkippedEntries()"
     >
       <mdi:unfold-more-horizontal class="size-3.5 shrink-0" />

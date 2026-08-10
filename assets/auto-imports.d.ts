@@ -152,6 +152,7 @@ declare global {
   const persistentVisibleKeysForContainer: typeof import('./composable/storage').persistentVisibleKeysForContainer
   const pinnedContainers: typeof import('./composable/storage').pinnedContainers
   const primaryColor: typeof import('./stores/settings').primaryColor
+  const project: typeof import('./composable/dismissGesture').project
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
   const provideLoggingContext: typeof import('./composable/logContext').provideLoggingContext
@@ -177,6 +178,7 @@ declare global {
   const resolveComponent: typeof import('vue').resolveComponent
   const resolvePrimaryColor: typeof import('./composable/primaryColor').resolvePrimaryColor
   const resourceStatMode: typeof import('./stores/settings').resourceStatMode
+  const rubberband: typeof import('./composable/dismissGesture').rubberband
   const scrollContextKey: typeof import('./composable/scrollContext').scrollContextKey
   const scrollLogsToBottom: typeof import('./composable/scrollControls').scrollLogsToBottom
   const scrollLogsToTop: typeof import('./composable/scrollControls').scrollLogsToTop
@@ -281,6 +283,7 @@ declare global {
   const useDeviceOrientation: typeof import('@vueuse/core').useDeviceOrientation
   const useDevicePixelRatio: typeof import('@vueuse/core').useDevicePixelRatio
   const useDevicesList: typeof import('@vueuse/core').useDevicesList
+  const useDismissGesture: typeof import('./composable/dismissGesture').useDismissGesture
   const useDisplayMedia: typeof import('@vueuse/core').useDisplayMedia
   const useDocumentVisibility: typeof import('@vueuse/core').useDocumentVisibility
   const useDownloadUrl: typeof import('./composable/downloadUrl').useDownloadUrl
@@ -475,6 +478,9 @@ declare global {
   // @ts-ignore
   export type { ContainerGroup } from './composable/containerGroups'
   import('./composable/containerGroups')
+  // @ts-ignore
+  export type { DismissAxis, DismissGestureOptions } from './composable/dismissGesture'
+  import('./composable/dismissGesture')
   // @ts-ignore
   export type { DrawerWidth } from './composable/drawer'
   import('./composable/drawer')
@@ -673,6 +679,7 @@ declare module 'vue' {
     readonly persistentVisibleKeysForContainer: UnwrapRef<typeof import('./composable/storage')['persistentVisibleKeysForContainer']>
     readonly pinnedContainers: UnwrapRef<typeof import('./composable/storage')['pinnedContainers']>
     readonly primaryColor: UnwrapRef<typeof import('./stores/settings')['primaryColor']>
+    readonly project: UnwrapRef<typeof import('./composable/dismissGesture')['project']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
     readonly provideLoggingContext: UnwrapRef<typeof import('./composable/logContext')['provideLoggingContext']>
@@ -698,6 +705,7 @@ declare module 'vue' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolvePrimaryColor: UnwrapRef<typeof import('./composable/primaryColor')['resolvePrimaryColor']>
     readonly resourceStatMode: UnwrapRef<typeof import('./stores/settings')['resourceStatMode']>
+    readonly rubberband: UnwrapRef<typeof import('./composable/dismissGesture')['rubberband']>
     readonly scrollContextKey: UnwrapRef<typeof import('./composable/scrollContext')['scrollContextKey']>
     readonly scrollLogsToBottom: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToBottom']>
     readonly scrollLogsToTop: UnwrapRef<typeof import('./composable/scrollControls')['scrollLogsToTop']>
@@ -802,6 +810,7 @@ declare module 'vue' {
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>
     readonly useDevicesList: UnwrapRef<typeof import('@vueuse/core')['useDevicesList']>
+    readonly useDismissGesture: UnwrapRef<typeof import('./composable/dismissGesture')['useDismissGesture']>
     readonly useDisplayMedia: UnwrapRef<typeof import('@vueuse/core')['useDisplayMedia']>
     readonly useDocumentVisibility: UnwrapRef<typeof import('@vueuse/core')['useDocumentVisibility']>
     readonly useDownloadUrl: UnwrapRef<typeof import('./composable/downloadUrl')['useDownloadUrl']>

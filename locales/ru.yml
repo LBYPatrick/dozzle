@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Столбцы"
   shape-line: "Линия"
   shape-area: "Область"
+  confirm: Подтвердить?
+drawer:
+  log-entry: Запись журнала
+  message: Сообщение
+  formatted: Форматировано
+  raw: Исходный вид
+  fields: Поля
+  show-all: Показать все
+  hide-all: Скрыть все
+  source: Источник
+  image: Образ
+  container-id: ID контейнера
+  terminal: Терминал
+  analytics: Аналитика
 action:
   copy-log: Копировать лог
   copy-link: Копировать постоянную ссылку
@@ -107,6 +121,7 @@ label:
   avail: "Дост."
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: Поиск {name}…
 tooltip:
   search: Поиск контейнеров (⌘ + k, ⌃k)
   pin-column: Закрепить столбец
@@ -118,6 +133,8 @@ tooltip:
   volumes: Тома
   volume-unreachable: недоступно с этого хоста
   volume-full: "{destination} заполнено на {pct}"
+  pin-container: Закрепить на боковой панели
+  unpin-container: Открепить с боковой панели
 error:
   page-not-found: Эта страница не доступна.
   host-group-not-found: "Хосты в группе «{name}» не найдены"
@@ -141,6 +158,7 @@ error:
     title: Что-то не так
     message: >-
       Dozzle UI превысил время ожидания при подключении к API. Пожалуйста, проверьте сетевое подключение и повторите попытку.
+  page-not-found-hint: Возможно, ссылка устарела или контейнер больше не существует.
 alert:
   redirected:
     title: Перенаправлен на новый контейнер
@@ -170,6 +188,7 @@ button:
   collapse-top-bar: Свернуть верхнюю панель
   expand-top-bar: Развернуть верхнюю панель
   clear-input: Очистить
+  back-to-dashboard: Вернуться на панель
 placeholder:
   search-containers: Поиск контейнеров (⌘ + k, ⌃k)
   search: Поиск
@@ -246,6 +265,8 @@ settings:
       start-line: Это многострочное сообщение об ошибке
       middle-line: со второй строкой
       end-line: и наконец третьей строкой.
+  whats-new: Что нового
+  open-notifications: Управление уведомлениями
 releases:
   features: одна новая функция | {count} функций
   bugFixes: одно исправление ошибки | {count} исправлений
@@ -309,6 +330,7 @@ notifications:
     containers-count: "{count} контейнеров"
     triggered-count: "{count} сработало"
     last-triggered: "Последнее: {time}"
+    change-destination: Изменить назначение
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

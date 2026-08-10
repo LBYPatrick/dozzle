@@ -1,72 +1,84 @@
 <template>
-  <!-- Matches LogDetails' layout so the cloud-search drawer feels identical to
-       the normal log-details panel: level tag + timestamp header, a 3-up meta
-       grid, then the raw message. The message is a cloud-indexed line (possibly
-       from a container that no longer exists locally), so it's rendered in a
-       read-only CodeMirror instead of the live-only fields table. -->
-  <header class="flex items-center gap-4">
-    <Tag v-if="hit.level" :data-level="hit.level" class="show-unknown text-white uppercase">{{ hit.level }}</Tag>
-    <h1 class="text-lg max-md:hidden">
-      <DateTime :date="date" />
-    </h1>
-    <h2 class="text-sm"><RelativeTime :date="date" /> on {{ hit.stream }}</h2>
-    <RouterLink
-      v-if="isLive"
-      :to="liveLink"
-      @click="close?.()"
-      class="btn btn-ghost btn-xs ml-auto gap-1.5"
-      :title="$t('action.see-in-context')"
-    >
-      <material-symbols:eye-tracking />
-      <span class="max-md:hidden">{{ $t("action.see-in-context") }}</span>
-    </RouterLink>
-  </header>
+  <!-- Same shape as LogDetails, deliberately: the two are the same screen for
+       the same kind of object, and the only real difference is that this one's
+       container may no longer exist locally. That difference is stated once, as
+       a pill next to the message, rather than changing the layout. -->
+  <DrawerPanel :eyebrow="$t('drawer.log-entry')">
+    <template #leading>
+      <span v-if="hit.level" class="status-pill level-pill" :data-level="hit.level">{{ hit.level }}</span>
+    </template>
 
-  <div class="mt-8 flex flex-col gap-10">
-    <section class="grid grid-cols-3 gap-2">
-      <div>
-        <div class="font-thin">Container Name</div>
-        <div class="truncate text-lg font-bold">{{ hit.containerName }}</div>
-      </div>
-      <div>
-        <div class="font-thin">Host</div>
-        <div class="truncate text-lg font-bold">{{ hostName }}</div>
-      </div>
-      <div>
-        <div class="font-thin">{{ image ? "Image" : "Container ID" }}</div>
-        <div class="truncate text-lg font-bold">{{ image ?? shortId }}</div>
-      </div>
-    </section>
+    <template #title><DateTime :date="date" /></template>
+    <template #subtitle> <RelativeTime :date="date" /> · {{ hit.stream }} </template>
 
-    <section class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        Message
+    <template #actions>
+      <RouterLink
+        v-if="isLive"
+        :to="liveLink"
+        @click="close?.()"
+        class="btn btn-sm gap-1.5"
+        :title="$t('action.see-in-context')"
+      >
+        <material-symbols:eye-tracking class="size-4" />
+        <span class="max-md:hidden">{{ $t("action.see-in-context") }}</span>
+      </RouterLink>
+    </template>
 
-        <UseClipboard v-slot="{ copy, copied }" :source="hit.message">
-          <button class="swap outline-hidden" @click="copy()" :class="{ 'swap-active': copied }">
-            <mdi:check class="swap-on" />
-            <material-symbols:content-copy class="swap-off" />
-          </button>
-        </UseClipboard>
+    <div class="flex flex-col gap-7">
+      <section class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <h2 class="type-section">{{ $t("drawer.message") }}</h2>
 
-        <span
-          v-if="!isLive"
-          class="bg-base-content/10 text-base-content/60 ml-auto inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-xs"
-        >
-          <mdi:cloud-off-outline class="size-3.5" />
-          {{ $t("cloud-search.container-removed") }}
-        </span>
-      </div>
-      <div class="bg-base-200 h-[55vh] overflow-hidden rounded-sm border border-white/20">
-        <JsonEditor :model-value="displayMessage" read-only />
-      </div>
-    </section>
-  </div>
+          <span v-if="!isLive" class="status-pill status-pill-neutral">
+            <mdi:cloud-off-outline class="size-3.5" />
+            {{ $t("cloud-search.container-removed") }}
+          </span>
+
+          <UseClipboard v-slot="{ copy, copied }" :source="hit.message">
+            <button
+              class="btn btn-sm btn-square hit-44 relative ml-auto"
+              @click="copy()"
+              :title="$t('action.copy-log')"
+              :aria-label="$t('action.copy-log')"
+            >
+              <mdi:check v-if="copied" class="text-success size-4" />
+              <material-symbols:content-copy v-else class="size-4" />
+            </button>
+          </UseClipboard>
+        </div>
+
+        <!-- dvh, and a tonal well rather than the `border-white/20` hairline
+             that was invisible on the light theme. -->
+        <div class="bg-base-content/4 h-[46dvh] overflow-hidden rounded-[var(--control-radius)]">
+          <JsonEditor :model-value="displayMessage" read-only />
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="type-section">{{ $t("drawer.source") }}</h2>
+        <div class="inset-group">
+          <div class="inset-row">
+            <span class="inset-label">{{ $t("label.container-name") }}</span>
+            <span class="inset-value truncate">{{ hit.containerName }}</span>
+          </div>
+          <div class="inset-row">
+            <span class="inset-label">{{ $t("label.host") }}</span>
+            <span class="inset-value truncate">{{ hostName }}</span>
+          </div>
+          <div class="inset-row">
+            <span class="inset-label">{{ image ? $t("drawer.image") : $t("drawer.container-id") }}</span>
+            <span class="inset-value truncate font-mono">{{ image ?? shortId }}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </DrawerPanel>
 </template>
 
 <script setup lang="ts">
 import type { CloudLogHit } from "@/composable/cloudLogSearch";
 import { UseClipboard } from "@vueuse/components";
+import DrawerPanel from "@/components/common/DrawerPanel.vue";
 
 const { hit, close } = defineProps<{ hit: CloudLogHit; query?: string; close?: () => void }>();
 

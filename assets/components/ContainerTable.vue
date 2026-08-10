@@ -6,7 +6,7 @@
          band of their own above the table. -->
     <div class="flex h-8 shrink-0 flex-row items-center gap-2">
       <h2 v-if="title" class="section-heading">
-        {{ title }} <span class="count">{{ sortedContainers.length }}</span>
+        {{ title }} <span class="section-count">{{ sortedContainers.length }}</span>
       </h2>
       <div v-if="hostOptions.length > 2" class="min-w-0">
         <!-- Same choice, two shapes: segments while they still fit on the bar,
@@ -42,8 +42,12 @@
         v-for="container in paginated"
         :key="container.id"
         v-memo="[container.id, container.state, statMode, isMobile]"
+        @click="openContainer(container, $event)"
       >
         <td v-if="isVisible('name')" class="max-w-80 truncate max-md:max-w-32">
+          <!-- Still a real link, so it can be focused, opened in a new tab, and
+               copied — the row click above is an additional target, not a
+               replacement for one. -->
           <router-link
             :to="{ name: '/container/[id]', params: { id: container.id } }"
             :title="container.name"
@@ -54,8 +58,8 @@
         </td>
         <td v-if="isVisible('host')" class="text-base-content/70">{{ container.hostLabel }}</td>
         <td v-if="isVisible('state')">
-          <span class="state-chip" :class="stateTone(container.state)">
-            <span class="state-dot"></span>{{ container.state }}
+          <span class="status-pill status-pill-dot capitalize" :class="stateTone(container.state)">
+            {{ container.state }}
           </span>
         </td>
         <td v-if="isVisible('created')" class="text-base-content/70">
@@ -243,13 +247,26 @@ const paginated = computed(() => {
 function stateTone(state: string) {
   switch (state) {
     case "running":
-      return "tone-running";
+      return "status-pill-success";
     case "paused":
     case "restarting":
-      return "tone-transient";
+      return "status-pill-warning";
     default:
-      return "tone-stopped";
+      return "status-pill-neutral";
   }
+}
+
+const router = useRouter();
+
+// Pressing anywhere on the row opens it. Two guards, both about not stealing a
+// click that was already meant for something else: anything with a destination
+// of its own (the name link, any control added to a cell later) handles itself,
+// and a drag that selected text was a read, not a tap.
+function openContainer(container: Container, event: MouseEvent) {
+  if ((event.target as HTMLElement | null)?.closest("a, button, input, label, [role='button']")) return;
+  const selection = window.getSelection();
+  if (selection && !selection.isCollapsed) return;
+  router.push({ name: "/container/[id]", params: { id: container.id } });
 }
 
 function isVisible(field: keys) {
@@ -263,35 +280,22 @@ function isVisible(field: keys) {
 <style scoped>
 @reference "@/main.css";
 
-/* Matches the hosts column's heading exactly, so the two columns start on the
-   same line. */
-.section-heading {
-  @apply text-base-content/50 flex shrink-0 items-center gap-2 text-xs font-semibold tracking-wider uppercase;
+/* `.section-heading`, `.section-count` and `.status-pill` all live in main.css
+   now. The heading pair was declared here and verbatim in the dashboard, for
+   two headings on the same screen; the chip was a fourth parallel small-label
+   system describing the same container state the other three already described. */
+
+/* The row is the target, not just the name cell. A table row that navigates
+   somewhere should be pressable along its whole length — before this, only the
+   name was a link, so most of the row looked clickable and was not. The link
+   fills the first cell and the rest of the row carries the press state. */
+tr {
+  @apply row-pressable;
 }
 
-.count {
-  @apply bg-base-content/8 text-base-content/60 rounded-full px-1.5 py-0.5 text-[0.7rem] tabular-nums;
-}
-
-.state-chip {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium capitalize;
-}
-
-.state-dot {
-  @apply size-1.5 shrink-0 rounded-full bg-current;
-}
-
-.tone-running {
-  @apply bg-success/12;
-  color: var(--color-success-text);
-}
-
-.tone-transient {
-  @apply bg-warning/12;
-  color: var(--color-warning-text);
-}
-
-.tone-stopped {
-  @apply text-base-content/60 bg-base-content/8;
+/* Anchor colour is inherited: the row already reads as a link from the cursor
+   and the press, and a coloured name in a table of names is noise. */
+tr a {
+  @apply text-inherit no-underline;
 }
 </style>

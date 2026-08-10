@@ -8,17 +8,24 @@
       <!-- Header -->
       <div class="flex items-start justify-between gap-2">
         <div class="flex min-w-0 flex-wrap items-center gap-2">
-          <h4 class="flex min-w-0 flex-wrap items-center gap-2 text-lg font-semibold">
+          <h3 class="type-heading flex min-w-0 flex-wrap items-center gap-2">
             <mdi:chart-line v-if="alert.metricExpression" class="text-info shrink-0" />
             <mdi:bell-ring-outline v-else-if="alert.eventExpression" class="text-info shrink-0" />
             <mdi:text-box-outline v-else class="text-info shrink-0" />
             <span class="break-all">{{ alert.name }}</span> <span class="text-sm font-light">→</span>
-            <div class="group/dispatch dropdown dropdown-hover">
-              <div
-                tabindex="0"
-                role="button"
-                class="border-base-content/0 hover:border-base-content/20 flex cursor-pointer items-center gap-1 rounded border px-1.5 py-0.5 text-xs font-light transition-colors"
+            <!-- Opened by press, not by the pointer passing over it: a menu that
+                 changes where an alert is delivered should never open by
+                 accident, and on touch a hover menu never opens at all. -->
+            <div class="group/dispatch dropdown" :class="{ 'dropdown-open': open }" ref="root">
+              <button
+                type="button"
+                ref="trigger"
+                aria-haspopup="menu"
+                :aria-expanded="open"
+                :title="$t('notifications.alert.change-destination')"
+                class="hover:bg-base-content/8 flex cursor-pointer items-center gap-1 rounded-[var(--control-radius)] px-1.5 py-1 text-xs font-light transition-colors"
                 :class="{ 'text-warning': !alert.dispatcher }"
+                @click="toggle"
               >
                 <template v-if="alert.dispatcher">
                   <mdi:webhook v-if="alert.dispatcher.type === 'webhook'" />
@@ -29,24 +36,33 @@
                   <mdi:alert-outline />
                   {{ $t("notifications.alert.dispatcher-deleted") }}
                 </template>
-                <mdi:chevron-down class="text-[0.6rem] opacity-0 transition-opacity group-hover/dispatch:opacity-100" />
-              </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-50 w-48 p-2 shadow-lg">
+                <mdi:chevron-down class="dispatch-caret text-[0.6rem]" />
+              </button>
+              <ul
+                v-if="open"
+                role="menu"
+                class="dropdown-content menu glass-surface glass-surface-sheer glass-surface-popover z-50 w-48 rounded-[var(--control-radius)] p-1.5"
+                @click="onItemClick"
+              >
                 <li v-for="dest in dispatchers" :key="dest.id">
-                  <a
+                  <button
+                    type="button"
+                    role="menuitem"
                     class="flex items-center gap-2"
-                    :class="{ active: dest.id === alert.dispatcher?.id }"
+                    :class="{ 'menu-active': dest.id === alert.dispatcher?.id }"
                     @click="changeDispatcher(dest.id)"
                   >
                     <mdi:webhook v-if="dest.type === 'webhook'" />
                     <mdi:cloud v-else />
                     {{ dest.name }}
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
-          </h4>
-          <span v-if="!alert.enabled" class="badge badge-warning badge-sm">{{ $t("notifications.alert.paused") }}</span>
+          </h3>
+          <span v-if="!alert.enabled" class="status-pill status-pill-warning">{{
+            $t("notifications.alert.paused")
+          }}</span>
         </div>
         <input
           type="checkbox"
@@ -112,6 +128,10 @@
 </template>
 
 <script lang="ts" setup>
+const root = useTemplateRef<HTMLElement>("root");
+const trigger = useTemplateRef<HTMLElement>("trigger");
+const { open, toggle, onItemClick } = useDropdownMenu(root, trigger);
+
 import type { Dispatcher, NotificationRule } from "@/types/notifications";
 import AlertForm from "./AlertForm.vue";
 
@@ -178,6 +198,42 @@ async function deleteAlert() {
 </script>
 
 <style scoped>
+/* The caret is quiet until the row is hovered or the control is focused, and
+   flips while the menu is open — the same disclosure language the rest of the
+   app's pull-downs use. Focus is included so a keyboard user can see which
+   control they are on. */
+.dispatch-caret {
+  opacity: 0;
+  transition:
+    opacity 150ms ease,
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.group\/dispatch:hover .dispatch-caret,
+.group\/dispatch:focus-within .dispatch-caret,
+.dropdown-open .dispatch-caret {
+  opacity: 1;
+}
+
+.dropdown-open .dispatch-caret {
+  transform: rotate(180deg);
+}
+
+@media (pointer: coarse) {
+  .dispatch-caret {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dispatch-caret {
+    transition: opacity 150ms ease;
+  }
+  .dropdown-open .dispatch-caret {
+    transform: none;
+  }
+}
+
 .card.highlight-new {
   animation: highlight-fade 3s ease-out;
 }

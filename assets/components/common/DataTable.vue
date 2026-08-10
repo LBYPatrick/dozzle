@@ -122,7 +122,7 @@ th.sorted .th-label {
 }
 
 th.sorted .sort-arrow {
-  @apply text-primary opacity-100;
+  @apply text-primary-safe opacity-100;
 }
 
 .sort-arrow.descending {

@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "柱狀"
   shape-line: "折線"
   shape-area: "面積"
+  confirm: 確認？
+drawer:
+  log-entry: 日誌項目
+  message: 訊息
+  formatted: 格式化
+  raw: 原始
+  fields: 欄位
+  show-all: 全部顯示
+  hide-all: 全部隱藏
+  source: 來源
+  image: 映像檔
+  container-id: 容器 ID
+  terminal: 終端機
+  analytics: 分析
 action:
   copy-log: 複製日誌
   copy-link: 複製永久連結
@@ -107,6 +121,7 @@ label:
   avail: "可用"
   stdout-short: "OUT"
   stderr-short: "ERR"
+  finding-container: 正在尋找 {name}…
 tooltip:
   search: 搜尋容器 (⌘ + k, ⌃k)
   pin-column: 釘選為欄位
@@ -118,6 +133,8 @@ tooltip:
   volumes: 卷
   volume-unreachable: 無法從此主機存取
   volume-full: "{destination} 已使用 {pct}"
+  pin-container: 釘選至側邊欄
+  unpin-container: 從側邊欄取消釘選
 error:
   page-not-found: 此頁面不存在
   host-group-not-found: "在群組「{name}」中找不到主機"
@@ -142,6 +159,7 @@ error:
     title: 發生錯誤
     message: >-
       Dozzle UI 連線至 API 時逾時。請檢查網路連線後再試一次。
+  page-not-found-hint: 連結可能已失效，或它指向的容器已不存在。
 alert:
   redirected:
     title: 已重新導向至新容器
@@ -172,6 +190,7 @@ button:
   collapse-top-bar: 收合頂部列
   expand-top-bar: 展開頂部列
   clear-input: 清除
+  back-to-dashboard: 返回儀表板
 placeholder:
   search-containers: 搜尋容器 (⌘ + k, ⌃k)
   search: 搜尋
@@ -249,6 +268,8 @@ settings:
       start-line: 這是一段多行錯誤訊息
       middle-line: 這是第二行
       end-line: 最後是第三行。
+  whats-new: 新功能
+  open-notifications: 管理通知
 releases:
   features: 一項新功能 | {count} 項新功能
   bugFixes: 一項錯誤修正 | {count} 項修正
@@ -312,6 +333,7 @@ notifications:
     containers-count: "{count} 個容器"
     triggered-count: "{count} 次觸發"
     last-triggered: "最後觸發: {time}"
+    change-destination: 變更目標
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

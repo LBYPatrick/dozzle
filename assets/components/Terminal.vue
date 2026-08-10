@@ -1,17 +1,18 @@
 <template>
-  <aside class="flex h-[calc(100svh-50px)] flex-col gap-2">
-    <header class="flex items-center gap-4">
-      <material-symbols:terminal class="size-8" />
-      <h1 class="text-2xl max-md:hidden">{{ container.name }}</h1>
-      <h2 class="text-sm">Started <RelativeTime :date="container.created" /></h2>
-    </header>
+  <!-- `flush`: the shell reaches the sheet's edges rather than sitting in a
+       padded box, and the height comes from the panel rather than a hand-tuned
+       `calc(100svh - 50px)` that assumed where the header ended. -->
+  <DrawerPanel :eyebrow="$t('drawer.terminal')" :title="container.name" flush>
+    <template #leading><material-symbols:terminal class="size-5" /></template>
+    <template #subtitle>{{ $t("label.started") }} <RelativeTime :date="container.created" /></template>
 
-    <div ref="host" class="shell flex-1"></div>
-  </aside>
+    <div ref="host" class="shell h-full px-2 pb-2"></div>
+  </DrawerPanel>
 </template>
 
 <script setup lang="ts">
 import { Container } from "@/models/Container";
+import DrawerPanel from "@/components/common/DrawerPanel.vue";
 import "@xterm/xterm/css/xterm.css";
 const { container, action } = defineProps<{ container: Container; action: "attach" | "exec" }>();
 
@@ -76,13 +77,19 @@ onMounted(() => {
     terminal.writeln("⚠️ Connection closed");
   });
 
-  // Handle window resize
-  const { width, height } = useWindowSize();
-  watch([width, height], () => {
-    requestAnimationFrame(() => {
-      fitAddon.fit();
-    });
-  });
+  // Refit from the element, not from the window.
+  //
+  // The panel used to be `calc(100svh - 50px)` — a height that was definite the
+  // moment it existed and only ever changed with the window, so watching the
+  // window was enough. Its height now comes from the drawer's flex layout,
+  // which means two things a window listener cannot see: it resolves *after*
+  // mount (so the `fit()` above can run against a box that is still zero-height
+  // and size the terminal to 0×0), and it changes when the panel does — a
+  // wrapping header, a `md`→`lg` drawer — without the window moving at all.
+  //
+  // A ResizeObserver on the host covers the initial layout and every later
+  // change, and fires the first time as soon as the box has a size.
+  useResizeObserver(host, () => requestAnimationFrame(() => fitAddon.fit()));
 });
 
 onUnmounted(() => {
@@ -128,6 +135,16 @@ onUnmounted(() => {
   50% {
     background-color: inherit;
     color: var(--color-base-content);
+  }
+}
+
+/* A blinking cursor is a 2 Hz oscillation on a bright block. Reduced motion
+   holds it steady — the cursor is still drawn, so the caret position is not
+   lost. */
+@media (prefers-reduced-motion: reduce) {
+  :deep(.xterm-cursor-blink),
+  :deep(.xterm .xterm-cursor-blink-block) {
+    animation: none;
   }
 }
 </style>

@@ -11,27 +11,27 @@
       <ul class="menu">
         <li class="menu-title px-2 py-1 text-[0.7rem]">{{ $t("label.cpu-memory") }}</li>
         <li v-for="option in resourceOptions" :key="option.value">
-          <a @click="setResourceMode(option.value)">
+          <button type="button" role="menuitem" @click="setResourceMode(option.value)">
             <mdi:check class="w-4" v-if="resourceStatMode === option.value" />
             <div v-else class="w-4"></div>
             {{ $t(option.label) }}
-          </a>
+          </button>
         </li>
         <li class="menu-title px-2 py-1 text-[0.7rem]">{{ $t("label.network-disk") }}</li>
         <li v-for="option in ioOptions" :key="option.value">
-          <a @click="setIoMode(option.value)">
+          <button type="button" role="menuitem" @click="setIoMode(option.value)">
             <mdi:check class="w-4" v-if="ioStatMode === option.value" />
             <div v-else class="w-4"></div>
             {{ $t(option.label) }}
-          </a>
+          </button>
         </li>
         <li class="menu-title px-2 py-1 text-[0.7rem]">{{ $t("toolbar.trend-shape") }}</li>
         <li v-for="option in shapeOptions" :key="option.value">
-          <a @click="setTrendShape(option.value)">
+          <button type="button" role="menuitem" @click="setTrendShape(option.value)">
             <mdi:check class="w-4" v-if="trendShape === option.value" />
             <div v-else class="w-4"></div>
             {{ $t(option.label) }}
-          </a>
+          </button>
         </li>
       </ul>
     </details>

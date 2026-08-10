@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-8">
     <!-- Destinations -->
     <div>
-      <h3 class="text-base-content/60 mb-4 font-semibold tracking-wide uppercase">
+      <h3 class="type-section mb-4">
         {{ $t("notifications.destinations") }}
       </h3>
 
@@ -45,7 +45,7 @@
     <!-- Alerts -->
     <div>
       <div class="mb-4">
-        <h3 class="text-base-content/60 font-semibold tracking-wide uppercase">{{ $t("notifications.alerts") }}</h3>
+        <h3 class="type-section">{{ $t("notifications.alerts") }}</h3>
       </div>
 
       <div class="tabs tabs-box mb-6">

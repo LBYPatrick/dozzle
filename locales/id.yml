@@ -37,6 +37,20 @@ toolbar:
   shape-bars: "Batang"
   shape-line: "Garis"
   shape-area: "Area"
+  confirm: Konfirmasi?
+drawer:
+  log-entry: Entri log
+  message: Pesan
+  formatted: Terformat
+  raw: Mentah
+  fields: Bidang
+  show-all: Tampilkan semua
+  hide-all: Sembunyikan semua
+  source: Sumber
+  image: Image
+  container-id: ID kontainer
+  terminal: Terminal
+  analytics: Analitik
 action:
   copy-log: Salin log
   copy-link: Salin permalink
@@ -108,7 +122,7 @@ label:
   avail: "Tersedia"
   stdout-short: "OUT"
   stderr-short: "ERR"
-
+  finding-container: Mencari {name}…
 tooltip:
   search: Cari kontainer (⌘ + k, ⌃k)
   pin-column: Sematkan sebagai kolom
@@ -120,7 +134,8 @@ tooltip:
   volumes: Volume
   volume-unreachable: tidak dapat dijangkau dari host ini
   volume-full: "{destination} terisi {pct}"
-
+  pin-container: Sematkan ke bilah sisi
+  unpin-container: Lepas dari bilah sisi
 error:
   page-not-found: Halaman ini tidak ada
   host-group-not-found: 'Tidak ada host yang ditemukan di grup "{name}"'
@@ -144,7 +159,7 @@ error:
     title: Ada yang tidak beres
     message: >-
       UI Dozzle gagal terhubung ke API karena waktu habis. Periksa koneksi jaringan dan coba lagi.
-
+  page-not-found-hint: Tautan mungkin sudah usang, atau kontainer yang dituju sudah tidak ada.
 alert:
   redirected:
     title: Dialihkan ke kontainer baru
@@ -176,7 +191,7 @@ button:
   collapse-top-bar: Ciutkan bilah atas
   expand-top-bar: Perluas bilah atas
   clear-input: Hapus
-
+  back-to-dashboard: Kembali ke dasbor
 placeholder:
   search-containers: Cari kontainer (⌘ + k, ⌃k)
   search: Cari
@@ -254,7 +269,8 @@ settings:
       start-line: Ini adalah pesan kesalahan multi-baris
       middle-line: dengan baris kedua
       end-line: dan akhirnya baris ketiga.
-
+  whats-new: Yang baru
+  open-notifications: Kelola notifikasi
 releases:
   features: satu fitur baru | {count} fitur
   bugFixes: satu perbaikan bug | {count} perbaikan
@@ -321,6 +337,7 @@ notifications:
     containers-count: "{count} kontainer"
     triggered-count: "{count} terpicu"
     last-triggered: "Terakhir: {time}"
+    change-destination: Ubah tujuan
   destination:
     http-webhook: HTTP Webhook
     dozzle-cloud: Dozzle Cloud

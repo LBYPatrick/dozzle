@@ -3,7 +3,7 @@
     <!-- ABOUT / UPDATES (was the top-right announcements bell) -->
     <section class="flex flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.about") }}</h2>
+        <h2 class="type-title">{{ $t("settings.about") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.about-desc") }}</p>
       </div>
       <UpdatesCard />
@@ -12,7 +12,7 @@
     <!-- CLOUD (was the top-right cloud popover) -->
     <section id="settings-cloud" class="flex scroll-mt-4 flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("cloud.title") }}</h2>
+        <h2 class="type-title">{{ $t("cloud.title") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.cloud-desc") }}</p>
       </div>
       <CloudSettingsCard />
@@ -21,7 +21,7 @@
     <!-- NOTIFICATIONS (was the top-right bell link) -->
     <section class="flex flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("notifications.title") }}</h2>
+        <h2 class="type-title">{{ $t("notifications.title") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("notifications.description") }}</p>
       </div>
       <button
@@ -40,7 +40,7 @@
     <!-- DISPLAY -->
     <section class="flex flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.display") }}</h2>
+        <h2 class="type-title">{{ $t("settings.display") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.display-desc") }}</p>
       </div>
 
@@ -166,7 +166,7 @@
     <!-- OPTIONS -->
     <section class="flex flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.options") }}</h2>
+        <h2 class="type-title">{{ $t("settings.options") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.options-desc") }}</p>
       </div>
 
@@ -239,7 +239,7 @@
     <!-- RESET -->
     <section class="flex flex-col gap-4">
       <div>
-        <h2 class="text-xl font-semibold tracking-tight">{{ $t("settings.reset-all") }}</h2>
+        <h2 class="type-title">{{ $t("settings.reset-all") }}</h2>
         <p class="text-base-content/60 mt-1 text-sm">{{ $t("settings.reset-desc") }}</p>
       </div>
 

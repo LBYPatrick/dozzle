@@ -84,6 +84,19 @@ const { openSettings } = useSettingsModal();
   }
 }
 
+/* The bar still has to appear — it is what says "you are here" — so reduced
+   motion keeps the fade and drops the sweep. */
+@media (prefers-reduced-motion: reduce) {
+  :deep([data-testid="side-menu"] .menu li > a.menu-active::before) {
+    animation: none;
+  }
+
+  :deep([data-testid="side-menu"] .menu details > summary::after),
+  :deep([data-testid="side-menu"] .menu :where(li > a, li > details > summary)) {
+    transition: none;
+  }
+}
+
 /* Smooth the daisyUI disclosure chevron on group summaries. */
 :deep([data-testid="side-menu"] .menu details > summary::after) {
   transition: transform 200ms cubic-bezier(0.32, 0.72, 0, 1);

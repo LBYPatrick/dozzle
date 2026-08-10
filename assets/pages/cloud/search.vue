@@ -3,7 +3,7 @@
     <section class="flex min-h-0 flex-1 flex-col">
       <!-- Header -->
       <div class="mb-4 flex shrink-0 items-center gap-3">
-        <h2 class="text-lg font-semibold">{{ $t("cloud-search.results-page-title") }}</h2>
+        <h1 class="type-title">{{ $t("cloud-search.results-page-title") }}</h1>
         <span v-if="committedQuery" class="text-base-content/70 font-mono text-sm">"{{ committedQuery }}"</span>
         <span v-if="cloudSearch.available.value" class="status-pill status-pill-primary ml-auto">
           <mdi:flash class="size-3" /> {{ $t("cloud-search.hero-pill-indexed") }}

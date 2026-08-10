@@ -10,9 +10,16 @@
         :title="container.name"
         class="group auto-cols-[max-content_minmax(0,1fr)_max-content_max-content] py-1"
       >
-        <svg-spinners:ring-resize v-if="container.isNew" class="text-secondary w-2" />
+        <!-- Always the state dot, never a spinner.
+             A new container used to swap this for `svg-spinners:ring-resize` —
+             a third spinner shape, and the wrong signal twice over. Nothing is
+             loading: the container exists, and `isNew` is cleared by the row's
+             own highlight animation after ~3s regardless of what the container
+             is doing. Meanwhile swapping the dot out meant the one row you were
+             most likely to be looking at was the only row not telling you its
+             state. "New" is what the highlight wash is for; the dot says what
+             the container is. -->
         <div
-          v-else
           class="status data-[state=exited]:status-error data-[state=running]:status-success data-[state=paused]:status-warning"
           :data-state="container.state"
         ></div>
@@ -29,7 +36,7 @@
         />
         <ContainerHealth :health="container.health" />
         <span
-          class="hover:text-secondary hidden group-hover:inline-block"
+          class="hover:text-secondary-safe hidden group-hover:inline-block"
           @click.stop.prevent="pinnedStore.pinContainer(container)"
           v-show="!pinnedStore.isPinned(container)"
           :title="$t('tooltip.pin-column')"
@@ -81,6 +88,18 @@ li.highlight-new {
   }
   to {
     background-color: transparent;
+  }
+}
+
+/* Collapsed, not cancelled.
+   `animation: none` would be wrong here: the row clears `isNew` from
+   `@animationend`, and that event never fires for an animation that does not
+   run — so the "new container" spinner beside the name would spin forever for
+   anyone who asked for reduced motion. A 1ms run has no perceptible fade and
+   still completes. */
+@media (prefers-reduced-motion: reduce) {
+  li.highlight-new {
+    animation-duration: 1ms;
   }
 }
 </style>

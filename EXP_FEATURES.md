@@ -13,9 +13,9 @@ verified against the actual diff.
 
 ## Summary
 
-- **Commits ahead:** 71
-- **Files changed:** 293
-- **Lines:** +16362 / -3033 (net +13329)
+- **Commits ahead:** 73
+- **Files changed:** 317
+- **Lines:** +20722 / -3428 (net +17294)
 
 Upstream has since shipped its own command palette and `copy-image` action, so
 that ground is no longer unique to this fork even though the fork's
@@ -784,6 +784,154 @@ routes already used it. Nothing pointed it at the whole fleet.
   they show; there the visible set _is_ the subject. Widening those (a host
   search covering that host's stopped containers) is a one-argument change if
   wanted.
+
+## Apple-design audit and remediation
+
+A full adversarial pass over every user-visible surface — 137 `.vue` files, 17
+pages, 2 layouts — against Apple's interface and motion doctrine, written up in
+`APPLE_DESIGN_AUDIT.md` and then fixed. The audit's finding was that the token
+system in `main.css` was already sound and roughly half the app ignored it.
+
+### Broken or inaccessible
+
+- **Log-row actions did not exist on touch.** The row menu (copy log, copy
+  permalink, see-in-context, show details, create alert) opened on
+  `dropdown-hover` behind an `opacity-0 group-hover` trigger, so on a phone or
+  tablet none of it was reachable. `dropdown-hover` is gone from all four menus
+  that used it; they are press-to-open on real `<button aria-haspopup>`, close on
+  Escape (restoring focus to the trigger) and on an outside press, and the row
+  trigger reveals unconditionally under `@media (pointer: coarse)`.
+- **`/show` permalinks could hang on a blank page.** The resolver ran in a
+  `watch` with no `immediate` against a long-lived store ref, so arriving with
+  the store already populated meant waiting for the next arbitrary SSE event —
+  minutes, on a quiet fleet — with an empty `<template>` on screen. Fixed, plus
+  real loading and not-found states.
+- **Three dead-end screens** (404, and both container-not-found pages) had no way
+  out at all. All now offer a route back, and use `dvh` rather than `screen`.
+- **`login.vue` predated the design system entirely**: a 2px focus ring and
+  daisyUI's own focus system (both contradicting `main.css`), `uppercase` button
+  labels, `<label>` nested inside `<label>` with no real `for`/`id`, `autofocus`
+  on both fields, and an error that reddened only the username though the failure
+  is for the credential pair. Rebuilt on the shared field and sheet material with
+  an `aria-live` error.
+- **31 `<a @click>` with no `href`** — none of them reachable by Tab — became
+  buttons. Menus gained `role="menu"`/`menuitem`; the command palette gained full
+  combobox/listbox semantics with `aria-activedescendant`.
+- **Destructive container actions now arm before they fire.** Stop, restart and
+  update ran on a single click with no confirmation and no undo; `update` pulls a
+  new image and recreates the container. Two-step, matching the settings reset.
+
+### Contrast, measured
+
+- **`--color-*-text` was built to fix a documented AA failure and then applied to
+  ~30% of its call sites.** The remaining 21 measured **1.61:1** on the light
+  theme. All are now on the readable form; only chart _fills_ keep the raw accent.
+- **Timestamps** ran at 2.96:1 on light (`--color-blue` as text) — now the
+  readable `info` form.
+- **Log level marks failed at both ends**: warn at **1.81:1** on light, debug at
+  **2.96:1** on dark, both under the 3:1 a non-text mark needs. A per-theme
+  `--level-*` ramp fixes both (worst case 4.39:1), and `[data-level]` no longer
+  paints at all — it resolves a variable, and `.level-fill` / `.level-pill` opt
+  in. The old bare attribute selector painted anything on the page that happened
+  to carry the attribute.
+
+### Consistency
+
+- **8 hand-rolled glass recipes → 1.** Five blur radii, six opacities, four
+  radii, saturation applied at random — and five of the eight were invisible to
+  `prefers-reduced-transparency` and `prefers-contrast`, because those queries
+  only ever landed on `.glass-surface`. Weights are now variants
+  (`-sheer` / `-thick` / `-popover` / `-chrome`).
+- **5 dropdown implementations → 1 behaviour**, one material, one radius,
+  symmetric enter/exit, and `transform-origin` following the alignment. They had
+  three different opening mechanisms between them (click, focus, hover).
+- **5 parallel status-chip systems → `.status-pill`**, with a `-dot` modifier.
+  Four of the five were describing container or host state.
+- **`.section-heading`/`.count` were copy-pasted** into two headings that sit
+  side by side on the dashboard, and had already drifted to different opacities.
+- **4 loading idioms → the documented set.** `loading-bars` had exactly one call
+  site against 19 uses of `loading-spinner` (and pulled in an inline-SVG mask
+  nothing else used); a third spinner shape stood in for "container is new",
+  which is not a wait and was displacing the row's state dot. `CircuitRing` and
+  `IndeterminateBar` are kept and documented — they carry different meanings, not
+  the same one drawn differently.
+- **Press feedback** existed on 4 surfaces out of ~20. `.row-pressable` covers
+  every row-shaped target, and container-table rows are clickable along their
+  whole length rather than only on the name.
+
+### Typography
+
+A real scale — `type-display` / `title` / `heading` / `body` / `caption` /
+`section` — each fixing size, weight, leading and tracking **as a set**, with
+tracking negative on the large steps and positive on the caption step. It
+replaces **nine** different treatments of "panel title". The heading outline was
+repaired too: one `<h1>` per page, and captions that were marked up as `<h2>`
+("Started 5m ago", a bare timestamp) are paragraphs again. Four pixel-locked font
+sizes became `rem` so they respect the reader's text-size setting.
+
+### Motion
+
+- **A real gesture layer**, which the app had none of: a grep for pointer
+  capture, velocity, springs or swipe returned nothing outside the auto-import
+  manifest, so §2 direct manipulation, §3 interruptibility, §5 velocity handoff
+  and §6 momentum projection were not partially met but absent.
+  `composable/dismissGesture.ts` implements all four properly — pointer capture
+  with grab-offset-preserving 1:1 tracking, a sampled velocity window,
+  rubber-banded boundaries, Apple's exponential-decay projection (`d = 0.998`)
+  to decide dismiss-vs-return, and a per-frame critically-damped spring handed
+  the release velocity. Interruptible by construction. Applied to `SideDrawer`
+  (swipe right) and `MobileMenu` (swipe up).
+- **`SideDrawer` got its scrim.** It was a `showModal()` dialog with
+  `backdrop:bg-none` — it blocked the page and gave no sign that it had. The veil
+  now also lifts in step with the drag.
+- **One sheet presentation** for both dialogs; the command palette previously
+  carried `transition-none!` and hard-cut into place while settings animated.
+- Eleven files' animations gained reduced-motion paths, `transition: all` on
+  toasts became named properties, and an unearned back-out overshoot was removed.
+- **Tooltips** gained viewport collision handling (they rendered off-screen near
+  the right edge, which in a sidebar-plus-log layout is most things) and now
+  appear on keyboard focus rather than mouse only.
+
+### Tap targets
+
+A `.hit-44` utility overflows a full 44pt target around controls that must stay
+visually small — the pin toggle was **16px**, the toast dismiss 24px. Where there
+was room, controls were simply enlarged.
+
+## Drawer panels, redesigned
+
+The right-hand drawer was the least designed surface in the app. Five panels each
+invented their own header, and the drawer positioned a close button _absolutely
+over_ whatever the panel put in that corner. Nothing was sticky, so titles
+scrolled away.
+
+- **`DrawerPanel.vue`** is the shared chrome for all six consumers: a sticky
+  translucent title bar with an eyebrow (category), title, subtitle and actions,
+  and the close control as a real row item. Its rule is a scroll edge. `flush`
+  hands the body over for panels that reach the sheet's edges and scroll
+  themselves.
+- **`LogDetails` was reordered around what you opened it for.** It led with a
+  three-column metadata grid under `font-thin` labels, then raw JSON, then a
+  fields table — so the log line was the third block down. Now: message first
+  (one surface with a Formatted/Raw segmented control instead of two
+  always-visible renderings), then fields, then provenance.
+- The fields table's `<caption>` reading "Fields are sortable by dragging and
+  dropping" is gone; every row has a visible grip and dragging is bound to it.
+- The per-row visibility **switch became a checkmark** — a switch is for a
+  setting, and eleven stacked vertically read as a settings screen that wandered
+  into an inspector.
+- **Inset grouped lists** (`.inset-group` / `.inset-row`) are promoted from the
+  settings sheet, which was the only place with Apple's list shape.
+
+## Mobile navigation bar
+
+Search, settings and the menu toggle were three `btn btn-circle` — 48px discs
+filled with the grey every pressable button wears. An iOS bar button item is a
+plain glyph: no surface at rest, a fill only while pressed. They are quiet glyphs
+now on a `.bar-item` that is deliberately not `.btn`, each with a full 44pt
+target, and the one item with a state (the menu toggle) is the only one that
+takes a fill. The bar itself is translucent chrome with content passing under it
+rather than an opaque strip the page ends at.
 
 ## Backend (Go)
 

@@ -111,7 +111,7 @@
     <!-- Unlink confirmation modal -->
     <dialog ref="unlinkModal" class="modal">
       <div class="modal-box">
-        <h3 class="text-lg font-bold">{{ $t("cloud.unlink") }}</h3>
+        <h3 class="type-heading">{{ $t("cloud.unlink") }}</h3>
         <p class="py-4 text-sm">{{ $t("cloud.unlink-confirm") }}</p>
         <div class="modal-action">
           <form method="dialog">

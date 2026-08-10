@@ -48,7 +48,10 @@ test("logout clears the session", async ({ page }) => {
   await login(page);
   await expect(page.getByTestId("settings")).toBeVisible();
 
-  await page.getByTestId("user-menu").locator("label").click();
+  // The trigger is a <button>, not a <label>: a menu that opens on a label's
+  // implicit focus is not operable by keyboard, so it was rebuilt as a real
+  // button with aria-haspopup/aria-expanded.
+  await page.getByTestId("user-menu").getByRole("button").first().click();
   await page.getByRole("button", { name: "Logout" }).click();
 
   await expect(page.locator('input[name="username"]')).toBeVisible();

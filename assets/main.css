@@ -236,7 +236,12 @@ body {
  * sticks right below it and the log content is padded by the same amount, so
  * they stay locked together. The safe-area inset is already handled by body. */
 :root {
-  --mobile-nav-height: 57px;
+  /* 56px = the nav row's `h-14`, and nothing else. It was 57 because the bar
+     carried a 1px bottom border in the box model; that edge is an inset
+     box-shadow now, which costs no layout. The log view's top inset is derived
+     from this, so a stale extra pixel showed up as a hairline gap between the
+     nav and the stats header — which mobile-stats.spec measures to ±1px. */
+  --mobile-nav-height: 56px;
   /* Shared roundedness for standalone floating controls (the search field, the
      scroll buttons, the collapsed stat pill) so they match the app's boxes
      instead of each choosing their own pill/rounding. Tracks the daisyUI box

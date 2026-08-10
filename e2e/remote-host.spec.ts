@@ -11,10 +11,13 @@ test("has right title", async ({ page }) => {
 });
 
 test("shows the labeled remote host", async ({ page }) => {
-  // The host column on the dashboard, rather than a bare getByText: the label also
-  // appears in the sidebar and the merge link, and which of them exist depends on
-  // whether containers have loaded yet.
-  await expect(page.getByRole("cell", { name: "remote-host" }).first()).toBeVisible();
+  // The sidebar's host group, not the dashboard's host column. This setup sees
+  // exactly one host, and the table drops that column when there is only one —
+  // it would repeat the same word on every row and cost the stat columns the
+  // width they need. So the cell this used to assert on cannot exist here.
+  // Scoped to the side menu rather than a bare getByText, since the label also
+  // appears in the merge link.
+  await expect(page.getByTestId("side-menu").getByText("remote-host").first()).toBeVisible();
 });
 
 test("select running container", async ({ page }) => {

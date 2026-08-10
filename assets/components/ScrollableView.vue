@@ -28,7 +28,12 @@
          scroll area a constant size, so opening search or collapsing never
          reflows the logs. Glass (backdrop blur) is allowed here: it is a
          container background layered over its own content. -->
-    <header v-if="hasHeader && !collapsed" class="absolute inset-x-0 top-0 z-20">
+    <!-- `scrollable-header` is load-bearing for e2e: mobile-stats.spec asserts
+         this header sits flush under the fixed mobile nav, with no gap and no
+         overlap. Upstream added the id for exactly that; it was lost when this
+         bar was rebuilt as a floating glass header, which left the test failing
+         against an element it could never find. -->
+    <header v-if="hasHeader && !collapsed" data-testid="scrollable-header" class="absolute inset-x-0 top-0 z-20">
       <div ref="barRow" class="border-base-content/10 relative border-b shadow-sm">
         <!-- The bar's glass sits on its own layer rather than on the bar
              itself. backdrop-filter turns an element into a backdrop root, and
